@@ -59,7 +59,7 @@ export default function EphoriaXHome() {
       {/* ===== Top Nav ===== */}
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/70 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
-          <div className="text-xl font-semibold tracking-tight">EphoriaX</div>
+          <div className="text-xl font-semibold tracking-tight">EphoriaX Main</div>
           <nav className="hidden gap-8 text-sm font-medium text-slate-600 md:flex">
             <a href="#products" className="hover:text-slate-900">Products</a>
             <a href="#why" className="hover:text-slate-900">Why EphoriaX</a>
