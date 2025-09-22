@@ -219,7 +219,7 @@ export default function EphoriaXHome() {
           <div className="text-sm text-slate-500">
             <a
               className="hover:text-slate-700"
-              href="mailto:hello@ephoriax.com"
+              href="mailto:paul@ephoriax.com"
             >
               hello@ephoriax.com
             </a>
