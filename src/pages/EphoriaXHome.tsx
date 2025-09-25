@@ -5,7 +5,6 @@
 // Tailwind classes kept consistent across sections.
 // ============================================================================
 
-import { Link } from "react-router-dom";
 
 // ===== Types =================================================================
 type CardProps = {

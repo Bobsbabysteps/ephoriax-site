@@ -29,13 +29,14 @@ export default function PDF() {
 
       {/* ===== Hero (aligned to platform) ===== */}
       <section
-        className="relative isolate"
-        style={{
-          backgroundImage: "url('/bridge.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
+  className="relative isolate"
+  style={{
+    backgroundImage: "url('/bridge.jpg'), linear-gradient(to right, #1e3a8a, #9333ea)", 
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundBlendMode: "overlay", // blends the gradient with the image
+  }}
+>
         <div className="absolute inset-0 bg-slate-900/60" />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 py-20 sm:py-28">
           <div className="max-w-2xl">
