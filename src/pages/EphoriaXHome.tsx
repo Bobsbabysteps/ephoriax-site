@@ -110,41 +110,35 @@ function Hero() {
     <section
       className="relative isolate"
       style={{
-        // Shows image if present; looks good with just gradient too
-        backgroundImage: "url('/bridge.jpg'), linear-gradient(to right, #1e3a8a, #9333ea)",
+        // looks good even if /bridge.jpg is missing
+        backgroundImage:
+          "url('/bridge.jpg'), linear-gradient(to right, #1e3a8a, #9333ea)",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundBlendMode: "overlay",
       }}
     >
-      {/* overlay */}
       <div className="absolute inset-0 bg-slate-900/55" />
 
-      {/* content */}
-      <div className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 sm:py-28">
-        <div className="max-w-2xl">
-          {/* Platform tag (optional) */}
+      <div className="relative mx-auto max-w-7xl px-4 py-20 sm:py-28">
+        {/* Center the content block and control line-length */}
+        <div className="mx-auto max-w-3xl text-center">
           <p className="text-indigo-300">EphoriaX Platform</p>
 
-          {/* H1 */}
-          <h1 className="mt-2 text-4xl font-bold tracking-tight text-white sm:text-5xl">
+          {/* Responsive H1 sizes */}
+          <h1 className="mt-3 font-bold tracking-tight text-white text-4xl sm:text-5xl md:text-6xl">
             The bridge between complexity and clarity
           </h1>
 
-          {/* H2 — Full */}
-          <p className="mt-4 max-w-xl text-lg leading-8 text-slate-100">
-            We do the sifting and searching for the data that matters, delivering the knowledge you
-            need to learn, understand, and make confident decisions — in seconds, not hours.
+          {/* Body text: comfortable line-length + responsive sizes/leading */}
+          <p className="mt-5 text-slate-100 text-base sm:text-lg leading-7 sm:leading-8">
+            We do the sifting and searching for the data that matters, delivering
+            the knowledge you need to learn, understand, and make confident
+            decisions — in seconds, not hours.
           </p>
 
-          {/*
-          // H2 — Micro (swap to this if you want a shorter line)
-          <p className="mt-4 max-w-xl text-lg leading-8 text-slate-100">
-            We surface the data that matters, giving you clarity and confidence in seconds — not hours.
-          </p>
-          */}
-
-          <div className="mt-8 flex gap-3">
+          {/* Buttons: center on all screens; stack on small screens */}
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <CTAButton href="#products">Explore Products</CTAButton>
             <a
               href="#beta"
@@ -158,7 +152,6 @@ function Hero() {
     </section>
   );
 }
-
 function WhyPillars() {
   return (
     <section id="why" className="mx-auto max-w-6xl px-4 sm:px-6 py-16">
