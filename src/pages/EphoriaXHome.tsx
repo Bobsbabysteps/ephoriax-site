@@ -56,7 +56,8 @@ const pillars: CardProps[] = [
   { title: "Integrity", body: "Traceable sources, transparent logic." },
   { title: "Efficiency", body: "Hours of searching compressed to minutes." },
   { title: "Clarity", body: "Answers you can act on—and defend." },
-  { title: "Satisfaction", body: "Skip the frustration of endless digging. EphoriaX delivers clarity and confidence fast—so you can focus on your goals and enjoy the results of smarter work." }
+  { title: "Satisfaction", body: "No more endless digging. EphoriaX delivers clarity and confidence in seconds—helping you reach your goals and enjoy the results of smarter work." 
+}
 ];
 
 const products: CardProps[] = [
