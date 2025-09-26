@@ -213,36 +213,35 @@ function Products() {
 
 function About() {
   return (
-function About() {
-  return (
     <section id="about" className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-16">
       <SectionHeading
         eyebrow="About EphoriaX"
         title="Built to turn complexity into clarity"
-        copy="We create focused tools that do the heavy lifting—sifting, connecting, and translating data into decisions you can trust. EphoriaX makes insight accessible, reliable, and fast, no matter the field."
+        copy="We create focused tools that do the heavy lifting—sifting, connecting, and translating data so you can decide with confidence."
       />
 
       {/* Testimonials */}
       <div className="mt-12 grid gap-8 sm:grid-cols-2">
         <blockquote className="rounded-xl bg-white p-6 shadow">
           <p className="text-slate-700">
-            "EphoriaX cut my research time from hours to minutes. The clarity it delivers is unmatched."
+            “EphoriaX cut my research time from hours to minutes. The clarity it
+            delivers is unmatched.”
           </p>
           <footer className="mt-4 text-sm text-slate-500">— Beta tester, Risk Analyst</footer>
         </blockquote>
 
         <blockquote className="rounded-xl bg-white p-6 shadow">
           <p className="text-slate-700">
-            "The platform doesn’t just save time—it gives me confidence that I’m making the right calls."
+            “The platform doesn’t just save time—it gives me confidence that I’m
+            making the right call.”
           </p>
           <footer className="mt-4 text-sm text-slate-500">— Underwriting Manager</footer>
         </blockquote>
       </div>
     </section>
-  );
-}
-  );
-}
+  );  // <-- close the return ( ... )
+}      // <-- close function About()
+ 
 
 function BetaCTA() {
   return (
