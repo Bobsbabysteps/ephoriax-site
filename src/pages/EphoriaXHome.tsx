@@ -63,17 +63,45 @@ const pillars: CardProps[] = [
 const products: CardProps[] = [
   {
     title: "Property Data Finder (PDF)",
-    body: "The Data Integrity & Efficiency Platform for property decisions.",
+    body:
+      "The Data Integrity & Efficiency Platform for property decisions. Surface permits, history, and hazards in seconds.",
+    // add a future link target (we won’t use it yet)
+    // @ts-expect-error – extend CardProps later
+    link: "/pdf",
   },
   {
     title: "InsightHub (Coming Soon)",
-    body: "Cross-dataset dashboards for smarter decisions.",
+    body:
+      "Cross-dataset dashboards for smarter decisions. Correlate, explore, and share."
   },
   {
     title: "RiskLens",
-    body: "Hazard scoring and what-if analysis for portfolios.",
+    body:
+      "Hazard scoring and what-if analysis for portfolios."
   },
 ];
+
+// LAYOUT (Products section)
+<section id="products" className="mx-auto max-w-6xl px-4 sm:px-6 py-16">
+  <SectionHeading
+    eyebrow="Explore Products"
+    title="Professional tools that bridge complexity to clarity"
+    copy="Each tool is built on the same platform principles—integrity, efficiency, and results you can trust."
+  />
+  <div className="mt-8 grid gap-6 sm:grid-cols-2">
+    {products.map((p) => (
+      <div
+        key={p.title}
+        className="rounded-2xl border border-slate-200 bg-white p-6 shadow hover:shadow-md transition-shadow"
+        // wire later; for now this is a harmless stub:
+        data-link={(p as any).link ?? undefined}
+      >
+        <h3 className="text-lg font-semibold text-slate-900">{p.title}</h3>
+        <p className="mt-2 text-sm leading-6 text-slate-600">{p.body}</p>
+      </div>
+    ))}
+  </div>
+</section>
 // #endregion DATA -------------------------------------------------------------
 
 // #region LAYOUT SECTIONS -----------------------------------------------------
@@ -218,29 +246,57 @@ function About() {
 
 function BetaCTA() {
   return (
-    <section id="beta" className="bg-indigo-50 py-16">
-      <div className="mx-auto max-w-3xl px-4 sm:px-6 text-center">
-        <h3 className="text-2xl font-semibold text-slate-900">Join the private beta</h3>
-        <p className="mt-2 text-slate-600">
-          Get early access to Property Data Finder and the EphoriaX platform updates.
-        </p>
-        <div className="mt-6 flex justify-center">
-          <CTAButton href="mailto:beta@ephoriax.com">Request an Invite</CTAButton>
+    <section id="beta" className="mx-auto max-w-6xl px-4 sm:px-6 py-16">
+      <div className="rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 p-[1px]">
+        <div className="rounded-2xl bg-white px-6 py-10 sm:px-10">
+          <h3 className="text-2xl font-semibold text-slate-900">
+            Join the private beta
+          </h3>
+          <p className="mt-3 max-w-2xl text-slate-600">
+            Get early access to Property Data Finder and platform updates. We’ll
+            notify you as new tools go live.
+          </p>
+          <div className="mt-6 flex gap-3">
+            <a
+              href="mailto:hello@ephoriax.com?subject=Request%20Beta%20Access"
+              className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500"
+            >
+              Request Access
+            </a>
+            <a
+              href="#products"
+              className="inline-flex items-center justify-center rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+            >
+              Explore Products
+            </a>
+          </div>
         </div>
       </div>
     </section>
   );
 }
-
 function Footer() {
   return (
-    <footer id="contact" className="border-t border-slate-200 bg-white">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 flex items-center justify-between">
-        <p className="text-sm text-slate-500">© {new Date().getFullYear()} EphoriaX</p>
-        <div className="text-sm text-slate-500">
-          <a className="hover:text-slate-700" href="mailto:hello@ephoriax.com">
-            hello@ephoriax.com
-          </a>
+    <footer className="mt-24 border-t border-slate-200 bg-white">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 py-10">
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-slate-600">
+            © {new Date().getFullYear()} EphoriaX — Bridging the gap.
+          </p>
+          <nav className="flex gap-5 text-sm">
+            <a href="#products" className="hover:text-slate-900 text-slate-600">
+              Products
+            </a>
+            <a href="#why" className="hover:text-slate-900 text-slate-600">
+              Why EphoriaX
+            </a>
+            <a href="#about" className="hover:text-slate-900 text-slate-600">
+              About
+            </a>
+            <a href="mailto:hello@ephoriax.com" className="hover:text-slate-900 text-slate-600">
+              Contact
+            </a>
+          </nav>
         </div>
       </div>
     </footer>
