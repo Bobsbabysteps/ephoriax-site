@@ -183,30 +183,51 @@ function Products() {
   );
 }
 
-function About() {
+// --- About section (renamed to avoid collisions) ---
+function AboutSection(): JSX.Element {
   return (
-    <section id="about" className="mx-auto max-w-6xl px-4 sm:px-6 py-20">
+    <section id="about" className="mx-auto max-w-6xl px-4 sm:px-6 py-16">
       <SectionHeading
         eyebrow="About EphoriaX"
-        title="Built with inspectors and underwriters"
-        copy="We build professional data tools that respect expert judgment. Platform-first:
-              shared identity, security, and UX across products—transparent sources,
-              auditable outputs, and workflow-ready (n8n, Make, custom)."
+        title="Built to turn complexity into clarity"
+        copy="We create focused tools that do the heavy lifting—sifting, connecting, and translating data into decisions."
       />
+      {/* testimonials or any content you added goes here */}
     </section>
   );
 }
 
+// --- Home Beta CTA (keeps Explore Products) ---
 function BetaCTA() {
   return (
     <section id="beta" className="bg-indigo-50 py-16">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 text-center">
-        <h3 className="text-2xl font-semibold text-slate-900">Join the private beta</h3>
-        <p className="mt-2 text-slate-600">
-          Get early access to Property Data Finder and the EphoriaX platform updates.
+        <p className="text-sm font-semibold tracking-wider text-indigo-600">
+          Private Beta Enrollment
         </p>
-        <div className="mt-6 flex justify-center">
-          <CTAButton href="mailto:beta@ephoriax.com">Request an Invite</CTAButton>
+        <h3 className="mt-2 text-2xl font-semibold text-slate-900">
+          Join now to lock in your access
+        </h3>
+        <p className="mt-2 text-slate-600">
+          A short window to help shape PDF. Early testers get priority and a preferred launch plan.
+        </p>
+
+        <div className="mt-6 flex justify-center gap-3">
+          {/* Keep on Home (links to PDF page) */}
+          <a
+            href="/pdf"
+            className="inline-flex items-center justify-center rounded-xl border px-6 py-3 text-sm font-semibold text-slate-900 hover:bg-white"
+          >
+            Explore Products
+          </a>
+
+          {/* Home beta -> generic beta landing (no product query) */}
+          <a
+            href="/beta"
+            className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white hover:bg-indigo-700"
+          >
+            Request Access
+          </a>
         </div>
       </div>
     </section>
@@ -246,7 +267,7 @@ export default function EphoriaXHome() {
       <Products />
 
       {/* ============================== ABOUT ============================ */}
-      <About />
+      <AboutSection />
 
       {/* =========================== CTA / BETA ========================== */}
       <BetaCTA />
