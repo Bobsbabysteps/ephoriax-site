@@ -1,25 +1,9 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+# Query: <About />
+# ContextLines: 1
 
-node_modules
-dist
-dist-ssr
-*.local
+1 result - 1 file
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-.vercel
+src/pages/EphoriaXHome.tsx:
+  269        {/* ============================== ABOUT ============================ */}
+  270:       <AboutSection />
+  271  
