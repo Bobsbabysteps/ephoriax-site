@@ -1,9 +1,27 @@
-# Query: <About />
-# ContextLines: 1
+# dependencies
+node_modules/
+.pnpm/
 
-1 result - 1 file
+# production build
+dist/
 
-src/pages/EphoriaXHome.tsx:
-  269        {/* ============================== ABOUT ============================ */}
-  270:       <AboutSection />
-  271  
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# local env files
+.env
+.env.local
+.env.*.local
+
+# Editor / IDE stuff
+.vscode/
+.idea/
+.DS_Store
+
+# cache
+.cache/
+.vite/
