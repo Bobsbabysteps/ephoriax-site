@@ -211,8 +211,10 @@ function Products() {
   );
 }
 
-function About() {
+// --- About section (renamed to avoid collisions) ---
+function AboutSection(): JSX.Element {
   return (
+
     <section id="about" className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-16">
       <SectionHeading
         eyebrow="About EphoriaX"
@@ -238,11 +240,14 @@ function About() {
           <footer className="mt-4 text-sm text-slate-500">— Underwriting Manager</footer>
         </blockquote>
       </div>
+
+
     </section>
   );  // <-- close the return ( ... )
 }      // <-- close function About()
  
 
+// --- Home Beta CTA (keeps Explore Products) ---
 function BetaCTA() {
   return (
     <section id="beta" className="mx-auto max-w-6xl px-4 sm:px-6 py-16">
@@ -320,7 +325,7 @@ export default function EphoriaXHome() {
       <Products />
 
       {/* ============================== ABOUT ============================ */}
-      <About />
+      <AboutSection />
 
       {/* =========================== CTA / BETA ========================== */}
       <BetaCTA />
