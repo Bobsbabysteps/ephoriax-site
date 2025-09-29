@@ -184,7 +184,7 @@ function Products() {
 }
 
 // --- About section (renamed to avoid collisions) ---
-function AboutSection(): JSX.Element {
+function AboutSection() {
   return (
     <section id="about" className="mx-auto max-w-6xl px-4 sm:px-6 py-16">
       <SectionHeading
