@@ -25,3 +25,4 @@ pnpm-debug.log*
 # cache
 .cache/
 .vite/.tsc-files.txt
+*.bak
