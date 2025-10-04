@@ -1,21 +1,8 @@
-@import "tailwindcss";
+/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* your custom styles can follow */
-
-/* Optional: your custom styles below */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: sans-serif;
-  background-color: #f8fafc;
-  color: #111827;
-}
-
-#root {
-  padding: 2rem;
-  text-align: center;
-}
+/* tiny reset (optional) */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
