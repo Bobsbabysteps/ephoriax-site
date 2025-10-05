@@ -5,6 +5,9 @@
 // Tailwind classes kept consistent across sections.
 // ============================================================================
 
+import { Link } from "react-router-dom";
+// optional with Vite’s automatic JSX runtime, but harmless:
+import React from "react";
 
 // ===== Types =================================================================
 type CardProps = {
@@ -214,12 +217,12 @@ function BetaCTA() {
 
         <div className="mt-6 flex justify-center gap-3">
           {/* Keep on Home (links to PDF page) */}
-          <a
-            href="/pdf"
-            className="inline-flex items-center justify-center rounded-xl border px-6 py-3 text-sm font-semibold text-slate-900 hover:bg-white"
-          >
-            Explore Products
-          </a>
+          <Link
+            to="/pdf"
+            className="inline-flex items-center justify-center rounded-xl border border-white/70 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10"
+           >
+           View PDF
+          </Link>
 
           {/* Home beta -> generic beta landing (no product query) */}
           <a

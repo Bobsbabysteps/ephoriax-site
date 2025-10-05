@@ -1,6 +1,6 @@
 // src/pages/PDF.tsx
 import React from "react";
-
+import { Link } from "react-router-dom";
 function SectionHeading({
   eyebrow,
   title,
@@ -99,12 +99,12 @@ export default function PDF() {
               <span className="font-semibold">seconds</span>, not hours.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <a
-                href="/pdf/submit"
+              <Link
+                to="/pdf/submit"
                 className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-6 py-3 font-semibold text-white hover:bg-indigo-500"
-              >
-                Submit a Property
-              </a>
+            >
+              Submit a Property
+            </Link>
               <a
                 href="/beta?product=pdf"
                 className="inline-flex items-center justify-center rounded-xl border px-6 py-3 font-semibold text-slate-900 hover:bg-slate-50"
@@ -157,12 +157,12 @@ export default function PDF() {
             work.
           </p>
           <div className="mt-6">
-            <a
-              href="/pdf/submit"
+            <Link
+              to="/pdf/submit"
               className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white hover:bg-indigo-700"
             >
               Submit a property
-            </a>
+            </Link>
           </div>
         </div>
       </section>
