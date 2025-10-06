@@ -6,7 +6,6 @@
 // ============================================================================
 import { Link } from "react-router-dom";
 import type { To } from "react-router-dom";
-import type { ReactNode } from "react";
 
 // ===== Types =================================================================
 type CardProps = {
@@ -24,7 +23,7 @@ type HeadingProps = {
 
 // ===== Shared UI Primitives ==================================================
 type CTAProps =
-  | { to: To; children: React.ReactNode }
+  | { to: To;    children: React.ReactNode }
   | { href: string; children: React.ReactNode };
 
 function CTAButton(props: CTAProps) {
