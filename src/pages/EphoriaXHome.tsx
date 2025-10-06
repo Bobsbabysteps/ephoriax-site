@@ -4,10 +4,9 @@
 // Structured with small, focused subcomponents + clear regions you can fold.
 // Tailwind classes kept consistent across sections.
 // ============================================================================
-
 import { Link } from "react-router-dom";
-// optional with Vite’s automatic JSX runtime, but harmless:
-import React from "react";
+import type { To } from "react-router-dom";
+import type { ReactNode } from "react";
 
 // ===== Types =================================================================
 type CardProps = {
@@ -24,13 +23,24 @@ type HeadingProps = {
 };
 
 // ===== Shared UI Primitives ==================================================
-function CTAButton({ href, children }: { href: string; children: React.ReactNode }) {
+type CTAProps =
+  | { to: To; children: React.ReactNode }
+  | { href: string; children: React.ReactNode };
+
+function CTAButton(props: CTAProps) {
+  const classes =
+    "inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500";
+
+  if ("to" in props) {
+    return (
+      <Link to={props.to} className={classes}>
+        {props.children}
+      </Link>
+    );
+  }
   return (
-    <a
-      href={href}
-      className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-    >
-      {children}
+    <a href={props.href} className={classes}>
+      {props.children}
     </a>
   );
 }
@@ -59,8 +69,11 @@ const pillars: CardProps[] = [
   { title: "Integrity", body: "Traceable sources, transparent logic." },
   { title: "Efficiency", body: "Hours of searching compressed to minutes." },
   { title: "Clarity", body: "Answers you can act on—and defend." },
-  { title: "Satisfaction", body: "No more endless digging. EphoriaX delivers clarity and confidence in seconds—helping you reach your goals and enjoy the results of smarter work." 
-}
+  {
+    title: "Satisfaction",
+    body:
+      "No more endless digging. EphoriaX delivers clarity and confidence in seconds—helping you reach your goals and enjoy the results of smarter work.",
+  },
 ];
 
 const products: CardProps[] = [
@@ -102,7 +115,7 @@ function Header() {
         </nav>
 
         <div className="hidden md:block">
-          <CTAButton href="#beta">Join Beta</CTAButton>
+         `` <CTAButton to="/pdf/submit">Join Beta</CTAButton>
         </div>
       </div>
     </header>
@@ -115,8 +128,7 @@ function Hero() {
       className="relative isolate"
       style={{
         // looks good even if /bridge.jpg is missing
-        backgroundImage:
-          "url('/bridge.jpg'), linear-gradient(to right, #1e3a8a, #9333ea)",
+        backgroundImage: "url('/bridge.jpg'), linear-gradient(to right, #1e3a8a, #9333ea)",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundBlendMode: "overlay",
@@ -144,18 +156,15 @@ function Hero() {
           {/* Buttons: center on all screens; stack on small screens */}
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <CTAButton href="#products">Explore Products</CTAButton>
-            <a
-              href="#beta"
-              className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white hover:bg-indigo-700"
-            >
-              Request Access
-            </a>
+            <CTAButton to="/pdf/submit">Request Access</CTAButton>
           </div>
         </div>
-      </div>
+     </div>
+      {/* Added missing closing div for mx-auto max-w-3xl */}
     </section>
   );
 }
+
 function WhyPillars() {
   return (
     <section id="why" className="mx-auto max-w-6xl px-4 sm:px-6 py-16">
@@ -216,23 +225,22 @@ function BetaCTA() {
         </p>
 
         <div className="mt-6 flex justify-center gap-3">
-          {/* Keep on Home (links to PDF page) */}
-          <Link
-            to="/pdf"
-            className="inline-flex items-center justify-center rounded-xl border border-white/70 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10"
-          >
-          View PDF
-          </Link>
+         {/* Explore Products -> PDF landing */}
+         <Link
+           to="/pdf"
+           className="inline-flex items-center justify-center rounded-xl border px-6 py-3 text-sm font-semibold text-slate-900 hover:bg-white"
+        >
+           Explore Products
+        </Link>
 
-          {/* Home beta -> generic beta landing (no product query) */}
-          <a
-            href="/beta"
-            className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white hover:bg-indigo-700"
-          >
-            Request Access
-          </a>
-        </div>
-      </div>
+        {/* Request Access -> PDF submit */}
+        <Link
+          to="/pdf/submit"
+          className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white hover:bg-indigo-700"
+      >
+          Request Access
+      </Link>
+     </div>
     </section>
   );
 }
