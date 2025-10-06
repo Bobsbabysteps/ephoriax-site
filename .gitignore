@@ -31,3 +31,9 @@ pnpm-debug.log*
 *.swp
 .*.swp
 *.bak
+
+# Editor junk
+*.swp
+*.swo
+*.bak
+.DS_Store
