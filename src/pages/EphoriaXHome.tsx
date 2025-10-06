@@ -221,26 +221,18 @@ function BetaCTA() {
           Join now to lock in your access
         </h3>
         <p className="mt-2 text-slate-600">
-          A short window to help shape PDF. Early testers get priority and a preferred launch plan.
+          A short window to help shape PDF. Early testers get priority and a
+          preferred launch plan.
         </p>
 
         <div className="mt-6 flex justify-center gap-3">
-         {/* Explore Products -> PDF landing */}
-         <Link
-           to="/pdf"
-           className="inline-flex items-center justify-center rounded-xl border px-6 py-3 text-sm font-semibold text-slate-900 hover:bg-white"
-        >
-           Explore Products
-        </Link>
+          {/* Keep this on Home to scroll to the products grid */}
+          <CTAButton href="#products">Explore Products</CTAButton>
 
-        {/* Request Access -> PDF submit */}
-        <Link
-          to="/pdf/submit"
-          className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white hover:bg-indigo-700"
-      >
-          Request Access
-      </Link>
-     </div>
+          {/* This should route to the form page */}
+          <CTAButton to="/pdf/submit">Request Access</CTAButton>
+        </div>
+      </div>
     </section>
   );
 }
