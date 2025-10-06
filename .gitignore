@@ -26,3 +26,8 @@ pnpm-debug.log*
 .cache/
 .vite/.tsc-files.txt
 *.bak
+
+# editor junk
+*.swp
+.*.swp
+*.bak
