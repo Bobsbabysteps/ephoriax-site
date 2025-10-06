@@ -8,6 +8,8 @@ import { Link } from "react-router-dom";
 import type { To } from "react-router-dom";
 
 // ===== Types =================================================================
+// Removed duplicate CTAProps type definition
+
 type CardProps = {
   title: string;
   body: string;
@@ -21,15 +23,15 @@ type HeadingProps = {
   className?: string;
 };
 
-// ===== Shared UI Primitives ==================================================
+// Either `to` OR `href` — never both
 type CTAProps =
-  | { to: To;    children: React.ReactNode }
+  | { to: To; children: React.ReactNode }
   | { href: string; children: React.ReactNode };
 
+// CTAButton component
 function CTAButton(props: CTAProps) {
   const classes =
-    "inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500";
-
+    "inline-block rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow hover:bg-indigo-700 transition";
   if ("to" in props) {
     return (
       <Link to={props.to} className={classes}>
