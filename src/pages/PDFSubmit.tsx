@@ -16,13 +16,6 @@ export default function PDFSubmit() {
   const SCRIPT_URL =
     "https://script.google.com/macros/s/AKfycbzc7tM9mw4WH_zo7lnRybve3P7mVclQsgM5Q3v2AlTByxZtdJVaMymWGC2UC5OJGMJPlQ/exec"// <-- paste your real endpoint here
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("submitting");
