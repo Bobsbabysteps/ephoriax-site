@@ -77,20 +77,6 @@ const pillars: CardProps[] = [
   },
 ];
 
-const products: CardProps[] = [
-  {
-    title: "Property Data Finder (PDF)",
-    body: "The Data Integrity & Efficiency Platform for property decisions.",
-  },
-  {
-    title: "InsightHub (Coming Soon)",
-    body: "Cross-dataset dashboards for smarter decisions.",
-  },
-  {
-    title: "RiskLens",
-    body: "Hazard scoring and what-if analysis for portfolios.",
-  },
-];
 // #endregion DATA -------------------------------------------------------------
 
 // #region LAYOUT SECTIONS -----------------------------------------------------
