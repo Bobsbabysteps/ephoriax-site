@@ -60,12 +60,12 @@ function BetaCTA() {
           preferred launch plan.
         </p>
         <div className="mt-6 flex justify-center">
-          <a
-            href="/beta?product=pdf"
+          <Link
+            to="/pdf/submit"
             className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white hover:bg-indigo-700"
-          >
+         >
             Request Access
-          </a>
+          </Link>
         </div>
       </div>
     </section>
@@ -103,15 +103,15 @@ export default function PDF() {
               <Link
                 to="/pdf/submit"
                 className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-6 py-3 font-semibold text-white hover:bg-indigo-500"
-            >
-              Submit a Property
-            </Link>
-              <a
-                href="/beta?product=pdf"
-                className="inline-flex items-center justify-center rounded-xl border px-6 py-3 font-semibold text-slate-900 hover:bg-slate-50"
               >
+                Submit a Property
+              </Link>
+              <Link
+                to="/pdf/submit"
+                className="inline-flex items-center justify-center rounded-xl border px-6 py-3 font-semibold text-slate-900 hover:bg-slate-50"
+              >  
                 Join the Private Beta
-              </a>
+              </Link>
             </div>
           </div>
         </div>
