@@ -1,6 +1,7 @@
 // src/pages/PDF.tsx
+// src/pages/PDF.tsx
 import React from "react";
-
+import { Link } from "react-router-dom";
 function SectionHeading({
   eyebrow,
   title,
@@ -59,12 +60,12 @@ function BetaCTA() {
           preferred launch plan.
         </p>
         <div className="mt-6 flex justify-center">
-          <a
-            href="/beta?product=pdf"
+          <Link
+            to="/pdf/submit"
             className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white hover:bg-indigo-700"
-          >
+         >
             Request Access
-          </a>
+          </Link>
         </div>
       </div>
     </section>
@@ -99,18 +100,18 @@ export default function PDF() {
               <span className="font-semibold">seconds</span>, not hours.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <a
-                href="/pdf/submit"
+              <Link
+                to="/pdf/submit"
                 className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-6 py-3 font-semibold text-white hover:bg-indigo-500"
               >
                 Submit a Property
-              </a>
-              <a
-                href="/beta?product=pdf"
+              </Link>
+              <Link
+                to="/pdf/submit"
                 className="inline-flex items-center justify-center rounded-xl border px-6 py-3 font-semibold text-slate-900 hover:bg-slate-50"
-              >
+              >  
                 Join the Private Beta
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -157,12 +158,12 @@ export default function PDF() {
             work.
           </p>
           <div className="mt-6">
-            <a
-              href="/pdf/submit"
+            <Link
+              to="/pdf/submit"
               className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white hover:bg-indigo-700"
             >
               Submit a property
-            </a>
+            </Link>
           </div>
         </div>
       </section>
