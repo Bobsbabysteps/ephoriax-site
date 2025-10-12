@@ -25,13 +25,14 @@ type HeadingProps = {
 
 // Either `to` OR `href` — never both
 type CTAProps =
-  | { to: To; children: React.ReactNode }
-  | { href: string; children: React.ReactNode };
+  | { to: To; children: React.ReactNode; className?: string }
+  | { href: string; children: React.ReactNode; className?: string };
 
 // CTAButton component
 function CTAButton(props: CTAProps) {
-  const classes =
+  const baseClasses =
     "inline-block rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow hover:bg-indigo-700 transition";
+  const classes = props.className ? `${baseClasses} ${props.className}` : baseClasses;
   if ("to" in props) {
     return (
       <Link to={props.to} className={classes}>
@@ -238,13 +239,15 @@ function BetaCTA() {
           preferred launch plan.
         </p>
 
-        <div className="mt-6 flex justify-center gap-3">
-          {/* Keep this on Home to scroll to the products grid */}
-          <CTAButton href="#products">Explore Products</CTAButton>
-
-          {/* This should route to the form page */}
-          <CTAButton to="/pdf/submit">Request Access</CTAButton>
-        </div>
+        <div className="mt-8 flex justify-center">
+  {/* Route directly to the form page */}
+  <CTAButton
+    to="/pdf/submit"
+    className="bg-indigo-600 text-white font-semibold px-6 py-3 rounded-lg shadow hover:bg-indigo-700 transition"
+  >
+    Request Access
+  </CTAButton>
+</div>
       </div>
     </section>
   );
