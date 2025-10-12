@@ -4,9 +4,12 @@
 // Structured with small, focused subcomponents + clear regions you can fold.
 // Tailwind classes kept consistent across sections.
 // ============================================================================
-
+import { Link } from "react-router-dom";
+import type { To } from "react-router-dom";
 
 // ===== Types =================================================================
+// Removed duplicate CTAProps type definition
+
 type CardProps = {
   title: string;
   body: string;
@@ -20,14 +23,26 @@ type HeadingProps = {
   className?: string;
 };
 
-// ===== Shared UI Primitives ==================================================
-function CTAButton({ href, children }: { href: string; children: React.ReactNode }) {
+// Either `to` OR `href` — never both
+type CTAProps =
+  | { to: To; children: React.ReactNode; className?: string }
+  | { href: string; children: React.ReactNode; className?: string };
+
+// CTAButton component
+function CTAButton(props: CTAProps) {
+  const baseClasses =
+    "inline-block rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow hover:bg-indigo-700 transition";
+  const classes = props.className ? `${baseClasses} ${props.className}` : baseClasses;
+  if ("to" in props) {
+    return (
+      <Link to={props.to} className={classes}>
+        {props.children}
+      </Link>
+    );
+  }
   return (
-    <a
-      href={href}
-      className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-    >
-      {children}
+    <a href={props.href} className={classes}>
+      {props.children}
     </a>
   );
 }
@@ -56,24 +71,13 @@ const pillars: CardProps[] = [
   { title: "Integrity", body: "Traceable sources, transparent logic." },
   { title: "Efficiency", body: "Hours of searching compressed to minutes." },
   { title: "Clarity", body: "Answers you can act on—and defend." },
-  { title: "Satisfaction", body: "No more endless digging. EphoriaX delivers clarity and confidence in seconds—helping you reach your goals and enjoy the results of smarter work." 
-}
+  {
+    title: "Satisfaction",
+    body:
+      "No more endless digging. EphoriaX delivers clarity and confidence in seconds—helping you reach your goals and enjoy the results of smarter work.",
+  },
 ];
 
-const products: CardProps[] = [
-  {
-    title: "Property Data Finder (PDF)",
-    body: "The Data Integrity & Efficiency Platform for property decisions.",
-  },
-  {
-    title: "InsightHub (Coming Soon)",
-    body: "Cross-dataset dashboards for smarter decisions.",
-  },
-  {
-    title: "RiskLens",
-    body: "Hazard scoring and what-if analysis for portfolios.",
-  },
-];
 // #endregion DATA -------------------------------------------------------------
 
 // #region LAYOUT SECTIONS -----------------------------------------------------
@@ -99,7 +103,7 @@ function Header() {
         </nav>
 
         <div className="hidden md:block">
-          <CTAButton href="#beta">Join Beta</CTAButton>
+         `` <CTAButton to="/pdf/submit">Join Beta</CTAButton>
         </div>
       </div>
     </header>
@@ -112,8 +116,7 @@ function Hero() {
       className="relative isolate"
       style={{
         // looks good even if /bridge.jpg is missing
-        backgroundImage:
-          "url('/bridge.jpg'), linear-gradient(to right, #1e3a8a, #9333ea)",
+        backgroundImage: "url('/bridge.jpg'), linear-gradient(to right, #1e3a8a, #9333ea)",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundBlendMode: "overlay",
@@ -141,18 +144,15 @@ function Hero() {
           {/* Buttons: center on all screens; stack on small screens */}
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <CTAButton href="#products">Explore Products</CTAButton>
-            <a
-              href="#beta"
-              className="inline-flex items-center justify-center rounded-xl border border-white/70 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10"
-            >
-              Request Access
-            </a>
+            <CTAButton to="/pdf/submit">Request Access</CTAButton>
           </div>
         </div>
-      </div>
+     </div>
+      {/* Added missing closing div for mx-auto max-w-3xl */}
     </section>
   );
 }
+
 function WhyPillars() {
   return (
     <section id="why" className="mx-auto max-w-6xl px-4 sm:px-6 py-16">
@@ -169,14 +169,40 @@ function Products() {
   return (
     <section id="products" className="bg-gray-50 py-20 sm:py-28">
       <div className="mx-auto max-w-6xl px-6 lg:px-8">
-        <SectionHeading eyebrow="Products" title="A growing family of tools under one platform." />
+        <SectionHeading
+          eyebrow="Products"
+          title="A growing family of tools under one platform."
+        />
+
+        {/* Clickable product cards */}
         <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {products.map((p) => (
-            <Card key={p.title} title={p.title} body={p.body} />
-          ))}
-        </div>
-        <div className="mt-10 flex justify-center">
-          <CTAButton href="#beta">Request Access</CTAButton>
+          <Link
+            to="/pdf"
+            className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md hover:bg-indigo-50 transition"
+          >
+            <h3 className="text-lg font-semibold text-slate-900">
+              Property Data Finder (PDF)
+            </h3>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              The Data Integrity & Efficiency Platform for property decisions.
+            </p>
+          </Link>
+
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm opacity-70">
+            <h3 className="text-lg font-semibold text-slate-900">
+              InsightHub (Coming Soon)
+            </h3>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              Cross-dataset dashboards for smarter decisions.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm opacity-70">
+            <h3 className="text-lg font-semibold text-slate-900">RiskLens</h3>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              Hazard scoring and what-if analysis for portfolios.
+            </p>
+          </div>
         </div>
       </div>
     </section>
@@ -209,26 +235,19 @@ function BetaCTA() {
           Join now to lock in your access
         </h3>
         <p className="mt-2 text-slate-600">
-          A short window to help shape PDF. Early testers get priority and a preferred launch plan.
+          A short window to help shape PDF. Early testers get priority and a
+          preferred launch plan.
         </p>
 
-        <div className="mt-6 flex justify-center gap-3">
-          {/* Keep on Home (links to PDF page) */}
-          <a
-            href="/pdf"
-            className="inline-flex items-center justify-center rounded-xl border px-6 py-3 text-sm font-semibold text-slate-900 hover:bg-white"
-          >
-            Explore Products
-          </a>
-
-          {/* Home beta -> generic beta landing (no product query) */}
-          <a
-            href="/beta"
-            className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white hover:bg-indigo-700"
-          >
-            Request Access
-          </a>
-        </div>
+        <div className="mt-8 flex justify-center">
+  {/* Route directly to the form page */}
+  <CTAButton
+    to="/pdf/submit"
+    className="bg-indigo-600 text-white font-semibold px-6 py-3 rounded-lg shadow hover:bg-indigo-700 transition"
+  >
+    Request Access
+  </CTAButton>
+</div>
       </div>
     </section>
   );
