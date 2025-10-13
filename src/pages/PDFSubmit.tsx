@@ -5,7 +5,7 @@ export default function PDFSubmit() {
         Try the Property Data Finder Tool
       </h1>
       <p className="text-slate-600 max-w-2xl mb-8">
-        Upload a sample property report below and explore the insights for free. 
+        Upload a sample property address below and explore the insights for free. 
         You can submit up to 3 trial reports.
       </p>
 
