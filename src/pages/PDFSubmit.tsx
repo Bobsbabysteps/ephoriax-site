@@ -1,148 +1,103 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function PDFSubmit() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    businessType: "",
-    city: "",
-  });
+  const navigate = useNavigate();
+  const [file, setFile] = useState<File | null>(null);
+  const [trialCount, setTrialCount] = useState(0);
+  const [limit] = useState(3);
+  const [message, setMessage] = useState("");
 
-  const [status, setStatus] = useState<
-    "idle" | "submitting" | "success" | "error"
-  >("idle");
+  useEffect(() => {
+    const used = Number(localStorage.getItem("pdf_submits") || 0);
+    setTrialCount(used);
+  }, []);
 
-  // Replace this with your actual Google Apps Script URL
-  const SCRIPT_URL =
-    "https://script.google.com/macros/s/AKfycbzc7tM9mw4WH_zo7lnRybve3P7mVclQsgM5Q3v2AlTByxZtdJVaMymWGC2UC5OJGMJPlQ/exec"// <-- paste your real endpoint here
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus("submitting");
 
-    try {
-      const response = await fetch(SCRIPT_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        setStatus("success");
-        setFormData({ name: "", email: "", businessType: "", city: "" });
-      } else {
-        throw new Error("Failed to submit");
-      }
-    } catch (err) {
-      console.error(err);
-      setStatus("error");
+    const used = Number(localStorage.getItem("pdf_submits") || 0);
+    if (used >= limit) {
+      setMessage("Your free trial has ended. Please subscribe to continue.");
+      setTimeout(() => {
+        window.location.href = "https://app.kit.com/creator-network/YOUR-FORM-ID";
+      }, 1500);
+      return;
     }
+
+    if (!file) {
+      setMessage("Please upload a PDF file first.");
+      return;
+    }
+
+    // Increment trial usage
+    localStorage.setItem("pdf_submits", String(used + 1));
+    setTrialCount(used + 1);
+
+    // Simulate processing the PDF (replace with actual logic later)
+    setMessage("Processing your PDF…");
+    setTimeout(() => {
+      setMessage("Upload successful!");
+      navigate("/thank-you");
+    }, 2000);
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-md p-8">
-        <h1 className="text-2xl font-bold text-indigo-600 mb-6 text-center">
-          EphoriaX Beta Tester Enrollment
+    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6">
+      <div className="max-w-lg w-full bg-white rounded-2xl shadow p-8">
+        <h1 className="text-2xl font-bold text-slate-900 text-center mb-2">
+          Try EphoriaX PDF Finder
         </h1>
-<div className="mt-8 w-full flex justify-center">
-  <iframe
-    src="https://ephoriax.kit.com/b0ab7abf0b"
-    className="w-full max-w-2xl h-[600px] border-0 rounded-xl shadow-md"
-    title="EphoriaX Signup Form"
-  />
-</div>
-        {status === "success" ? (
-          <div className="text-center">
-            <h2 className="text-green-600 font-semibold mb-2">
-              Submission Received 🎉
-            </h2>
-            <p className="text-slate-600 text-sm">
-              Thank you for joining the EphoriaX Beta! We’ll be in touch soon.
-            </p>
+        <p className="text-slate-600 text-center mb-6">
+          Upload your PDF report below. You have{" "}
+          <span className="font-semibold">{limit - trialCount}</span> of{" "}
+          {limit} free trials remaining.
+        </p>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Upload Property Report (PDF)
+            </label>
+            <input
+              type="file"
+              accept="application/pdf"
+              onChange={(e) => setFile(e.target.files?.[0] || null)}
+              className="block w-full text-sm text-slate-700 border border-slate-300 rounded-lg cursor-pointer focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 p-2"
+            />
           </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">     
-            <div>
-             {/*
-              <label className="block text-sm font-medium text-slate-700">
-                Name
-              </label>
-              <input
-                type="text"
-                name="name"
-                required
-                onChange={handleChange}
-                value={formData.name}
-                className="mt-1 w-full rounded-md border border-slate-300 p-2 focus:ring-indigo-500 focus:border-indigo-500"
-              />
-              */}
-            </div>
-            
-            <div>
-              {/*
-              <label className="block text-sm font-medium text-slate-700">
-                Email
-              </label>
-              <input
-                type="email"
-                name="email"
-                required
-                onChange={handleChange}
-                value={formData.email}
-                className="mt-1 w-full rounded-md border border-slate-300 p-2 focus:ring-indigo-500 focus:border-indigo-500"
-              />
-*/}
-            </div>
 
-            <div>
-              {/*
-              <label className="block text-sm font-medium text-slate-700">
-                Business Type
-              </label>
-              <input
-                type="text"
-                name="businessType"
-                placeholder="e.g. Realtor, Appraiser, Researcher"
-                onChange={handleChange}
-                value={formData.businessType}
-                className="mt-1 w-full rounded-md border border-slate-300 p-2 focus:ring-indigo-500 focus:border-indigo-500"
-              />
-              */}
-            </div>
+          <button
+            type="submit"
+            disabled={trialCount >= limit}
+            className={`w-full rounded-lg py-2.5 font-semibold transition ${
+              trialCount >= limit
+                ? "bg-slate-300 text-slate-500 cursor-not-allowed"
+                : "bg-indigo-600 text-white hover:bg-indigo-700"
+            }`}
+          >
+            {trialCount >= limit ? "Trial Ended" : "Submit PDF"}
+          </button>
+        </form>
 
-            
-            <div>
-              {/*
-              <label className="block text-sm font-medium text-slate-700">
-                City
-              </label>
-              <input
-                type="text"
-                name="city"
-                onChange={handleChange}
-                value={formData.city}
-                className="mt-1 w-full rounded-md border border-slate-300 p-2 focus:ring-indigo-500 focus:border-indigo-500"
-              />
-              */}
-            </div>
-
-{/*
-            <button
-              type="submit"
-              disabled={status === "submitting"}
-              className="w-full rounded-md bg-indigo-600 text-white font-semibold py-2.5 hover:bg-indigo-700 transition"
-            >
-              {status === "submitting" ? "Submitting..." : "Submit"}
-            </button>
-*/}
-          </form>
+        {message && (
+          <p className="text-center mt-4 text-slate-700 font-medium">{message}</p>
         )}
 
-        {status === "error" && (
-          <p className="mt-4 text-red-600 text-center text-sm">
-            Something went wrong. Please try again.
-          </p>
+        {trialCount >= limit && (
+          <div className="mt-6 text-center">
+            <p className="text-slate-600 mb-3">
+              Your free trial has ended. Continue using EphoriaX with a full subscription.
+            </p>
+            <a
+              href="https://ephoriax.kit.com/b0ab7abf0b"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block bg-indigo-600 text-white px-5 py-2.5 rounded-lg hover:bg-indigo-700 transition"
+            >
+              Subscribe Now
+            </a>
+          </div>
         )}
       </div>
     </div>

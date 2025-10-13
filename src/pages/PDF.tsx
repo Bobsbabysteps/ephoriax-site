@@ -83,53 +83,25 @@ const handleTryFree = () => {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       {/* HERO */}
-      <section
-        className="relative isolate"
-        style={{
-          backgroundImage:
-            "linear-gradient(110deg, #1e3a8a 0%, #4f46e5 40%, #9333ea 100%)",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="absolute inset-0 bg-slate-900/40" />
-        <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
-          <div className="max-w-3xl">
-            <p className="text-indigo-200">Property Data Finder (PDF)</p>
-            <h1 className="mt-2 text-4xl font-bold tracking-tight text-white sm:text-5xl">
-              The bridge between complexity and clarity
-            </h1>
-            <p className="mt-4 max-w-2xl text-lg leading-8 text-indigo-50">
-              We do the sifting and searching for the data that matters—permits,
-              history, hazards, sources—so you can learn, understand, and make
-              confident decisions in{" "}
-              <span className="font-semibold">seconds</span>, not hours.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                to="/pdf/submit"
-                className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-6 py-3 font-semibold text-white hover:bg-indigo-500"
-              >
-                Submit a Property
-              </Link>
-              <Link
-                to="/pdf/submit"
-                className="inline-flex items-center justify-center rounded-xl border px-6 py-3 font-semibold text-slate-900 hover:bg-slate-50"
-              >  
-                Join the Private Beta
-              </Link>
-            </div>
-          </div>
-          <div className="mt-8 text-center">
-            <button
-               onClick={handleTryFree}
-               className="inline-flex items-center justify-center rounded-md bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 px-8 py-3 text-base font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-indigo-500/50 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2"
-            >
-               Try It Free
-            </button>
-          </div>
-        </div>
-      </section>
+      <section className="relative isolate bg-gradient-to-r from-indigo-600 via-sky-500 to-teal-400 text-white text-center py-32">
+  <div className="max-w-3xl mx-auto px-6">
+    <h1 className="text-5xl font-extrabold mb-6 leading-tight">
+      Discover Property Data Faster Than Ever
+    </h1>
+    <p className="text-lg text-white/90 mb-10">
+      Get insights in seconds with the AI-powered Property Data Finder Tool. 
+      No more guesswork — just clarity, instantly.
+    </p>
+
+    {/* Try It Free Button */}
+    <button
+      onClick={handleTryFree}
+      className="bg-white text-indigo-700 font-semibold px-8 py-4 rounded-xl shadow-lg hover:bg-indigo-50 hover:shadow-indigo-300 transition-all duration-300"
+    >
+      🚀 Try It Free
+    </button>
+  </div>
+</section>
 
       {/* VALUE */}
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
