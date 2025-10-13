@@ -1,7 +1,7 @@
 // src/pages/PDF.tsx
-// src/pages/PDF.tsx
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
 function SectionHeading({
   eyebrow,
   title,
@@ -74,6 +74,12 @@ function BetaCTA() {
 
 // ✅ Main PDF page
 export default function PDF() {
+  const navigate = useNavigate();
+
+const handleTryFree = () => {
+  navigate("/pdf-submit");
+};
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       {/* HERO */}
@@ -113,6 +119,14 @@ export default function PDF() {
                 Join the Private Beta
               </Link>
             </div>
+          </div>
+          <div className="mt-8 text-center">
+            <button
+               onClick={handleTryFree}
+               className="inline-flex items-center justify-center rounded-md bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 px-8 py-3 text-base font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-indigo-500/50 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2"
+            >
+               Try It Free
+            </button>
           </div>
         </div>
       </section>
