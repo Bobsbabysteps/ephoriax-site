@@ -47,7 +47,7 @@ function Card({
 // ✅ This is the clean BetaCTA section
 function BetaCTA() {
   return (
-    <section id="beta" className="bg-indigo-50 py-16">
+    <section className="bg-indigo-50 py-16">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 text-center">
         <p className="text-sm font-semibold tracking-wider text-indigo-600">
           Private Beta Enrollment
@@ -73,35 +73,35 @@ function BetaCTA() {
 }
 
 // ✅ Main PDF page
-export default function PDF() {
+const PDF: React.FC = () => {
   const navigate = useNavigate();
 
-const handleTryFree = () => {
-  navigate("/pdf-submit");
-};
+  const handleTryFree = () => {
+    navigate("/pdf-trial.html");
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       {/* HERO */}
       <section className="relative isolate bg-gradient-to-r from-indigo-600 via-sky-500 to-teal-400 text-white text-center py-32">
-  <div className="max-w-3xl mx-auto px-6">
-    <h1 className="text-5xl font-extrabold mb-6 leading-tight">
-      Discover Property Data Faster Than Ever
-    </h1>
-    <p className="text-lg text-white/90 mb-10">
-      Get insights in seconds with the AI-powered Property Data Finder Tool. 
-      No more guesswork — just clarity, instantly.
-    </p>
+        <div className="max-w-3xl mx-auto px-6">
+          <h1 className="text-5xl font-extrabold mb-6 leading-tight">
+            Discover Property Data Faster Than Ever
+          </h1>
+          <p className="text-lg text-white/90 mb-10">
+            Get insights in seconds with the AI-powered Property Data Finder Tool. 
+            No more guesswork — just clarity, instantly.
+          </p>
 
-    {/* Try It Free Button */}
-    <button
-      onClick={handleTryFree}
-      className="bg-white text-indigo-700 font-semibold px-8 py-4 rounded-xl shadow-lg hover:bg-indigo-50 hover:shadow-indigo-300 transition-all duration-300"
-    >
-      🚀 Try It Free
-    </button>
-  </div>
-</section>
+          {/* Try It Free Button */}
+          <button
+            onClick={handleTryFree}
+            className="bg-white text-indigo-700 font-semibold px-8 py-4 rounded-xl shadow-lg hover:bg-indigo-50 hover:shadow-indigo-300 transition-all duration-300"
+          >
+            🚀 Try It Free
+          </button>
+        </div>
+      </section>
 
       {/* VALUE */}
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
@@ -155,4 +155,6 @@ const handleTryFree = () => {
       </section>
     </div>
   );
-}
+};
+
+export default PDF;
