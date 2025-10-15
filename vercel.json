@@ -1,4 +1,7 @@
 {
+  "git": {
+    "productionBranch": "main"
+  },
   "routes": [
     { "handle": "filesystem" },
     { "src": "/.*", "dest": "/index.html" }
