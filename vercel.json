@@ -1,12 +1,9 @@
 {
+  "rewrites": [
+    { "source": "/pdf-trial", "destination": "/pdf-trial.html" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
   "git": {
     "productionBranch": "main"
-  },
-  "routes": [
-    { "handle": "filesystem" },
-    { "src": "/.*", "dest": "/index.html" }
-  ],
-  "rewrites": [
-    { "source": "/pdf-trial", "destination": "/pdf-trial.html" }
-  ]
+  }
 }
