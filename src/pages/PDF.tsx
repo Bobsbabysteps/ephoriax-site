@@ -1,31 +1,22 @@
 // src/pages/PDF.tsx
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-function SectionHeading({
-  eyebrow,
-  title,
-  copy,
-}: {
-  eyebrow?: string;
-  title: string;
-  copy?: string;
-}) {
+// ----------------------------------------------------
+// Section Heading Component (optional if used elsewhere)
+// ----------------------------------------------------
+function SectionHeading({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
-    <div className="mx-auto max-w-3xl text-center">
-      {eyebrow && (
-        <p className="text-sm font-semibold tracking-wider text-indigo-600">
-          {eyebrow}
-        </p>
-      )}
-      <h2 className="mt-1 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-        {title}
-      </h2>
-      {copy && <p className="mt-4 text-lg leading-8 text-slate-600">{copy}</p>}
+    <div className="text-center mb-10">
+      <h2 className="text-3xl font-bold text-slate-900">{title}</h2>
+      {subtitle && <p className="mt-2 text-slate-600">{subtitle}</p>}
     </div>
   );
 }
 
+// ----------------------------------------------------
+// Card Component
+// ----------------------------------------------------
 function Card({
   title,
   body,
@@ -44,7 +35,9 @@ function Card({
   );
 }
 
-// ✅ This is the clean BetaCTA section
+// ----------------------------------------------------
+// Beta CTA Section
+// ----------------------------------------------------
 function BetaCTA() {
   return (
     <section className="bg-indigo-50 py-16">
@@ -59,97 +52,61 @@ function BetaCTA() {
           A short window to help shape PDF. Early testers get priority and a
           preferred launch plan.
         </p>
-        <div className="mt-6 flex justify-center">
-          <Link
-            to="/pdf/submit"
-            className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white hover:bg-indigo-700"
-         >
+        <div className="mt-6">
+          <a
+            href="/request-access"
+            className="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-6 py-3 text-white font-semibold hover:bg-indigo-700 transition-all"
+          >
             Request Access
-          </Link>
+          </a>
         </div>
       </div>
     </section>
   );
 }
 
-// ✅ Main PDF page
+// ----------------------------------------------------
+// Main PDF Page Component
+// ----------------------------------------------------
 const PDF: React.FC = () => {
-  const navigate = useNavigate();
-
-  const handleTryFree = () => {
-    navigate("/pdf-trial.html");
-  };
+  // ✅ Fix: Scroll to top when the page loads
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "auto" }); // change "smooth" for animation
+  }, []);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
-      {/* HERO */}
-      <section className="relative isolate bg-gradient-to-r from-indigo-600 via-sky-500 to-teal-400 text-white text-center py-32">
-        <div className="max-w-3xl mx-auto px-6">
-          <h1 className="text-5xl font-extrabold mb-6 leading-tight">
-            Discover Property Data Faster Than Ever
+    <div className="bg-slate-50 min-h-screen">
+      {/* Example content header */}
+      <section className="py-16 text-center">
+        <div className="mx-auto max-w-2xl">
+          <h1 className="text-4xl font-bold text-slate-900">
+            Property Data Finder (PDF)
           </h1>
-          <p className="text-lg text-white/90 mb-10">
-            Get insights in seconds with the AI-powered Property Data Finder Tool. 
-            No more guesswork — just clarity, instantly.
+          <p className="mt-4 text-slate-600">
+            The Data Integrity & Efficiency Platform for property professionals.
           </p>
-
-          {/* Try It Free Button */}
-          <button
-            onClick={handleTryFree}
-            className="bg-white text-indigo-700 font-semibold px-8 py-4 rounded-xl shadow-lg hover:bg-indigo-50 hover:shadow-indigo-300 transition-all duration-300"
-          >
-            🚀 Try It Free
-          </button>
         </div>
       </section>
 
-      {/* VALUE */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-        <SectionHeading
-          eyebrow="Why PDF"
-          title="Data integrity and efficiency, together"
-          copy="Stop reconciling conflicting sources. PDF normalizes data, shows provenance, and surfaces the signal—so your time goes to judgment, not hunting."
-        />
-        <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          <Card
-            title="Integrity by default"
-            body="Normalized fields, deduped sources, and explicit provenance—see how every answer was derived."
-          />
-          <Card
-            title="Seconds, not hours"
-            body="A single address query returns permits, history, hazards, and key attributes fast."
-          />
-          <Card
-            title="Transparent sources"
-            body="Click through to originals. PDF never hides where facts came from."
-          />
-          <Card
-            title="Built for reliability"
-            body="Designed to reduce rework and callbacks—consistent outputs you can cite."
-          />
-        </div>
-      </section>
-
-      {/* ... other sections like HOW IT WORKS, SOCIAL PROOF, PRICING ... */}
-
-      {/* BETA CTA */}
+      {/* Beta CTA Section */}
       <BetaCTA />
 
-      {/* FINAL CTA */}
+      {/* Final CTA Section */}
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm text-center">
-          <h3 className="text-2xl font-bold">Ready to see PDF in action?</h3>
+        <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+          <h3 className="text-2xl font-bold text-slate-900">
+            Ready to see PDF in action?
+          </h3>
           <p className="mt-2 text-slate-600">
-            Start with an address. We’ll handle the heavy lifting and show our
-            work.
+            Start with an address. We’ll handle the heavy lifting and show our work.
           </p>
           <div className="mt-6">
-            <Link
-              to="/pdf/submit"
-              className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white hover:bg-indigo-700"
+            <a
+              href="/pdf-trial.html"
+              className="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-6 py-3 text-white font-semibold hover:bg-indigo-700 transition-all"
             >
-              Submit a property
-            </Link>
+              Try it free
+            </a>
           </div>
         </div>
       </section>
