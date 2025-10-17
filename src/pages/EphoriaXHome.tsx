@@ -176,17 +176,17 @@ function Products() {
 
         {/* Clickable product cards */}
         <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <Link
-            to="/pdf"
-            className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md hover:bg-indigo-50 transition"
+          <a
+           href="/pdf"
+           className="rounded-2xl border border-slate-200 bg-white block hover:shadow-lg hover:-translate-y-1 hover:bg-slate-50 transition-all duration-300"
           >
-            <h3 className="text-lg font-semibold text-slate-900">
-              Property Data Finder (PDF)
-            </h3>
-            <p className="mt-2 text-sm leading-6 text-slate-600">
-              The Data Integrity & Efficiency Platform for property decisions.
-            </p>
-          </Link>
+          <h3 className="text-lg font-semibold text-slate-900">
+           Property Data Finder (PDF)
+          </h3>
+          <p className="mt-2 text-sm text-slate-600">
+           The Data Integrity & Efficiency Platform for property professionals.
+         </p>
+        </a>
 
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm opacity-70">
             <h3 className="text-lg font-semibold text-slate-900">

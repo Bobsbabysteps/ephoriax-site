@@ -1,6 +1,7 @@
 // src/pages/PDF.tsx
 import React, { useEffect } from "react";
 import { motion } from "framer-motion";
+import CTAButton from "../CTAButton";
 
 // ----------------------------------------------------
 // Animated Feature Card Component
@@ -96,12 +97,12 @@ const PDF: React.FC = () => {
             preferred launch plan.
           </p>
           <div className="mt-6">
-            <a
-              href="/request-access"
-              className="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-6 py-3 text-white font-semibold hover:bg-indigo-700 transition-all"
+            <CTAButton
+             to="/pdf/submit"
+             className="bg-indigo-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
             >
-              Request Access
-            </a>
+             Request Access
+            </CTAButton>
           </div>
         </div>
       </motion.section>
