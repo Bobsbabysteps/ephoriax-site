@@ -15,25 +15,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.log("📨 Sending request to OpenAI with prompt:", prompt);
 
     const response = await fetch("https://api.openai.com/v1/responses", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        input: [
-          {
-            role: "user",
-            content: [
-              { type: "text", text: prompt },
-              { type: "file_reference", file_id: "file-Jbv2TXMDkvv4M8SQc187Pz" },
-            ],
-          },
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+  },
+  body: JSON.stringify({
+    model: "gpt-4o-mini",
+    input: [
+      {
+        role: "user",
+        content: [
+          { type: "input_text", text: prompt },
+          { type: "input_file", file_id: "file-Jbv2TXMDkvv4M8SQc187Pz" },
         ],
-        tools: [{ type: "file_search" }],
-      }),
-    });
+      },
+    ],
+    tools: [{ type: "file_search" }],
+  }),
+});
 
     const data = await response.json();
 
