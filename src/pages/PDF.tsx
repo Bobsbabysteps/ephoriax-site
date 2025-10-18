@@ -168,18 +168,7 @@ export default function PDF() {
           className="bg-indigo-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-indigo-700"
         >
           Request Access
-        </CTAButton>
-
-        {/* Secondary: Try It Free */}
-        <form onSubmit={handleSubmit}>
-          <button
-            type="submit"
-            disabled={loading}
-            className="inline-flex items-center justify-center rounded-lg bg-indigo-500 px-6 py-3 text-white font-semibold hover:bg-indigo-600 disabled:opacity-50"
-          >
-            {loading ? "Analyzing..." : "Try it free"}
-          </button>
-        </form>
+        </CTAButton>    
       </motion.div>
     </motion.div>
   );
