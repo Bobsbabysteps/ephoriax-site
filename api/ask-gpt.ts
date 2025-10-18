@@ -1,19 +1,19 @@
-export default async function handler(req: any, res: any) {
-  // Restrict to POST requests only
+import type { NextApiRequest, NextApiResponse } from "next";
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    // Parse JSON body safely
-    const body = req.body || {};
-    const prompt = body.prompt;
+    const { prompt } = req.body || {};
 
     if (!prompt) {
-      return res.status(400).json({ error: "Missing prompt" });
+      return res.status(400).json({ error: "Missing prompt in request body" });
     }
 
-    // Call the OpenAI Responses API with file reference
+    console.log("📨 Sending request to OpenAI with prompt:", prompt);
+
     const response = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
       headers: {
@@ -22,42 +22,40 @@ export default async function handler(req: any, res: any) {
       },
       body: JSON.stringify({
         model: "gpt-4o-mini",
-        tools: [{ type: "file_search" }],
         input: [
           {
             role: "user",
             content: [
               { type: "text", text: prompt },
-              {
-                type: "file_reference",
-                file_id: "file-Jbv2TXMDkvv4M8SQc187Pz", // Your uploaded instruction file
-              },
+              { type: "file_reference", file_id: "file-Jbv2TXMDkvv4M8SQc187Pz" },
             ],
           },
         ],
+        tools: [{ type: "file_search" }],
       }),
     });
 
     const data = await response.json();
 
-    // Handle OpenAI API errors clearly
+    // Log detailed error if OpenAI returns an error object
     if (!response.ok) {
-      console.error("OpenAI API Error:", data);
+      console.error("❌ OpenAI API Error:", JSON.stringify(data, null, 2));
       return res
         .status(500)
         .json({ error: data.error?.message || "OpenAI request failed" });
     }
 
-    // Safely extract the reply text
+    // Safely extract text from structured response
     const reply =
       data.output?.[0]?.content?.[0]?.text ||
       data.output?.[0]?.content?.text ||
       data.output_text ||
       "No response generated.";
 
+    console.log("✅ GPT Reply:", reply.slice(0, 200)); // preview up to 200 chars
     return res.status(200).json({ reply });
-  } catch (err: any) {
-    console.error("Server Error:", err);
-    return res.status(500).json({ error: err.message || "Internal server error" });
+  } catch (error: any) {
+    console.error("🔥 Server Error:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 }
