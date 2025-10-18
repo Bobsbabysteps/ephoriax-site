@@ -1,43 +1,50 @@
-import type { IncomingMessage, ServerResponse } from "http";
+export default async function handler(req: any, res: any) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
 
-export default async function handler(req: IncomingMessage & { body?: any }, res: ServerResponse) {
-  try {console.log("🔍 Environment key loaded:", !!process.env.OPENAI_API_KEY);
-    // 1️⃣ Get the user's prompt from the request body
-    const { prompt } = req.body;
+  try {
+    const { prompt } = await req.json();
 
-    // 2️⃣ Call OpenAI’s GPT model using your API key from .env
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-  },
-  body: JSON.stringify({
-    model: "gpt-4o-mini",
-    messages: [{ role: "user", content: prompt || "Test connection" }],
-  }),
-});
+    const response = await fetch("https://api.openai.com/v1/responses", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        tools: [{ type: "file_search" }],
+        input: [
+          {
+            role: "user",
+            content: [
+              { type: "text", text: prompt },
+              {
+                type: "file_reference",
+                file_id: "file-Jbv2TXMDkvv4M8SQc187Pz", // <--- your uploaded instruction file
+              },
+            ],
+          },
+        ],
+      }),
+    });
 
-if (!response.ok) {
-  const err = await response.text();
-  console.error("GPT API error:", err);
-  throw new Error(`OpenAI API returned ${response.status}`);
-}
-
-    // 3️⃣ Parse and return the GPT reply
     const data = await response.json();
-    res.statusCode = 200;
-res.setHeader("Content-Type", "application/json");
-res.end(
-  JSON.stringify({
-    reply: data.choices?.[0]?.message?.content || "No response from GPT.",
-  })
-);
 
-  } catch (error) {
-  console.error("GPT API Error:", error);
-  res.statusCode = 500;
-  res.setHeader("Content-Type", "application/json");
-  res.end(JSON.stringify({ error: "Error calling GPT API" }));
-}
+    if (!response.ok) {
+      console.error("OpenAI API Error:", data);
+      return res.status(500).json({ error: data.error || "Failed to fetch response" });
+    }
+
+    const reply =
+      data.output?.[0]?.content?.[0]?.text ||
+      data.output?.[0]?.content?.text ||
+      "No response generated.";
+
+    res.status(200).json({ reply });
+  } catch (err) {
+    console.error("Server Error:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
 }
