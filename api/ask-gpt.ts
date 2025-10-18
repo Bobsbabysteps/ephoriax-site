@@ -1,11 +1,19 @@
 export default async function handler(req: any, res: any) {
+  // Restrict to POST requests only
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    const { prompt } = await req.json();
+    // Parse JSON body safely
+    const body = req.body || {};
+    const prompt = body.prompt;
 
+    if (!prompt) {
+      return res.status(400).json({ error: "Missing prompt" });
+    }
+
+    // Call the OpenAI Responses API with file reference
     const response = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
       headers: {
@@ -22,7 +30,7 @@ export default async function handler(req: any, res: any) {
               { type: "text", text: prompt },
               {
                 type: "file_reference",
-                file_id: "file-Jbv2TXMDkvv4M8SQc187Pz", // <--- your uploaded instruction file
+                file_id: "file-Jbv2TXMDkvv4M8SQc187Pz", // Your uploaded instruction file
               },
             ],
           },
@@ -32,19 +40,24 @@ export default async function handler(req: any, res: any) {
 
     const data = await response.json();
 
+    // Handle OpenAI API errors clearly
     if (!response.ok) {
       console.error("OpenAI API Error:", data);
-      return res.status(500).json({ error: data.error || "Failed to fetch response" });
+      return res
+        .status(500)
+        .json({ error: data.error?.message || "OpenAI request failed" });
     }
 
+    // Safely extract the reply text
     const reply =
       data.output?.[0]?.content?.[0]?.text ||
       data.output?.[0]?.content?.text ||
+      data.output_text ||
       "No response generated.";
 
-    res.status(200).json({ reply });
-  } catch (err) {
+    return res.status(200).json({ reply });
+  } catch (err: any) {
     console.error("Server Error:", err);
-    res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: err.message || "Internal server error" });
   }
 }
