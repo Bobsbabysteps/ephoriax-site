@@ -34,9 +34,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       {
         role: "user",
         content: [
-          { type: "text", text: prompt },
+          { type: "input_text", text: prompt },
           {
-            type: "file_reference",
+            type: "input_file",
             file_id: "file-Jbv2TXMDkvv4M8SQc187Pz", // your uploaded instruction file
           },
         ],
