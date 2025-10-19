@@ -17,21 +17,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const response = await fetch("https://api.openai.com/v1/responses", {
   method: "POST",
   headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-  },
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${process.env.OPENAI_API_KEY!}`,
+  "OpenAI-Project": process.env.OPENAI_PROJECT_ID!,
+  "OpenAI-Beta": "assistants=v2",
+},
   body: JSON.stringify({
     model: "gpt-4o-mini",
+    tools: [
+      {
+        type: "file_search",
+        vector_store_ids: ["vs_68f42da177a08191a71c5b863ac63847"],
+      },
+    ],
     input: [
       {
         role: "user",
         content: [
-          { type: "input_text", text: prompt },
-          { type: "input_file", file_id: "file-Jbv2TXMDkvv4M8SQc187Pz" },
+          { type: "text", text: prompt },
+          {
+            type: "file_reference",
+            file_id: "file-Jbv2TXMDkvv4M8SQc187Pz", // your uploaded instruction file
+          },
         ],
       },
     ],
-    tools: [{ type: "file_search" }],
   }),
 });
 
