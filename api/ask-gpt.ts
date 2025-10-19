@@ -46,6 +46,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 });
 
     const data = await response.json();
+    console.log("🧩 Full OpenAI Response:", JSON.stringify(data, null, 2));
 
     // Log detailed error if OpenAI returns an error object
     if (!response.ok) {
