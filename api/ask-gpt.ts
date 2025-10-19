@@ -25,20 +25,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       body: JSON.stringify({
         model: "gpt-4o-mini-2024-07-18",
         input: [
-          {
-            role: "user",
-            content: [
-              {
-                type: "input_text",
-                text: prompt,
-              },
-              {
-                type: "input_file",
-                file_id: "file-CXew7agZen1NgJoB34e3uG",
-},
-            ],
-          },
-        ],
+      {
+        role: "user",
+        content: [
+         {
+           type: "input_text",
+           text: `Using the uploaded EphoriaX-Free-Tool-Instructions.pdf as your guide, generate a Property Data Finder report for the following address: ${prompt}`,
+         },
+         {
+           type: "input_file",
+           file_id: "file-CXew7agZen1NgJoB34e3uG",
+         },
+       ],
+     },
+    ],
         tools: [
           {
             type: "file_search",
