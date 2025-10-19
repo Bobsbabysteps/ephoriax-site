@@ -56,11 +56,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Safely extract text from structured response
-    const reply =
-      data.output?.[0]?.content?.[0]?.text ||
-      data.output?.[0]?.content?.text ||
+    // Safely extract the reply text from GPT response
+      const reply =
+      data.output?.[0]?.content
+        ?.map((c: any) => c?.text || c?.output_text || "")
+        .join("\n")
+        .trim() ||
       data.output_text ||
-      "No response generated.";
+      "No response generated.";  
 
     console.log("✅ GPT Reply:", reply.slice(0, 200)); // preview up to 200 chars
     return res.status(200).json({ reply });
