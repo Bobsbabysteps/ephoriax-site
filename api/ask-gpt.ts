@@ -34,8 +34,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               },
               {
                 type: "input_file",
-                file_id: "file-SwxuEjtvK6og3Jf2FmqsmV", // EphoriaX PDF Instructions
-              },
+                file_id: "file-CXew7agZen1NgJoB34e3uG",
+},
             ],
           },
         ],
