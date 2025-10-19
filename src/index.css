@@ -6,3 +6,20 @@
 /* optional tiny reset */
 *, *::before, *::after { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
+/* ============================== */
+/* Custom animations for Free Tool */
+/* ============================== */
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0.4;
+  }
+}
