@@ -1,6 +1,6 @@
-// src/components/FreeReportGenerator.tsx
-import React, { useState } from "react";
+import { useState } from "react";
 
+// src/components/FreeReportGenerator.tsx
 export default function FreeReportGenerator() {
   const [loading, setLoading] = useState(false);
 

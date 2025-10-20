@@ -37,3 +37,4 @@ pnpm-debug.log*
 *.swo
 *.bak
 .DS_Store
+.vercel
