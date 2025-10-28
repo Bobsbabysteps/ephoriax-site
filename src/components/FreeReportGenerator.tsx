@@ -1,45 +1,96 @@
 import { useState } from "react";
 
-// src/components/FreeReportGenerator.tsx
 export default function FreeReportGenerator() {
+  const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
+  const [report, setReport] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleClick = () => {
+  const handleGenerate = async () => {
+    if (!address.trim()) {
+      setError("Please enter a property address.");
+      return;
+    }
+    setError(null);
     setLoading(true);
-    setTimeout(() => setLoading(false), 2500); // simulate GPT response delay
+    setReport(null);
+
+    try {
+      const res = await fetch(`/api/property-gpt?address=${encodeURIComponent(address)}`);
+      if (!res.ok) throw new Error(`Server error: ${res.statusText}`);
+      const data = await res.json();
+
+      // Clean up GPT response (strip backticks + parse JSON if needed)
+      let parsed = data.report;
+      if (typeof parsed === "string") {
+        parsed = parsed.replace(/```json|```/g, "").trim();
+        parsed = JSON.parse(parsed);
+      }
+
+      setReport(parsed);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="bg-gradient-to-br from-indigo-50 via-white to-slate-50 border border-slate-200 rounded-2xl p-10 shadow-lg hover:shadow-2xl hover:border-indigo-300/60 transition-all duration-500">
-      <h3 className="text-2xl font-semibold text-slate-900 mb-3">
-        Ready to generate your Free Property Report?
-      </h3>
-      <p className="text-slate-600 mb-6">
-        Enter a property address below to get an instant AI-generated summary.
+    <div className="p-6 rounded-2xl bg-white shadow-md space-y-4 max-w-xl mx-auto text-center">
+      <h2 className="text-2xl font-bold text-slate-800">Try Property Data Finder</h2>
+      <p className="text-slate-600 text-sm">
+        Enter an address below to generate an instant AI-powered property report.
       </p>
 
-      <input
-        type="text"
-        placeholder="1234 Oak Street, Stockton, CA"
-        className="w-full p-3 border border-slate-300 rounded-lg mb-4"
-      />
+      <div className="flex gap-2 justify-center">
+        <input
+          type="text"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          placeholder="123 Main St, Springfield"
+          className="w-2/3 px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+        />
+        <button
+          onClick={handleGenerate}
+          disabled={loading}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded-lg transition-all disabled:bg-slate-400"
+        >
+          {loading ? "Generating..." : "Try it Free"}
+        </button>
+      </div>
 
-      <button
-        onClick={handleClick}
-        disabled={loading}
-        className={`relative overflow-hidden bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-lg font-medium shadow-sm transition-all group ${
-          loading ? "opacity-70 cursor-wait" : ""
-        }`}
-      >
-        <span className="relative z-10">
-          {loading ? "Generating..." : "Generate Report"}
-        </span>
-        <span
-          className={`absolute inset-0 bg-gradient-to-r from-indigo-400/20 via-white/40 to-indigo-400/20 translate-x-[-100%] ${
-            loading ? "animate-shimmer" : "group-hover:translate-x-[100%]"
-          } transition-transform duration-1000 ease-out`}
-        ></span>
-      </button>
+      {error && <p className="text-red-500 text-sm">{error}</p>}
+
+      {report && (
+        <div className="text-left mt-6 border-t border-slate-200 pt-4 space-y-2">
+          <h3 className="font-semibold text-slate-800 text-lg">
+            {report.property_address}
+          </h3>
+          <p className="text-slate-600 text-sm">
+            Type: {report.property_characteristics.property_type} —{" "}
+            {report.property_characteristics.square_footage} sq ft
+          </p>
+          <p className="text-slate-600 text-sm">
+            Built: {report.property_characteristics.year_built} • Bedrooms:{" "}
+            {report.property_characteristics.number_of_bedrooms} • Bathrooms:{" "}
+            {report.property_characteristics.number_of_bathrooms}
+          </p>
+
+          <div className="mt-4 text-sm">
+            <h4 className="font-semibold text-slate-700">Risk Insights:</h4>
+            <pre className="bg-slate-50 p-2 rounded-lg overflow-x-auto text-xs">
+              {JSON.stringify(report.risk_insights, null, 2)}
+            </pre>
+          </div>
+
+          <div className="mt-4 text-sm">
+            <h4 className="font-semibold text-slate-700">Inspection Notes:</h4>
+            <pre className="bg-slate-50 p-2 rounded-lg overflow-x-auto text-xs">
+              {JSON.stringify(report.underwriting_inspection_notes, null, 2)}
+            </pre>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
