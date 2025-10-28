@@ -1,9 +1,9 @@
 {
-  "rewrites": [
-    { "source": "/pdf-trial", "destination": "/pdf-trial.html" },
-    { "source": "/(.*)", "destination": "/index.html" }
-  ],
-  "git": {
-    "productionBranch": "main"
+  "buildCommand": "npm install && npm run build",
+  "installCommand": "npm install --legacy-peer-deps",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "env": {
+    "NPM_CONFIG_FROZEN_LOCKFILE": "false"
   }
 }
