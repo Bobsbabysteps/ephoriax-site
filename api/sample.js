@@ -1,8 +1,8 @@
 export default function handler(req, res) {
-  return res.json({
+  res.status(200).json({
     address: "123 Main St",
     city: "Sampleville",
     state: "CA",
-    message: "Fetched mock property data successfully!",
+    message: "Fetched mock property data successfully!"
   });
 }
