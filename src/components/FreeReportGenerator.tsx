@@ -3,92 +3,183 @@ import { useState } from "react";
 export default function FreeReportGenerator() {
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [report, setReport] = useState<any>(null);
-  const [error, setError] = useState<string | null>(null);
 
   const handleGenerate = async () => {
     if (!address.trim()) {
       setError("Please enter a property address.");
       return;
     }
-    setError(null);
+
+    setError("");
     setLoading(true);
     setReport(null);
 
     try {
-      const res = await fetch(`/api/property-gpt?address=${encodeURIComponent(address)}`);
-      if (!res.ok) throw new Error(`Server error: ${res.statusText}`);
-      const data = await res.json();
+      // ✅ Automatically select correct API URL for dev and production
+      const apiUrl = window.location.origin.includes("localhost")
+        ? "https://ephoriax-site.vercel.app/api/property-gpt"
+        : "/api/property-gpt";
 
-      // Clean up GPT response (strip backticks + parse JSON if needed)
-      let parsed = data.report;
-      if (typeof parsed === "string") {
-        parsed = parsed.replace(/```json|```/g, "").trim();
-        parsed = JSON.parse(parsed);
+      console.log(
+        "🔍 Fetching from:",
+        `${apiUrl}?address=${encodeURIComponent(address)}`
+      );
+
+      const response = await fetch(
+        `${apiUrl}?address=${encodeURIComponent(address)}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
       }
 
-      setReport(parsed);
+      const data = await response.json();
+
+      // 🧠 Handle either JSON or plain-text GPT output
+      let parsedReport = data.report;
+
+      if (typeof parsedReport === "string") {
+        const cleaned = parsedReport
+          .replace(/```(?:json)?/gi, "")
+          .replace(/```/g, "")
+          .trim();
+
+        try {
+          parsedReport = JSON.parse(cleaned);
+        } catch {
+          console.warn("⚠️ Still not valid JSON — showing raw text output.");
+          parsedReport = { text: cleaned }; // fallback to plain text
+        }
+      }
+
+      setReport(parsedReport);
     } catch (err: any) {
-      setError(err.message);
+      console.error("Fetch error:", err);
+      setError(
+        "Could not fetch property data. Please check the address or try again."
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="p-6 rounded-2xl bg-white shadow-md space-y-4 max-w-xl mx-auto text-center">
-      <h2 className="text-2xl font-bold text-slate-800">Try Property Data Finder</h2>
-      <p className="text-slate-600 text-sm">
-        Enter an address below to generate an instant AI-powered property report.
+    <div className="max-w-3xl mx-auto p-6 bg-white shadow-md rounded-xl">
+      <h2 className="text-2xl font-bold text-indigo-900 mb-4 text-center">
+        AI Property Data Report
+      </h2>
+
+      <p className="text-gray-600 text-center mb-6">
+        Instantly generate a property overview, risk insights, and inspection
+        notes using AI.
       </p>
 
-      <div className="flex gap-2 justify-center">
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
         <input
           type="text"
           value={address}
           onChange={(e) => setAddress(e.target.value)}
-          placeholder="123 Main St, Springfield"
-          className="w-2/3 px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+          placeholder="Enter property address"
+          className="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none"
         />
         <button
           onClick={handleGenerate}
           disabled={loading}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded-lg transition-all disabled:bg-slate-400"
+          className="bg-indigo-700 hover:bg-indigo-800 text-white font-semibold rounded-lg px-6 py-3 transition disabled:opacity-50"
         >
-          {loading ? "Generating..." : "Try it Free"}
+          {loading ? "Fetching..." : "Generate Report"}
         </button>
       </div>
 
-      {error && <p className="text-red-500 text-sm">{error}</p>}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+          ⚠️ {error}
+        </div>
+      )}
 
-      {report && (
-        <div className="text-left mt-6 border-t border-slate-200 pt-4 space-y-2">
-          <h3 className="font-semibold text-slate-800 text-lg">
-            {report.property_address}
-          </h3>
-          <p className="text-slate-600 text-sm">
-            Type: {report.property_characteristics.property_type} —{" "}
-            {report.property_characteristics.square_footage} sq ft
-          </p>
-          <p className="text-slate-600 text-sm">
-            Built: {report.property_characteristics.year_built} • Bedrooms:{" "}
-            {report.property_characteristics.number_of_bedrooms} • Bathrooms:{" "}
-            {report.property_characteristics.number_of_bathrooms}
-          </p>
+      {/* ✅ Structured JSON Report */}
+      {report && !report.text && (
+        <div className="bg-white shadow-md rounded-2xl p-6 mt-8 border border-gray-200">
+          <h2 className="text-2xl font-bold text-indigo-800 mb-4 flex items-center gap-2">
+            <span className="text-indigo-700">🏠</span> Property Report Summary
+          </h2>
 
-          <div className="mt-4 text-sm">
-            <h4 className="font-semibold text-slate-700">Risk Insights:</h4>
-            <pre className="bg-slate-50 p-2 rounded-lg overflow-x-auto text-xs">
-              {JSON.stringify(report.risk_insights, null, 2)}
-            </pre>
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">
+              Property Details
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-gray-700">
+              <p>
+                <strong>Address:</strong> {report.property_address}
+              </p>
+              <p>
+                <strong>Year Built:</strong>{" "}
+                {report.property_characteristics?.year_built}
+              </p>
+              <p>
+                <strong>Type:</strong> {report.property_characteristics?.type}
+              </p>
+              <p>
+                <strong>Square Footage:</strong>{" "}
+                {report.property_characteristics?.square_footage}
+              </p>
+              <p>
+                <strong>Lot Size:</strong>{" "}
+                {report.property_characteristics?.lot_size}
+              </p>
+            </div>
           </div>
 
-          <div className="mt-4 text-sm">
-            <h4 className="font-semibold text-slate-700">Inspection Notes:</h4>
-            <pre className="bg-slate-50 p-2 rounded-lg overflow-x-auto text-xs">
-              {JSON.stringify(report.underwriting_inspection_notes, null, 2)}
-            </pre>
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-gray-800 mb-2 flex items-center">
+              ⚠️ <span className="ml-2">Risk Insights</span>
+            </h3>
+            <div className="text-gray-700 space-y-1">
+              {Object.entries(report.risk_insights || {}).map(
+                ([risk, value]) => (
+                  <p key={risk}>
+                    <strong>{risk}:</strong> {String(value)}
+                  </p>
+                )
+              )}
+            </div>
           </div>
+
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800 mb-2 flex items-center">
+              🧾 <span className="ml-2">Underwriting Notes</span>
+            </h3>
+            <ul className="list-disc pl-6 text-gray-700 space-y-1">
+              {Object.values(report.underwriting_inspection_notes || {}).map(
+                (note, idx) => (
+                  <li key={idx}>{String(note)}</li>
+                )
+              )}
+            </ul>
+          </div>
+
+          <div className="mt-8 text-right">
+            <button
+              className="bg-indigo-700 hover:bg-indigo-800 text-white font-medium px-6 py-2 rounded-lg transition"
+              onClick={() => window.print()}
+            >
+              Download / Print Report
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ✅ Text-only fallback */}
+      {report?.text && (
+        <div className="bg-white shadow-md rounded-2xl p-6 mt-8 border border-gray-200">
+          <h2 className="text-2xl font-bold text-indigo-800 mb-4">
+            🧠 AI Property Report
+          </h2>
+          <pre className="whitespace-pre-line text-gray-800 leading-relaxed">
+            {report.text}
+          </pre>
         </div>
       )}
     </div>
