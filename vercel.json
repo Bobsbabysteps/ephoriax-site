@@ -1,30 +1,16 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "api/property-gpt.ts",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "index.html",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "api/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
-  ],
+  "version": 3,
+  "framework": "vite",
+  "buildCommand": "vite build",
   "functions": {
     "api/property-gpt.ts": {
       "runtime": "nodejs20.x",
       "memory": 512,
       "maxDuration": 30
     }
-  }
+  },
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1.ts" },
+    { "src": "/(.*)", "dest": "/" }
+  ]
 }
