@@ -4,7 +4,6 @@ export const config = {
   maxDuration: 30,
 };
 
-import { NextResponse } from "next/server";
 import OpenAI from "openai";
 import { PROPERTY_DATA_FINDER_INSTRUCTIONS } from "../src/lib/gptInstructions";
 
@@ -21,8 +20,6 @@ function detectPropertyType(address: string): "Residential" | "Commercial" {
   ];
 
   const lowerAddress = address.toLowerCase();
-
-  // If it matches a residential-style pattern → residential
   const isResidential = residentialIndicators.some(word =>
     lowerAddress.includes(word)
   );
@@ -30,12 +27,16 @@ function detectPropertyType(address: string): "Residential" | "Commercial" {
   return isResidential ? "Residential" : "Commercial";
 }
 
-export async function GET(req: Request) {
+// ✅ Correct handler for Vercel Node API (no NextResponse)
+export default async function handler(req: Request): Promise<Response> {
   const { searchParams } = new URL(req.url);
   const address = searchParams.get("address");
 
   if (!address) {
-    return NextResponse.json({ error: "Missing address" }, { status: 400 });
+    return new Response(JSON.stringify({ error: "Missing address" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   try {
@@ -61,12 +62,17 @@ export async function GET(req: Request) {
 
     const report = completion.choices[0]?.message?.content || "No report found.";
 
-    return NextResponse.json({ report });
+    return new Response(JSON.stringify({ report }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (err) {
     console.error("API error:", err);
-    return NextResponse.json(
-      { error: "Failed to generate property data report" },
-      { status: 500 }
-    );
+    return new Response(JSON.stringify({
+      error: "Failed to generate property data report"
+    }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 }
