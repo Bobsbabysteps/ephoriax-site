@@ -1,5 +1,5 @@
 export const config = {
-  runtime: 'nodejs20.x',
+  runtime: 'nodejs', // ✅ correct current Vercel runtime identifier
   memory: 512,
   maxDuration: 30,
 };
