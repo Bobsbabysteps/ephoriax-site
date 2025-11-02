@@ -1,24 +1,9 @@
 {
   "version": 2,
   "builds": [
-    {
-      "src": "api/property-gpt.ts",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "index.html",
-      "use": "@vercel/static"
-    }
+    { "src": "index.html", "use": "@vercel/static-build", "config": { "distDir": "dist" } }
   ],
   "routes": [
-    { "src": "/api/(.*)", "dest": "/api/$1.ts" },
     { "src": "/(.*)", "dest": "/index.html" }
-  ],
-  "functions": {
-    "api/property-gpt.ts": {
-      "runtime": "nodejs20.x",
-      "memory": 512,
-      "maxDuration": 30
-    }
-  }
+  ]
 }

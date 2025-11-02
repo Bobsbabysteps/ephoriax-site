@@ -1,6 +1,12 @@
+export const config = {
+  runtime: 'nodejs20.x',
+  memory: 512,
+  maxDuration: 30,
+};
+
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
-import { PROPERTY_DATA_FINDER_INSTRUCTIONS } from "@/lib/gptInstructions";
+import { PROPERTY_DATA_FINDER_INSTRUCTIONS } from "../src/lib/gptInstructions";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -38,11 +44,11 @@ export async function GET(req: Request) {
 
     const messages = [
       {
-        role: "system",
+        role: "system" as const,
         content: PROPERTY_DATA_FINDER_INSTRUCTIONS,
       },
       {
-        role: "user",
+        role: "user" as const,
         content: `${propertyType} ${address}\nGenerate a detailed property data report following the structured format defined in your system instructions.`,
       },
     ];
