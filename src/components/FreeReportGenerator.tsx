@@ -8,7 +8,7 @@ export default function FreeReportGenerator() {
 
   const handleGenerate = async () => {
     if (!address.trim()) {
-      setError("Please enter a property address.");
+      setError("Please enter an address.");
       return;
     }
 
