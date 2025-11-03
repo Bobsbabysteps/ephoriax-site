@@ -1,15 +1,13 @@
 // src/pages/EphoriaXHome.tsx
 // ============================================================================
 // EphoriaX Home
-// Structured with small, focused subcomponents + clear regions you can fold.
-// Tailwind classes kept consistent across sections.
+// Unified button system using <Button> component for consistent design
 // ============================================================================
+
 import { Link } from "react-router-dom";
-import type { To } from "react-router-dom";
+import Button from "../components/Button"; // ✅ New unified button import
 
-// ===== Types =================================================================
-// Removed duplicate CTAProps type definition
-
+// ===== Types ================================================================
 type CardProps = {
   title: string;
   body: string;
@@ -23,30 +21,7 @@ type HeadingProps = {
   className?: string;
 };
 
-// Either `to` OR `href` — never both
-type CTAProps =
-  | { to: To; children: React.ReactNode; className?: string }
-  | { href: string; children: React.ReactNode; className?: string };
-
-// CTAButton component
-function CTAButton(props: CTAProps) {
-  const baseClasses =
-    "inline-block rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow hover:bg-indigo-700 transition";
-  const classes = props.className ? `${baseClasses} ${props.className}` : baseClasses;
-  if ("to" in props) {
-    return (
-      <Link to={props.to} className={classes}>
-        {props.children}
-      </Link>
-    );
-  }
-  return (
-    <a href={props.href} className={classes}>
-      {props.children}
-    </a>
-  );
-}
-
+// ===== Reusable Components ==================================================
 function Card({ title, body, className = "" }: CardProps) {
   return (
     <div className={`rounded-2xl border border-slate-200 bg-white p-6 shadow-sm ${className}`}>
@@ -66,7 +41,7 @@ function SectionHeading({ eyebrow, title, copy, className = "" }: HeadingProps) 
   );
 }
 
-// #region DATA ----------------------------------------------------------------
+// ===== Data ================================================================
 const pillars: CardProps[] = [
   { title: "Integrity", body: "Traceable sources, transparent logic." },
   { title: "Efficiency", body: "Hours of searching compressed to minutes." },
@@ -78,9 +53,7 @@ const pillars: CardProps[] = [
   },
 ];
 
-// #endregion DATA -------------------------------------------------------------
-
-// #region LAYOUT SECTIONS -----------------------------------------------------
+// ===== Layout Sections ======================================================
 function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/70 backdrop-blur">
@@ -103,7 +76,9 @@ function Header() {
         </nav>
 
         <div className="hidden md:block">
-         `` <CTAButton to="/pdf/submit">Join Beta</CTAButton>
+          <Link to="/pdf/submit">
+            <Button>Join Beta</Button>
+          </Link>
         </div>
       </div>
     </header>
@@ -115,7 +90,6 @@ function Hero() {
     <section
       className="relative isolate"
       style={{
-        // looks good even if /bridge.jpg is missing
         backgroundImage: "url('/bridge.jpg'), linear-gradient(to right, #1e3a8a, #9333ea)",
         backgroundSize: "cover",
         backgroundPosition: "center",
@@ -125,30 +99,29 @@ function Hero() {
       <div className="absolute inset-0 bg-slate-900/55" />
 
       <div className="relative mx-auto max-w-7xl px-4 py-20 sm:py-28">
-        {/* Center the content block and control line-length */}
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-indigo-300">EphoriaX Platform</p>
 
-          {/* Responsive H1 sizes */}
           <h1 className="mt-3 font-bold tracking-tight text-white text-4xl sm:text-5xl md:text-6xl">
             The bridge between complexity and clarity
           </h1>
 
-          {/* Body text: comfortable line-length + responsive sizes/leading */}
           <p className="mt-5 text-slate-100 text-base sm:text-lg leading-7 sm:leading-8">
             We do the sifting and searching for the data that matters, delivering
             the knowledge you need to learn, understand, and make confident
             decisions — in seconds, not hours.
           </p>
 
-          {/* Buttons: center on all screens; stack on small screens */}
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <CTAButton href="#products">Explore Products</CTAButton>
-            <CTAButton to="/pdf/submit">Request Access</CTAButton>
+            <a href="#products">
+              <Button>Explore Products</Button>
+            </a>
+            <Link to="/pdf/submit">
+              <Button variant="secondary">Request Information</Button>
+            </Link>
           </div>
         </div>
-     </div>
-      {/* Added missing closing div for mx-auto max-w-3xl */}
+      </div>
     </section>
   );
 }
@@ -174,19 +147,18 @@ function Products() {
           title="A growing family of tools under one platform."
         />
 
-        {/* Clickable product cards */}
         <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <a
-           href="/pdf"
-           className="rounded-2xl border border-slate-200 bg-white block hover:shadow-lg hover:-translate-y-1 hover:bg-slate-50 transition-all duration-300"
+            href="/pdf"
+            className="rounded-2xl border border-slate-200 bg-white block hover:shadow-lg hover:-translate-y-1 hover:bg-slate-50 transition-all duration-300 p-6"
           >
-          <h3 className="text-lg font-semibold text-slate-900">
-           Property Data Finder (PDF)
-          </h3>
-          <p className="mt-2 text-sm text-slate-600">
-           The Data Integrity & Efficiency Platform for property professionals.
-         </p>
-        </a>
+            <h3 className="text-lg font-semibold text-slate-900">
+              Property Data Finder (PDF)
+            </h3>
+            <p className="mt-2 text-sm text-slate-600">
+              The Data Integrity & Efficiency Platform for property professionals.
+            </p>
+          </a>
 
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm opacity-70">
             <h3 className="text-lg font-semibold text-slate-900">
@@ -209,7 +181,6 @@ function Products() {
   );
 }
 
-// --- About section (renamed to avoid collisions) ---
 function AboutSection() {
   return (
     <section id="about" className="mx-auto max-w-6xl px-4 sm:px-6 py-16">
@@ -218,12 +189,10 @@ function AboutSection() {
         title="Built to turn complexity into clarity"
         copy="We create focused tools that do the heavy lifting—sifting, connecting, and translating data into decisions."
       />
-      {/* testimonials or any content you added goes here */}
     </section>
   );
 }
 
-// --- Home Beta CTA (keeps Explore Products) ---
 function BetaCTA() {
   return (
     <section id="beta" className="bg-indigo-50 py-16">
@@ -240,14 +209,10 @@ function BetaCTA() {
         </p>
 
         <div className="mt-8 flex justify-center">
-  {/* Route directly to the form page */}
-  <CTAButton
-    to="/pdf/submit"
-    className="bg-indigo-600 text-white font-semibold px-6 py-3 rounded-lg shadow hover:bg-indigo-700 transition"
-  >
-    Request Access
-  </CTAButton>
-</div>
+          <Link to="/pdf/submit">
+            <Button>Request Information</Button>
+          </Link>
+        </div>
       </div>
     </section>
   );
@@ -257,7 +222,9 @@ function Footer() {
   return (
     <footer id="contact" className="border-t border-slate-200 bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 flex items-center justify-between">
-        <p className="text-sm text-slate-500">© {new Date().getFullYear()} EphoriaX</p>
+        <p className="text-sm text-slate-500">
+          © {new Date().getFullYear()} EphoriaX
+        </p>
         <div className="text-sm text-slate-500">
           <a className="hover:text-slate-700" href="mailto:hello@ephoriax.com">
             hello@ephoriax.com
@@ -267,31 +234,17 @@ function Footer() {
     </footer>
   );
 }
-// #endregion LAYOUT SECTIONS --------------------------------------------------
 
-// ===== Page Export ===========================================================
+// ===== Page Export ==========================================================
 export default function EphoriaXHome() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
-      {/* ============================ TOP NAV ============================ */}
       <Header />
-
-      {/* ============================ HERO =============================== */}
       <Hero />
-
-      {/* ====================== WHY / VALUE PILLARS ====================== */}
       <WhyPillars />
-
-      {/* ============================ PRODUCTS =========================== */}
       <Products />
-
-      {/* ============================== ABOUT ============================ */}
       <AboutSection />
-
-      {/* =========================== CTA / BETA ========================== */}
       <BetaCTA />
-
-      {/* ============================== FOOTER =========================== */}
       <Footer />
     </div>
   );
