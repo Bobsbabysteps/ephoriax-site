@@ -77,7 +77,7 @@ const { searchParams } = new URL(url);
     ];
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-4.1-turbo",
+      model: "gpt-4o-mini",  // ✅ fast, cheap, supports JSON, and 100% accessible
       temperature: 0.4,
       messages,
     });
