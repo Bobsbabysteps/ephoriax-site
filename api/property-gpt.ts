@@ -29,7 +29,11 @@ function detectPropertyType(address: string): "Residential" | "Commercial" {
 
 // ✅ Correct handler for Vercel Node API (no NextResponse)
 export default async function handler(req: Request): Promise<Response> {
-  const { searchParams } = new URL(req.url, `https://${req.headers.get("host")}`);
+  const host =
+  (req.headers instanceof Headers
+    ? req.headers.get("host")
+    : (req as any).headers?.["host"]) || "localhost:3000";
+const { searchParams } = new URL(req.url, `https://${host}`);
   const address = searchParams.get("address");
 
   if (!address) {
