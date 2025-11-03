@@ -33,7 +33,11 @@ export default async function handler(req: Request): Promise<Response> {
   (req.headers instanceof Headers
     ? req.headers.get("host")
     : (req as any).headers?.["host"]) || "localhost:3000";
-const { searchParams } = new URL(req.url, `https://${host}`);
+// Ensure we always have an absolute base URL
+const url = req.url.startsWith("http")
+  ? req.url
+  : `https://${host}${req.url}`;
+const { searchParams } = new URL(url);
   const address = searchParams.get("address");
 
   if (!address) {
