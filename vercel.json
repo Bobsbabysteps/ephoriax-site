@@ -5,7 +5,8 @@
     { "src": "api/property-gpt.ts", "use": "@vercel/node" }
   ],
   "routes": [
-    { "src": "/api/(.*)", "dest": "/api/$1.ts" },
+    { "src": "^/api/(.*)", "dest": "/api/$1.ts" },
+    { "handle": "filesystem" },
     { "src": "/assets/(.*)", "dest": "/assets/$1" },
     { "src": "/favicon.ico", "dest": "/favicon.ico" },
     { "src": "/robots.txt", "dest": "/robots.txt" },
