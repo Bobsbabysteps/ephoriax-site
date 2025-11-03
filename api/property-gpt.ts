@@ -66,20 +66,21 @@ export default async function handler(req: Request): Promise<Response> {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
-    } catch (err: any) {
-    console.error("API error:", err);
+  } catch (err: any) {
+  console.error("🔍 ENV CHECK:", process.env.OPENAI_API_KEY ? "✅ Found key" : "❌ Missing key");
+  console.error("API error:", err);
 
-    return new Response(
-      JSON.stringify({
-        error: "Failed to generate property data report",
-        message: err?.message || "Unknown error",
-        type: err?.type || null,
-        stack: err?.stack || null,
-      }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+  return new Response(
+    JSON.stringify({
+      error: "Failed to generate property data report",
+      message: err?.message || "Unknown error",
+      type: err?.type || "Unknown type",
+      stack: err?.stack || null,
+    }),
+    {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    }
+  );
   }
-} // 👈 this one closes the `handler` function
+}
