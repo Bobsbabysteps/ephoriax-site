@@ -76,51 +76,72 @@ export default async function handler(req: Request): Promise<Response | undefine
         },
       ];
 
-      const completion = await openai.chat.completions.create({
-  model: "gpt-4o-mini", // ✅ fast, cheap, supports JSON
-  temperature: 0.6, // ✅ balanced tone
-  max_tokens: 600, // ✅ shorter, avoids timeouts
-  response_format: { type: "json_object" }, // ✅ ensures valid JSON output
-  messages: [
-    {
-      role: "system",
-      content:
-        "You are a real estate data assistant. Always respond with a valid JSON object containing structured property insights.",
-    },
-    {
-      role: "user",
-      content: `Generate property insights for the following address: ${address}. Return only valid JSON.`,
-    },
-  ],
-});
-      const report = completion.choices[0]?.message?.content || "No report found.";
-
-      return new Response(JSON.stringify({ report }), {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      });
-    } catch (err: any) {
-      console.error("API error:", err);
-      return new Response(
-        JSON.stringify({
-          error: "Failed to generate property data report",
-          message: err?.message || "Unknown error",
-          type: err?.type || "Unknown type",
-          stack: err?.stack || null,
-        }),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-    }
-
-    // ✅ This goes AFTER the catch block, as a final fallback:
-    return new Response(
-      JSON.stringify({ error: "Unexpected handler exit" }),
+  // 🧠 Use a fast, safe, timeout-proof OpenAI call
+try {
+  const completionPromise = openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    temperature: 0.4, // ⚡ faster and more deterministic
+    max_tokens: 300,  // ✅ keeps response short and under Vercel limit
+    response_format: { type: "json_object" },
+    messages: [
       {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-  }
+        role: "system",
+        content:
+          "You are a real estate data assistant. Always respond with a valid JSON object containing structured property insights. Do not include markdown, explanations, or extra text — JSON only.",
+      },
+      {
+        role: "user",
+        content: `Generate a short property insight summary for: ${address}. Only return valid JSON.`,
+      },
+    ],
+  });
+
+  // 🕒 Safety net: return a default JSON if OpenAI takes >25 seconds
+  const timeoutPromise = new Promise((resolve) =>
+    setTimeout(
+      () =>
+        resolve({
+          choices: [
+            {
+              message: {
+                content: JSON.stringify({
+                  error: "timeout",
+                  message:
+                    "The request took too long. Please try again with a shorter address or later.",
+                }),
+              },
+            },
+          ],
+        }),
+      25000 // ⏱ 25s fallback
+    )
+  );
+
+  const completion: any = await Promise.race([
+    completionPromise,
+    timeoutPromise,
+  ]);
+
+  const report =
+    completion?.choices?.[0]?.message?.content ||
+    '{"error": "No report returned"}';
+
+  return new Response(report, {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+} catch (err: any) {
+  console.error("API error:", err);
+  return new Response(
+    JSON.stringify({
+      error: "Failed to generate property data report",
+      message: err?.message || "Unknown error",
+      type: err?.type || null,
+      stack: err?.stack || null,
+    }),
+    {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    }
+  );
+}
