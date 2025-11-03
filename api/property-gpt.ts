@@ -29,10 +29,24 @@ function detectPropertyType(address: string): "Residential" | "Commercial" {
 
 // ✅ Correct handler for Vercel Node API (no NextResponse)
 export default async function handler(req: Request): Promise<Response> {
-  const host =
-  (req.headers instanceof Headers
-    ? req.headers.get("host")
-    : (req as any).headers?.["host"]) || "localhost:3000";
+  // ✅ Works on both Node.js (object) and Fetch (Headers) types
+let host: string | null = null;
+
+if (req.headers?.get) {
+  // Modern Fetch API (Edge, Web environments)
+  host = req.headers.get("host");
+} else if (req.headers && typeof req.headers === "object") {
+  // Node.js-style header object
+  // 🧩 Node.js-style header object (e.g., Vercel's runtime)
+if (!("get" in req.headers)) {
+  const nodeHeaders = req.headers as Record<string, string | string[] | undefined>;
+  host =
+    (Array.isArray(nodeHeaders["host"])
+      ? nodeHeaders["host"][0]
+      : nodeHeaders["host"]) || null;
+}
+
+host = host || "localhost:3000";
 // Ensure we always have an absolute base URL
 const url = req.url.startsWith("http")
   ? req.url
