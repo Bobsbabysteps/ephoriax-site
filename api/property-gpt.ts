@@ -77,12 +77,22 @@ export default async function handler(req: Request): Promise<Response | undefine
       ];
 
       const completion = await openai.chat.completions.create({
-        model: "gpt-4o-mini", // ✅ fast, cheap, supports JSON, and 100% accessible
-        temperature: 0.6,     // ✅ balanced for consistency + creativity
-        max_tokens: 600,      // ✅ limits output size to prevent slow responses
-        response_format: { type: "json_object" }, // ✅ ensures valid JSON output
-        messages,             // ✅ keep your existing messages array
-      });
+  model: "gpt-4o-mini", // ✅ fast, cheap, supports JSON
+  temperature: 0.6, // ✅ balanced tone
+  max_tokens: 600, // ✅ shorter, avoids timeouts
+  response_format: { type: "json_object" }, // ✅ ensures valid JSON output
+  messages: [
+    {
+      role: "system",
+      content:
+        "You are a real estate data assistant. Always respond with a valid JSON object containing structured property insights.",
+    },
+    {
+      role: "user",
+      content: `Generate property insights for the following address: ${address}. Return only valid JSON.`,
+    },
+  ],
+});
       const report = completion.choices[0]?.message?.content || "No report found.";
 
       return new Response(JSON.stringify({ report }), {
