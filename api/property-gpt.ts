@@ -5,7 +5,7 @@ export const config = {
 };
 
 import OpenAI from "openai";
-import { PROPERTY_DATA_FINDER_INSTRUCTIONS } from "../src/lib/gptInstructions";
+import { PROPERTY_DATA_FINDER_INSTRUCTIONS } from "../src/lib/gptInstructions.js";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -66,19 +66,20 @@ export default async function handler(req: Request): Promise<Response> {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
-  } catch (err: any) {
-  console.error("🔴 API error:", err);
+    } catch (err: any) {
+    console.error("API error:", err);
 
-  return new Response(
-    JSON.stringify({
-      error: "Failed to generate property data report",
-      message: err?.message || "Unknown error",
-      type: err?.type || null,
-      stack: err?.stack || null
-    }),
-    {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    }
-  );
-}
+    return new Response(
+      JSON.stringify({
+        error: "Failed to generate property data report",
+        message: err?.message || "Unknown error",
+        type: err?.type || null,
+        stack: err?.stack || null,
+      }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  }
+} // 👈 this one closes the `handler` function
