@@ -28,9 +28,23 @@ function detectPropertyType(address: string): "Residential" | "Commercial" {
 }
 
 // ✅ Main API route handler
-export default async function handler(req: Request): Promise<Response> {
+// ✅ Unified, runtime-safe handler for both Node.js + Edge
+export default async function handler(req: any, res?: any): Promise<Response> {
   try {
-    const url = new URL(req.url, `https://${req.headers.get("host")}`);
+    // ✅ Cross-runtime safe header access (Node + Edge)
+    const hostHeader =
+      req.headers?.get?.("host")
+      req.headers?.host ||
+      req.headers?.["x-forwarded-host"] ||
+      "localhost:3000";
+
+    // ✅ Ensure a full URL object
+    const fullUrl =
+      req.url?.startsWith("http")
+        ? req.url
+        : `https://${hostHeader}${req.url}`;
+
+    const url = new URL(fullUrl);
     const address = url.searchParams.get("address");
 
     if (!address) {
@@ -39,6 +53,9 @@ export default async function handler(req: Request): Promise<Response> {
         headers: { "Content-Type": "application/json" },
       });
     }
+
+    // 🔽 Continue with your normal flow
+    // e.g. detect property type, make OpenAI call, etc.
 
     const propertyType = detectPropertyType(address);
 
