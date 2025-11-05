@@ -16,16 +16,16 @@ const openai = new OpenAI({
 // ✅ Helper: Detect property type (Residential vs Commercial)
 function detectPropertyType(address: string): "Residential" | "Commercial" {
   const residentialIndicators = [
-    "st", "street", "ave", "avenue", "rd", "road", "ln", "lane", "dr", "drive",
-    "ct", "court", "trl", "trail", "pl", "place", "way", "circle", "apt",
-    "apartment", "unit", "#", "residence", "home",
+    "st", "street", "ave", "avenue", "rd", "road",
+    "ln", "lane", "dr", "drive", "ct", "court",
+    "trl", "trail", "pl", "place", "way", "circle",
+    "apt", "apartment", "unit", "#", "residence", "home",
   ];
 
   const lowerAddress = address.toLowerCase();
-  const isResidential = residentialIndicators.some((word) =>
-    lowerAddress.includes(word)
+  const isResidential = residentialIndicators.some((w) =>
+    lowerAddress.includes(w)
   );
-
   return isResidential ? "Residential" : "Commercial";
 }
 
@@ -39,7 +39,7 @@ export default async function handler(req: any, res?: any): Promise<Response> {
       req.headers?.["x-forwarded-host"] ||
       "localhost:3000";
 
-    // ✅ Ensure we always construct a valid absolute URL
+    // ✅ Ensure a valid absolute URL
     const fullUrl =
       req.url?.startsWith("http") ? req.url : `https://${hostHeader}${req.url}`;
     const url = new URL(fullUrl);
@@ -55,43 +55,59 @@ export default async function handler(req: any, res?: any): Promise<Response> {
     // 🏠 Determine property type
     const propertyType = detectPropertyType(address);
 
-    // ⚡ OpenAI call with strict JSON compliance and 8s hard timeout
-    const completionPromise = openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      temperature: 0.4,
-      max_tokens: 150,
-      response_format: { type: "json_object" },
-      messages: [
-        {
-          role: "system",
-          content:
-            PROPERTY_DATA_FINDER_INSTRUCTIONS ||
-            "You are a real estate data assistant. Respond ONLY in valid JSON format with no text outside the JSON. Return property insights as structured JSON.",
-        },
-        {
-          role: "user",
-          content: `Generate a concise ${propertyType} property data report for ${address}. Include all fields in JSON format.`,
-        },
-      ],
-    });
+    // 🧠 Create an AbortController for hard cancellation (8 seconds)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
 
-    // ⏱ Hard 8-second timeout short-circuit
-    let didTimeout = false;
-    const timeout = setTimeout(() => {
-      didTimeout = true;
-    }, 8000);
-
-    let completion: any;
     try {
-      completion = await completionPromise;
-    } catch (err) {
-      if (didTimeout) {
-        // 🧠 If OpenAI took too long, return graceful timeout response
+      // ⚡ OpenAI request — strict JSON and fast
+      const completion = await openai.chat.completions.create(
+        {
+          model: "gpt-4o-mini",
+          temperature: 0.4,
+          max_tokens: 150,
+          response_format: { type: "json_object" },
+          messages: [
+            {
+              role: "system",
+              content:
+                PROPERTY_DATA_FINDER_INSTRUCTIONS ||
+                "You are a real estate data assistant. Respond ONLY in valid JSON format with no text outside the JSON. Return property insights as structured JSON.",
+            },
+            {
+              role: "user",
+              content: `Generate a concise ${propertyType} property data report for ${address}. Include all fields in JSON format.`,
+            },
+          ],
+        },
+        { signal: controller.signal }
+      );
+
+      clearTimeout(timeoutId);
+
+      // ✅ Extract the report content
+      const reportText = completion?.choices?.[0]?.message?.content ?? "{}";
+
+      let parsed;
+      try {
+        parsed = JSON.parse(reportText);
+      } catch {
+        parsed = { error: "Invalid JSON returned", raw: reportText };
+      }
+
+      return new Response(JSON.stringify({ report: parsed }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error: any) {
+      clearTimeout(timeoutId);
+
+      // ⏱ Graceful timeout exit
+      if (error.name === "AbortError") {
         return new Response(
           JSON.stringify({
             error: "timeout",
-            message:
-              "The property report took too long to generate. Please try again later.",
+            message: "The OpenAI request took too long and was cancelled.",
           }),
           {
             status: 200,
@@ -99,27 +115,20 @@ export default async function handler(req: any, res?: any): Promise<Response> {
           }
         );
       }
-      throw err;
-    } finally {
-      clearTimeout(timeout);
+
+      // ⚠️ Any other API or network error
+      console.error("OpenAI error:", error);
+      return new Response(
+        JSON.stringify({
+          error: "OpenAI call failed",
+          message: error?.message || "Unknown error",
+        }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
-
-    // ✅ Extract report safely
-    const reportText = completion?.choices?.[0]?.message?.content ?? "{}";
-
-    // 🧩 Validate and parse JSON
-    let parsed;
-    try {
-      parsed = JSON.parse(reportText);
-    } catch {
-      parsed = { error: "Invalid JSON returned", raw: reportText };
-    }
-
-    // 🚀 Return consistent structured response
-    return new Response(JSON.stringify({ report: parsed }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
   } catch (err: any) {
     console.error("API error:", err);
     return new Response(
