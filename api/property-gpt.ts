@@ -1,4 +1,4 @@
-// Vercel serverless function configuration
+// ✅ Vercel serverless configuration
 export const config = {
   runtime: "nodejs",
   memory: 512,
@@ -13,37 +13,33 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// ✅ Helper: Detect property type based on address keywords
+// ✅ Detect Residential vs Commercial for context
 function detectPropertyType(address: string): "Residential" | "Commercial" {
   const residentialIndicators = [
-    "st", "street", "ave", "avenue", "rd", "road", "ln", "lane", "dr", "drive",
-    "ct", "court", "trl", "trail", "pl", "place", "way", "circle", "cove",
+    "st", "street", "ave", "avenue", "rd", "road",
+    "ln", "lane", "dr", "drive", "ct", "court",
+    "trl", "trail", "pl", "place", "way", "circle",
     "apt", "apartment", "unit #", "#", "residence", "home",
   ];
 
-  const lowerAddress = address.toLowerCase();
-  return residentialIndicators.some((word) => lowerAddress.includes(word))
-    ? "Residential"
-    : "Commercial";
+  const lower = address.toLowerCase();
+  const isResidential = residentialIndicators.some((w) => lower.includes(w));
+  return isResidential ? "Residential" : "Commercial";
 }
 
-// ✅ Main API route handler
-// ✅ Unified, runtime-safe handler for both Node.js + Edge
+// ✅ Unified, runtime-safe API handler
 export default async function handler(req: any, res?: any): Promise<Response> {
   try {
-    // ✅ Cross-runtime safe header access (Node + Edge)
+    // 🧩 Cross-runtime safe header access
     const hostHeader =
-      req.headers?.get?.("host")
+      req.headers?.get?.("host") ||
       req.headers?.host ||
       req.headers?.["x-forwarded-host"] ||
       "localhost:3000";
 
-    // ✅ Ensure a full URL object
+    // 🧠 Ensure a valid URL object
     const fullUrl =
-      req.url?.startsWith("http")
-        ? req.url
-        : `https://${hostHeader}${req.url}`;
-
+      req.url?.startsWith("http") ? req.url : `https://${hostHeader}${req.url}`;
     const url = new URL(fullUrl);
     const address = url.searchParams.get("address");
 
@@ -54,74 +50,77 @@ export default async function handler(req: any, res?: any): Promise<Response> {
       });
     }
 
-    // 🔽 Continue with your normal flow
-    // e.g. detect property type, make OpenAI call, etc.
-
+    // 🏠 Detect property type
     const propertyType = detectPropertyType(address);
 
-    // ⏱ Abort after 7 seconds
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 7000);
-
-    let completion;
-    try {
-      completion = await openai.chat.completions.create(
+    // ⚡ Safer 8-second timeout race for OpenAI completion
+    const completionPromise = openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      temperature: 0.4,
+      max_tokens: 150,
+      response_format: { type: "json_object" },
+      messages: [
         {
-          model: "gpt-4o-mini",
-          temperature: 0.4,
-          max_tokens: 150,
-          messages: [
-            {
-              role: "system",
-              content:
-                "You are a real estate assistant. Respond only with JSON object {propertyType, summary, estimate}.",
-            },
-            {
-              role: "user",
-              content: `Summarize property insights for ${address}, a ${propertyType} property.`,
-            },
-          ],
+          role: "system",
+          content:
+            PROPERTY_DATA_FINDER_INSTRUCTIONS ||
+            "You are a real estate data assistant. Always return a valid JSON object.",
         },
-        { signal: controller.signal }
-      );
-    } catch (error: any) {
-      if (error.name === "AbortError") {
-        return new Response(
-          JSON.stringify({
-            report: {
-              error: "timeout",
-              message:
-                "The request took too long. Please try again later.",
-            },
+        {
+          role: "user",
+          content: `Generate a concise ${propertyType} property data report for ${address}.`,
+        },
+      ],
+    });
+
+    // ⏱ Timeout fallback after 8 seconds
+    const timeoutPromise = new Promise((resolve) =>
+      setTimeout(
+        () =>
+          resolve({
+            choices: [
+              {
+                message: {
+                  content: JSON.stringify({
+                    error: "timeout",
+                    message:
+                      "The property report took too long to generate. Please try again later.",
+                  }),
+                },
+              },
+            ],
           }),
-          {
-            status: 200,
-            headers: { "Content-Type": "application/json" },
-          }
-        );
-      }
-      throw error;
-    } finally {
-      clearTimeout(timeout);
-    }
+        8000 // 8 seconds
+      )
+    );
 
-    const text = completion?.choices?.[0]?.message?.content ?? "";
-    let report;
+    // 🏁 Race both promises
+    const completion: any = await Promise.race([
+      completionPromise,
+      timeoutPromise,
+    ]);
+
+    // ✅ Always extract a valid JSON string
+    const reportText = completion?.choices?.[0]?.message?.content ?? "{}";
+
+    // 🧩 Validate JSON
+    let parsed;
     try {
-      report = JSON.parse(text);
+      parsed = JSON.parse(reportText);
     } catch {
-      report = { summary: text };
+      parsed = { error: "Invalid JSON returned", raw: reportText };
     }
 
-    return new Response(JSON.stringify({ report }), {
+    // 🚀 Return consistent JSON response
+    return new Response(JSON.stringify({ report: parsed }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   } catch (err: any) {
-    console.error("Server error:", err);
+    console.error("API error:", err);
     return new Response(
       JSON.stringify({
-        error: "Server failure",
+        error: "Failed to generate property data report",
         message: err?.message || "Unknown error",
       }),
       {
