@@ -18,16 +18,27 @@ export default function FreeReportGenerator() {
     setReport(null);
 
     try {
-      const response = await fetch(`/api/property-gpt?address=${encodeURIComponent(address)}`);
-      const data = await response.json();
+  const response = await fetch(`/api/property-gpt?address=${encodeURIComponent(address)}`);
 
-      if (!response.ok) throw new Error(data.error || "Failed to generate report.");
-      setReport(data.report || "No report data returned.");
-    } catch (err: any) {
-      setError(err.message || "Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+  // Try parsing JSON safely
+  let data;
+  try {
+    data = await response.json();
+  } catch {
+    const text = await response.text(); // fallback for non-JSON
+    throw new Error(`Invalid JSON response: ${text.slice(0, 100)}...`);
+  }
+
+  if (!response.ok) {
+    throw new Error(data?.error || "Failed to generate report.");
+  }
+
+  setReport(data?.report || "No report data returned.");
+} catch (err: any) {
+  setError(err.message || "Something went wrong. Please try again.");
+} finally {
+  setLoading(false);
+}
   };
 
   return (
