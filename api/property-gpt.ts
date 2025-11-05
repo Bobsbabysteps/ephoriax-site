@@ -1,4 +1,4 @@
-// ✅ Vercel serverless configuration
+// ✅ Vercel Serverless Function Configuration
 export const config = {
   runtime: "nodejs",
   memory: 512,
@@ -13,21 +13,23 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// ✅ Detect Residential vs Commercial for context
+// ✅ Helper: Detect property type for contextual responses
 function detectPropertyType(address: string): "Residential" | "Commercial" {
   const residentialIndicators = [
-    "st", "street", "ave", "avenue", "rd", "road",
-    "ln", "lane", "dr", "drive", "ct", "court",
-    "trl", "trail", "pl", "place", "way", "circle",
-    "apt", "apartment", "unit #", "#", "residence", "home",
+    "st", "street", "ave", "avenue", "rd", "road", "ln", "lane",
+    "dr", "drive", "ct", "court", "trl", "trail", "pl", "place",
+    "way", "circle", "apt", "apartment", "unit", "#", "residence", "home",
   ];
 
-  const lower = address.toLowerCase();
-  const isResidential = residentialIndicators.some((w) => lower.includes(w));
+  const lowerAddress = address.toLowerCase();
+  const isResidential = residentialIndicators.some((w) =>
+    lowerAddress.includes(w)
+  );
+
   return isResidential ? "Residential" : "Commercial";
 }
 
-// ✅ Unified, runtime-safe API handler
+// ✅ Unified API handler (works in both Node + Edge contexts)
 export default async function handler(req: any, res?: any): Promise<Response> {
   try {
     // 🧩 Cross-runtime safe header access
@@ -37,7 +39,7 @@ export default async function handler(req: any, res?: any): Promise<Response> {
       req.headers?.["x-forwarded-host"] ||
       "localhost:3000";
 
-    // 🧠 Ensure a valid URL object
+    // ✅ Ensure valid URL
     const fullUrl =
       req.url?.startsWith("http") ? req.url : `https://${hostHeader}${req.url}`;
     const url = new URL(fullUrl);
@@ -50,10 +52,10 @@ export default async function handler(req: any, res?: any): Promise<Response> {
       });
     }
 
-    // 🏠 Detect property type
+    // 🏠 Determine property type
     const propertyType = detectPropertyType(address);
 
-    // ⚡ Safer 8-second timeout race for OpenAI completion
+    // ⚡ OpenAI request with hard timeout protection
     const completionPromise = openai.chat.completions.create({
       model: "gpt-4o-mini",
       temperature: 0.4,
@@ -73,37 +75,39 @@ export default async function handler(req: any, res?: any): Promise<Response> {
       ],
     });
 
-    // ⏱ Timeout fallback after 8 seconds
-    const timeoutPromise = new Promise((resolve) =>
-      setTimeout(
-        () =>
-          resolve({
-            choices: [
-              {
-                message: {
-                  content: JSON.stringify({
-                    error: "timeout",
-                    message:
-                      "The property report took too long to generate. Please try again later.",
-                  }),
-                },
-              },
-            ],
+    // ⏱ Hard 8-second cutoff
+    let didTimeout = false;
+    const timeout = setTimeout(() => {
+      didTimeout = true;
+    }, 8000);
+
+    let completion: any;
+    try {
+      completion = await completionPromise;
+    } catch (err) {
+      if (didTimeout) {
+        // 🧠 If OpenAI took too long, short-circuit early
+        return new Response(
+          JSON.stringify({
+            error: "timeout",
+            message:
+              "The property report took too long to generate. Please try again later.",
           }),
-        8000 // 8 seconds
-      )
-    );
+          {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      }
+      throw err;
+    } finally {
+      clearTimeout(timeout);
+    }
 
-    // 🏁 Race both promises
-    const completion: any = await Promise.race([
-      completionPromise,
-      timeoutPromise,
-    ]);
-
-    // ✅ Always extract a valid JSON string
+    // ✅ Always extract a valid string
     const reportText = completion?.choices?.[0]?.message?.content ?? "{}";
 
-    // 🧩 Validate JSON
+    // 🧩 Validate JSON output
     let parsed;
     try {
       parsed = JSON.parse(reportText);
@@ -111,7 +115,7 @@ export default async function handler(req: any, res?: any): Promise<Response> {
       parsed = { error: "Invalid JSON returned", raw: reportText };
     }
 
-    // 🚀 Return consistent JSON response
+    // 🚀 Respond consistently
     return new Response(JSON.stringify({ report: parsed }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
@@ -122,6 +126,7 @@ export default async function handler(req: any, res?: any): Promise<Response> {
       JSON.stringify({
         error: "Failed to generate property data report",
         message: err?.message || "Unknown error",
+        stack: err?.stack || null,
       }),
       {
         status: 500,
