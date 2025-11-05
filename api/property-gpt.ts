@@ -13,23 +13,23 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// ✅ Helper: Detect property type for contextual responses
+// ✅ Helper: Detect property type (Residential vs Commercial)
 function detectPropertyType(address: string): "Residential" | "Commercial" {
   const residentialIndicators = [
-    "st", "street", "ave", "avenue", "rd", "road", "ln", "lane",
-    "dr", "drive", "ct", "court", "trl", "trail", "pl", "place",
-    "way", "circle", "apt", "apartment", "unit", "#", "residence", "home",
+    "st", "street", "ave", "avenue", "rd", "road", "ln", "lane", "dr", "drive",
+    "ct", "court", "trl", "trail", "pl", "place", "way", "circle", "apt",
+    "apartment", "unit", "#", "residence", "home",
   ];
 
   const lowerAddress = address.toLowerCase();
-  const isResidential = residentialIndicators.some((w) =>
-    lowerAddress.includes(w)
+  const isResidential = residentialIndicators.some((word) =>
+    lowerAddress.includes(word)
   );
 
   return isResidential ? "Residential" : "Commercial";
 }
 
-// ✅ Unified API handler (works in both Node + Edge contexts)
+// ✅ Main API handler (Node + Edge compatible)
 export default async function handler(req: any, res?: any): Promise<Response> {
   try {
     // 🧩 Cross-runtime safe header access
@@ -39,7 +39,7 @@ export default async function handler(req: any, res?: any): Promise<Response> {
       req.headers?.["x-forwarded-host"] ||
       "localhost:3000";
 
-    // ✅ Ensure valid URL
+    // ✅ Ensure we always construct a valid absolute URL
     const fullUrl =
       req.url?.startsWith("http") ? req.url : `https://${hostHeader}${req.url}`;
     const url = new URL(fullUrl);
@@ -55,7 +55,7 @@ export default async function handler(req: any, res?: any): Promise<Response> {
     // 🏠 Determine property type
     const propertyType = detectPropertyType(address);
 
-    // ⚡ OpenAI request with hard timeout protection
+    // ⚡ OpenAI call with strict JSON compliance and 8s hard timeout
     const completionPromise = openai.chat.completions.create({
       model: "gpt-4o-mini",
       temperature: 0.4,
@@ -66,16 +66,16 @@ export default async function handler(req: any, res?: any): Promise<Response> {
           role: "system",
           content:
             PROPERTY_DATA_FINDER_INSTRUCTIONS ||
-            "You are a real estate data assistant. Always return a valid JSON object.",
+            "You are a real estate data assistant. Respond ONLY in valid JSON format with no text outside the JSON. Return property insights as structured JSON.",
         },
         {
           role: "user",
-          content: `Generate a concise ${propertyType} property data report for ${address}.`,
+          content: `Generate a concise ${propertyType} property data report for ${address}. Include all fields in JSON format.`,
         },
       ],
     });
 
-    // ⏱ Hard 8-second cutoff
+    // ⏱ Hard 8-second timeout short-circuit
     let didTimeout = false;
     const timeout = setTimeout(() => {
       didTimeout = true;
@@ -86,7 +86,7 @@ export default async function handler(req: any, res?: any): Promise<Response> {
       completion = await completionPromise;
     } catch (err) {
       if (didTimeout) {
-        // 🧠 If OpenAI took too long, short-circuit early
+        // 🧠 If OpenAI took too long, return graceful timeout response
         return new Response(
           JSON.stringify({
             error: "timeout",
@@ -104,10 +104,10 @@ export default async function handler(req: any, res?: any): Promise<Response> {
       clearTimeout(timeout);
     }
 
-    // ✅ Always extract a valid string
+    // ✅ Extract report safely
     const reportText = completion?.choices?.[0]?.message?.content ?? "{}";
 
-    // 🧩 Validate JSON output
+    // 🧩 Validate and parse JSON
     let parsed;
     try {
       parsed = JSON.parse(reportText);
@@ -115,7 +115,7 @@ export default async function handler(req: any, res?: any): Promise<Response> {
       parsed = { error: "Invalid JSON returned", raw: reportText };
     }
 
-    // 🚀 Respond consistently
+    // 🚀 Return consistent structured response
     return new Response(JSON.stringify({ report: parsed }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
