@@ -30,7 +30,6 @@ function detectPropertyType(address: string): "Residential" | "Commercial" {
 // ✅ Main API route handler
 export default async function handler(req: Request): Promise<Response> {
   try {
-    // 🔹 Parse the incoming address
     const url = new URL(req.url, `https://${req.headers.get("host")}`);
     const address = url.searchParams.get("address");
 
@@ -43,69 +42,69 @@ export default async function handler(req: Request): Promise<Response> {
 
     const propertyType = detectPropertyType(address);
 
-    // 🔹 Ask OpenAI for a structured property report
-    const completionPromise = openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      temperature: 0.4,
-      max_tokens: 200,
-      response_format: { type: "json_object" },
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are a real estate data assistant. Respond only with valid JSON containing concise, structured property insights.",
-        },
-        {
-          role: "user",
-          content: `Generate a short property insight summary for this ${propertyType} property at ${address}. Include: propertyType, generalInsights, and estimatedValue.`,
-        },
-      ],
-    });
+    // ⏱ Abort after 7 seconds
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 7000);
 
-    // ⏱ Race against an 8-second timeout to avoid Vercel 504s
-    const completion: any = await Promise.race([
-      completionPromise,
-      new Promise((resolve) =>
-        setTimeout(
-          () =>
-            resolve({
-              choices: [
-                {
-                  message: {
-                    content: JSON.stringify({
-                      error: "timeout",
-                      message:
-                        "The report took too long. Please try again shortly.",
-                    }),
-                  },
-                },
-              ],
-            }),
-          8000
-        )
-      ),
-    ]);
-
-    // 🔹 Extract and validate the response
-    const reportText = completion?.choices?.[0]?.message?.content ?? "";
-    let reportJson;
-
+    let completion;
     try {
-      reportJson = JSON.parse(reportText);
-    } catch {
-      reportJson = { error: "Invalid response format", raw: reportText };
+      completion = await openai.chat.completions.create(
+        {
+          model: "gpt-4o-mini",
+          temperature: 0.4,
+          max_tokens: 150,
+          messages: [
+            {
+              role: "system",
+              content:
+                "You are a real estate assistant. Respond only with JSON object {propertyType, summary, estimate}.",
+            },
+            {
+              role: "user",
+              content: `Summarize property insights for ${address}, a ${propertyType} property.`,
+            },
+          ],
+        },
+        { signal: controller.signal }
+      );
+    } catch (error: any) {
+      if (error.name === "AbortError") {
+        return new Response(
+          JSON.stringify({
+            report: {
+              error: "timeout",
+              message:
+                "The request took too long. Please try again later.",
+            },
+          }),
+          {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      }
+      throw error;
+    } finally {
+      clearTimeout(timeout);
     }
 
-    // 🔹 Return the result as JSON
-    return new Response(JSON.stringify({ report: reportJson }), {
+    const text = completion?.choices?.[0]?.message?.content ?? "";
+    let report;
+    try {
+      report = JSON.parse(text);
+    } catch {
+      report = { summary: text };
+    }
+
+    return new Response(JSON.stringify({ report }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   } catch (err: any) {
-    console.error("API error:", err);
+    console.error("Server error:", err);
     return new Response(
       JSON.stringify({
-        error: "Failed to generate property data report",
+        error: "Server failure",
         message: err?.message || "Unknown error",
       }),
       {
