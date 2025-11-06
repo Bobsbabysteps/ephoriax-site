@@ -1,10 +1,9 @@
 {
-  "version": 3,
-  "functions": {
-    "api/pdf/route.ts": {
-      "runtime": "edge"
-    }
-  },
+  "version": 2,
+  "builds": [
+    { "src": "package.json", "use": "@vercel/static-build" },
+    { "src": "api/pdf/route.ts", "use": "@vercel/edge-function" }
+  ],
   "routes": [
     { "src": "/api/pdf", "dest": "api/pdf/route.ts" },
     { "src": "/(.*)", "dest": "/index.html" }
