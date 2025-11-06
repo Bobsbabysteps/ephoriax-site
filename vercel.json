@@ -1,15 +1,12 @@
 {
-  "version": 2,
+  "version": 3,
   "functions": {
     "api/pdf/route.ts": {
-      "runtime": "edge-runtime@2.0.0"
+      "runtime": "edge"
     }
   },
   "routes": [
     { "src": "/api/pdf", "dest": "api/pdf/route.ts" },
-    { "src": "/assets/(.*)", "dest": "/assets/$1" },
-    { "src": "/favicon.ico", "dest": "/favicon.ico" },
-    { "src": "/robots.txt", "dest": "/robots.txt" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
