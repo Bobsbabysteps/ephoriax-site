@@ -1,11 +1,15 @@
 {
   "version": 2,
-  "builds": [
-    { "src": "package.json", "use": "@vercel/static-build" },
-    { "src": "api/pdf/route.ts", "use": "@vercel/node" }
-  ],
+  "functions": {
+    "api/pdf/route.ts": {
+      "runtime": "nodejs20.x"
+    }
+  },
   "routes": [
-    { "src": "/api/pdf", "dest": "api/pdf/route.ts" },
+    { "src": "/api/(.*)", "dest": "/api/$1.ts" },
+    { "src": "/assets/(.*)", "dest": "/assets/$1" },
+    { "src": "/favicon.ico", "dest": "/favicon.ico" },
+    { "src": "/robots.txt", "dest": "/robots.txt" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
