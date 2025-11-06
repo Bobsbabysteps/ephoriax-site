@@ -19,9 +19,9 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "erasableSyntaxOnly": true,
+    "erasedSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src", "postcss.config.js", "tailwind.config.js", "api/gptInstructions.ts"]
+  "include": ["src", "api", "postcss.config.js", "tailwind.config.js"]
 }
