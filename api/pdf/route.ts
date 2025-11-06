@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import OpenAI from "openai";
-import { PROPERTY_DATA_FINDER_INSTRUCTIONS } from "../../src/lib/gptInstructions";
+import { PROPERTY_DATA_FINDER_INSTRUCTIONS } from "./gptInstructions";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
