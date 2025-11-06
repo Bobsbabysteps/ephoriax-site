@@ -1,10 +1,5 @@
 {
   "version": 2,
-  "functions": {
-    "api/pdf/route.ts": {
-      "runtime": "nodejs20.x"
-    }
-  },
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1.ts" },
     { "src": "/assets/(.*)", "dest": "/assets/$1" },
