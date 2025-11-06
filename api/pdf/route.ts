@@ -1,5 +1,3 @@
-export const runtime = "edge";
-
 import OpenAI from "openai";
 import { PROPERTY_DATA_FINDER_INSTRUCTIONS } from "../../src/lib/gptInstructions";
 
