@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     { "src": "package.json", "use": "@vercel/static-build" },
-    { "src": "api/pdf/route.ts", "use": "@vercel/edge-function" }
+    { "src": "api/pdf/route.ts", "use": "@vercel/edge-handler" }
   ],
   "routes": [
     { "src": "/api/pdf", "dest": "api/pdf/route.ts" },
