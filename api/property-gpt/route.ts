@@ -1,6 +1,7 @@
-import type { VercelRequest, VercelResponse } from "@vercel/node";
+export const runtime = "edge";
+
 import OpenAI from "openai";
-import { PROPERTY_DATA_FINDER_INSTRUCTIONS } from "./gptInstructions";
+import { PROPERTY_DATA_FINDER_INSTRUCTIONS } from "../pdf/gptInstructions.js";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -18,12 +19,16 @@ function detectPropertyType(address: string): "Residential" | "Commercial" {
     : "Commercial";
 }
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: Request): Promise<Response> {
   try {
-    const address = (req.query.address as string) || "";
+    const url = new URL(req.url);
+    const address = url.searchParams.get("address");
 
     if (!address) {
-      return res.status(400).json({ error: "Missing address" });
+      return new Response(JSON.stringify({ error: "Missing address" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     const propertyType = detectPropertyType(address);
@@ -67,25 +72,46 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         parsed = { error: "Invalid JSON returned", raw: content };
       }
 
-      return res.status(200).json({ report: parsed });
+      return Response.json({ report: parsed });
     } catch (error: any) {
       clearTimeout(timeout);
 
       if (error.name === "AbortError") {
-        return res
-          .status(200)
-          .json({ error: "timeout", message: "The OpenAI request took too long and was cancelled." });
+        return new Response(
+          JSON.stringify({
+            error: "timeout",
+            message: "The OpenAI request took too long and was cancelled.",
+          }),
+          {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
       }
 
       console.error("OpenAI error:", error);
-      return res
-        .status(500)
-        .json({ error: "OpenAI call failed", message: error?.message || "Unknown error" });
+      return new Response(
+        JSON.stringify({
+          error: "OpenAI call failed",
+          message: error?.message || "Unknown error",
+        }),
+        {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
   } catch (err: any) {
     console.error("API error:", err);
-    return res
-      .status(500)
-      .json({ error: "Failed to generate property data report", message: err?.message || "Unknown error" });
+    return new Response(
+      JSON.stringify({
+        error: "Failed to generate property data report",
+        message: err?.message || "Unknown error",
+      }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 }
