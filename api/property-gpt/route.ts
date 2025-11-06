@@ -72,10 +72,7 @@ export default async function handler(req: Request): Promise<Response> {
         parsed = { error: "Invalid JSON returned", raw: content };
       }
 
-      return new Response(JSON.stringify({ report: parsed }), {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      });
+      return Response.json({ report: parsed });
     } catch (error: any) {
       clearTimeout(timeout);
 
