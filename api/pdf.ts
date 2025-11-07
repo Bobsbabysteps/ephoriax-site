@@ -1,21 +1,37 @@
-import type { VercelRequest, VercelResponse } from "@vercel/node";
-import OpenAI from "openai";
-import { PROPERTY_DATA_FINDER_INSTRUCTIONS } from "../src/lib/gptInstructions";
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import OpenAI from 'openai';
+import { PROPERTY_DATA_FINDER_INSTRUCTIONS } from './gptInstructions';
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY!,
 });
 
-function detectPropertyType(address: string): "Residential" | "Commercial" {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  const { address } = req.query;
+
+  if (!address || typeof address !== 'string') {
+    res.status(400).send('Missing address parameter');
+    return;
+  }
+
+  const propertyType = detectPropertyType(address);
+
+  res.status(200).json({
+    success: true,
+    propertyType,
+  });
+}
+
+function detectPropertyType(address: string): 'Residential' | 'Commercial' {
   const residentialIndicators = [
-    "st","street","ave","avenue","rd","road","ln","lane","dr","drive",
-    "ct","court","trl","trail","pl","place","way","circle",
-    "apt","apartment","unit","#","residence","home",
+    'st', 'street', 'ave', 'avenue', 'rd', 'road', 'ln', 'lane', 'dr', 'drive',
+    'ct', 'court', 'trl', 'trail', 'pl', 'place', 'way', 'circle',
+    'apt', 'apartment', 'unit', '#', 'residence', 'home',
   ];
   const lower = address.toLowerCase();
   return residentialIndicators.some((w) => lower.includes(w))
-    ? "Residential"
-    : "Commercial";
+    ? 'Residential'
+    : 'Commercial';
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
