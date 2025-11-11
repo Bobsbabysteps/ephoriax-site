@@ -1,7 +1,7 @@
 export const runtime = "edge";
 
 import OpenAI from "openai";
-import { PROPERTY_DATA_FINDER_INSTRUCTIONS } from "../pdf/gptInstructions.js";
+import { PROPERTY_DATA_FINDER_INSTRUCTIONS } from "../gptInstructions";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,

@@ -1,23 +1,32 @@
 export default function ThankYou() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 text-center p-6">
-      <h1 className="text-3xl font-bold text-indigo-600 mb-4">
-        You’re In! 🎉
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-indigo-900 via-indigo-800 to-indigo-700 text-white text-center p-8">
+      {/* Header */}
+      <h1 className="text-4xl font-extrabold mb-4 animate-fadeIn">
+        🎉 You’re In!
       </h1>
 
-      <p className="text-slate-600 max-w-md">
-        Thanks for requesting beta access to EphoriaX Property Data Finder Tool, Beta program.  
-        Check your inbox for a confirmation email from us — it includes
-        important next steps and a link back here when you’re ready
-        to explore your dashboard.
+      {/* Subtext */}
+      <p className="text-indigo-100 max-w-lg leading-relaxed mb-8">
+        Thanks for joining the <span className="font-semibold">EphoriaX Beta Program</span> — 
+        you’re officially on the inside.  
+        <br />
+        Check your inbox for a confirmation email with important details and 
+        next steps on how to explore your tools and dashboard.
       </p>
 
+      {/* Call-to-Action */}
       <a
         href="/"
-        className="mt-8 inline-block bg-indigo-600 text-white font-semibold py-2 px-6 rounded-lg hover:bg-indigo-700 transition"
+        className="bg-white text-indigo-900 font-semibold py-3 px-8 rounded-full shadow-md hover:bg-indigo-100 transition-all"
       >
         Return Home
       </a>
+
+      {/* Optional Footer */}
+      <footer className="mt-12 text-sm text-indigo-200 opacity-80">
+        © {new Date().getFullYear()} EPHORIAX — All rights reserved.
+      </footer>
     </div>
   );
 }

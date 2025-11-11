@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Button from "../components/Button";
+import Button from "./Button";
 import { jsPDF } from "jspdf";
 
 export default function FreeReportGenerator() {
@@ -7,6 +7,9 @@ export default function FreeReportGenerator() {
   const [loading, setLoading] = useState(false);
   const [report, setReport] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // ✅ Production n8n webhook URL
+  const WEBHOOK_URL = "https://doble.app.n8n.cloud/webhook/workflow8-intake";
 
   const handleGenerate = async () => {
     if (!address.trim()) {
@@ -19,12 +22,34 @@ export default function FreeReportGenerator() {
     setReport(null);
 
     try {
-      const response = await fetch(`/api/property-gpt?address=${encodeURIComponent(address)}`);
-      const data = await response.json();
+      const response = await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          address: address.trim(),
+          source: "ephoriax-free-report",
+          timestamp: new Date().toISOString(),
+        }),
+      });
 
-      if (!response.ok) throw new Error(data.error || "Failed to generate report.");
-      setReport(data.report || "No report data returned.");
+      if (!response.ok) {
+        throw new Error(`Server responded with ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("✅ Webhook Response:", data);
+
+      if (data.status === "ok" || data.message?.includes("success")) {
+        setReport(
+          data.report ||
+            JSON.stringify(data, null, 2) ||
+            "Report received, but no text was provided."
+        );
+      } else {
+        throw new Error(data.message || "Report generation failed.");
+      }
     } catch (err: any) {
+      console.error("❌ Webhook error:", err);
       setError(err.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
@@ -40,9 +65,8 @@ export default function FreeReportGenerator() {
       format: "a4",
     });
 
-    const pageWidth = pdf.internal.pageSize.getWidth();
     const margin = 40;
-    const maxWidth = pageWidth - margin * 2;
+    const maxWidth = pdf.internal.pageSize.getWidth() - margin * 2;
 
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(18);
@@ -52,7 +76,6 @@ export default function FreeReportGenerator() {
     pdf.setFontSize(12);
     pdf.text(`Address: ${address}`, margin, 80);
 
-    // Split text into lines for wrapping
     const lines = pdf.splitTextToSize(report, maxWidth);
     pdf.text(lines, margin, 110);
 
@@ -65,7 +88,8 @@ export default function FreeReportGenerator() {
         Free Property Data Report
       </h1>
       <p className="text-gray-600 max-w-2xl text-center mb-8">
-        Generate AI-powered insights instantly. Enter a property address to receive your free analysis.
+        Generate AI-powered insights instantly. Enter a property address to
+        receive your free analysis.
       </p>
 
       <div className="w-full max-w-md space-y-4">
@@ -85,11 +109,15 @@ export default function FreeReportGenerator() {
       </div>
 
       {/* --- Display Results --- */}
-      {error && <div className="mt-6 text-red-600 font-medium">{error}</div>}
+      {error && (
+        <div className="mt-6 text-red-600 font-medium text-center">
+          {error}
+        </div>
+      )}
 
       {report && (
         <div className="mt-10 w-full max-w-2xl bg-white p-6 rounded-xl shadow-md border border-gray-200">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
             Generated Report
           </h2>
           <pre className="text-gray-700 whitespace-pre-wrap leading-relaxed mb-6">

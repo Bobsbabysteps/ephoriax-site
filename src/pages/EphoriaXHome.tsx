@@ -6,7 +6,7 @@
 
 import { Link } from "react-router-dom";
 import Button from "../components/Button"; // ✅ New unified button import
-
+import { useLocation } from "react-router-dom";
 // ===== Types ================================================================
 type CardProps = {
   title: string;
@@ -76,9 +76,18 @@ function Header() {
         </nav>
 
         <div className="hidden md:block">
-          <Link to="/pdf/submit">
-            <Button>Join Beta</Button>
-          </Link>
+
+          const location = useLocation();
+
+          {location.pathname === "/pdf" && (
+            <a
+              href="https://ephoriax.kit.com/b0ab7abf0b"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button>Join Beta</Button>
+            </a>
+          )}
         </div>
       </div>
     </header>
@@ -116,9 +125,13 @@ function Hero() {
             <a href="#products">
               <Button>Explore Products</Button>
             </a>
-            <Link to="/pdf/submit">
-              <Button variant="secondary">Request Information</Button>
-            </Link>
+            <a
+              href="https://ephoriax.kit.com/b0ab7abf0b"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button>Request Information</Button>
+            </a>
           </div>
         </div>
       </div>
@@ -209,9 +222,13 @@ function BetaCTA() {
         </p>
 
         <div className="mt-8 flex justify-center">
-          <Link to="/pdf/submit">
-            <Button>Request Information</Button>
-          </Link>
+          <a
+            href="https://ephoriax.kit.com/b0ab7abf0b"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button>Join Beta</Button>
+          </a>
         </div>
       </div>
     </section>

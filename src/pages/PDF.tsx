@@ -4,6 +4,7 @@ import FreeReportGenerator from "../components/FreeReportGenerator";
 export default function PDF() {
   const [scrolled, setScrolled] = useState(false);
 
+
   // Detect scroll to toggle shadow
   useEffect(() => {
     const handleScroll = () => {
@@ -22,11 +23,10 @@ export default function PDF() {
     <div className="bg-gray-50 text-gray-800 min-h-screen">
       {/* Navigation Bar */}
       <nav
-        className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-          scrolled
+        className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled
             ? "bg-white shadow-md border-b border-gray-200 opacity-100"
             : "bg-white/90 border-b border-transparent opacity-0 animate-fadeIn"
-        }`}
+          }`}
       >
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
           <a
@@ -63,20 +63,16 @@ export default function PDF() {
         </div>
       </section>
 
-{/* Trusted Partners */}
+      {/* Trusted Partners */}
       <section className="py-12 text-center bg-white">
         <h2 className="text-xl font-semibold text-gray-800 mb-4">
           Trusted Sources, Trusted Results
         </h2>
         <p className="text-gray-600 max-w-2xl mx-auto mb-8">
-          Powered by industry-leading providers like ATTOM, ensuring your insights are accurate,
-          complete, and up to date.
+          Powered by industry-leading providers like ATTOM, ensuring your insights
+          are accurate, complete, and up to date.
         </p>
-        <div className="flex justify-center items-center gap-8 flex-wrap">
-          <img src="/attom-logo.png" alt="ATTOM Logo" className="h-10 opacity-90" />
-          <img src="/placeholder-logo.png" alt="Placeholder Logo" className="h-10 opacity-70" />
-          <img src="/placeholder-logo.png" alt="Placeholder Logo" className="h-10 opacity-70" />
-        </div>
+
         <div className="mt-10">
           <button
             onClick={scrollToReport}
