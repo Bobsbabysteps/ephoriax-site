@@ -35,30 +35,32 @@ export default function FreeReportGenerator() {
       });
 
       const text = await response.text();
-      let data: any = null;
+      console.log("Raw response from n8n:", text);
 
+      let data: any = null;
       try {
         data = JSON.parse(text);
       } catch {
-        console.warn("Response not valid JSON:", text);
+        console.warn("Could not parse JSON, raw text:", text);
       }
 
-      if (!response.ok || data?.status !== "ok") {
-        throw new Error(
-          data?.message || `Server responded with ${response.status}`
+      if (!response.ok) {
+        throw new Error(data?.message || `Server responded with ${response.status}`);
+      }
+
+      if (data?.status === "ok") {
+        setMessage("Your submission was received successfully!");
+        setReport(
+          `Your property report request for "${address}" was received.\n\n` +
+            `Run ID: ${data.run_id || "N/A"}\n` +
+            `Status: ${data.status}\n\nRaw:\n${text}`
         );
+      } else {
+        throw new Error(`Unexpected response: ${text}`);
       }
-
-      // ✅ Success
-      setMessage("Your submission was received successfully!");
-      setReport(
-        `Your property report request for "${address}" has been received and logged.\n\nRun ID: ${
-          data.run_id || "N/A"
-        }\nStatus: ${data.status}`
-      );
     } catch (err: any) {
-      console.error("Error generating report:", err);
-      setError("Server error. Please try again later.");
+      console.error("Submission failed:", err);
+      setError(`Server error. Details: ${err.message}`);
     } finally {
       setLoading(false);
     }
