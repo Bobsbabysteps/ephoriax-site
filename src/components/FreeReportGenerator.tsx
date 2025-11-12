@@ -6,6 +6,7 @@ export default function FreeReportGenerator() {
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
   const [report, setReport] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   // ✅ Production n8n webhook URL
@@ -18,8 +19,9 @@ export default function FreeReportGenerator() {
     }
 
     setError(null);
-    setLoading(true);
+    setMessage(null);
     setReport(null);
+    setLoading(true);
 
     try {
       const response = await fetch(WEBHOOK_URL, {
@@ -32,27 +34,30 @@ export default function FreeReportGenerator() {
         }),
       });
 
-      // Try to parse JSON if available
-      let data = null;
+      const text = await response.text();
+      let data: any = null;
+
       try {
-        data = await response.json();
+        data = JSON.parse(text);
       } catch {
-        // n8n might send plain text, not JSON — safely ignore
+        console.warn("Response not valid JSON:", text);
       }
 
-      if (!response.ok) {
-        throw new Error(data?.message || `Server responded with ${response.status}`);
+      if (!response.ok || data?.status !== "ok") {
+        throw new Error(
+          data?.message || `Server responded with ${response.status}`
+        );
       }
 
-      // ✅ Handle successful submission
-      if (data?.status === "ok" || response.ok) {
-        setReport("Your report request was successfully submitted!");
-      } else {
-        setError("We received an unexpected response. Please try again.");
-      }
-
-    } catch (error: any) {
-      console.error("Submission failed:", error);
+      // ✅ Success
+      setMessage("Your submission was received successfully!");
+      setReport(
+        `Your property report request for "${address}" has been received and logged.\n\nRun ID: ${
+          data.run_id || "N/A"
+        }\nStatus: ${data.status}`
+      );
+    } catch (err: any) {
+      console.error("Error generating report:", err);
       setError("Server error. Please try again later.");
     } finally {
       setLoading(false);
@@ -62,12 +67,7 @@ export default function FreeReportGenerator() {
   const handleDownloadPDF = () => {
     if (!report) return;
 
-    const pdf = new jsPDF({
-      orientation: "p",
-      unit: "pt",
-      format: "a4",
-    });
-
+    const pdf = new jsPDF({ orientation: "p", unit: "pt", format: "a4" });
     const margin = 40;
     const maxWidth = pdf.internal.pageSize.getWidth() - margin * 2;
 
@@ -90,11 +90,13 @@ export default function FreeReportGenerator() {
       <h1 className="text-4xl font-bold text-gray-900 mb-4 text-center">
         Free Property Data Report
       </h1>
+
       <p className="text-gray-600 max-w-2xl text-center mb-8">
         Generate AI-powered insights instantly. Enter a property address to
         receive your free analysis.
       </p>
 
+      {/* --- Address Input --- */}
       <div className="w-full max-w-md space-y-4">
         <input
           type="text"
@@ -111,13 +113,20 @@ export default function FreeReportGenerator() {
         </div>
       </div>
 
-      {/* --- Display Results --- */}
+      {/* --- Status Messages --- */}
       {error && (
         <div className="mt-6 text-red-600 font-medium text-center">
           {error}
         </div>
       )}
 
+      {message && (
+        <div className="mt-6 text-green-600 font-medium text-center">
+          {message}
+        </div>
+      )}
+
+      {/* --- Report Section --- */}
       {report && (
         <div className="mt-10 w-full max-w-2xl bg-white p-6 rounded-xl shadow-md border border-gray-200">
           <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
