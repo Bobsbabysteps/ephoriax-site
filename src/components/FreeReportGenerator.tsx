@@ -48,7 +48,7 @@ export default function FreeReportGenerator() {
         setMessage(data?.message || "Your submission was received successfully!");
         setReport(
           `Your property report request for "${address}" was received.\n\n` +
-          `Run ID: ${data.run_id || "N/A"}\n` +
+          `Run ID: ${data.run_id?.replace(/[{}$]/g, "") || "N/A"}\n` +
           `Status: ${data.status}\n\nRaw:\n${text}`
         );
       } else if (!response.ok) {
