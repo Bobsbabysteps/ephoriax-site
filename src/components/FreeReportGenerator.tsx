@@ -32,25 +32,28 @@ export default function FreeReportGenerator() {
         }),
       });
 
+      // Try to parse JSON if available
+      let data = null;
+      try {
+        data = await response.json();
+      } catch {
+        // n8n might send plain text, not JSON — safely ignore
+      }
+
       if (!response.ok) {
-        throw new Error(`Server responded with ${response.status}`);
+        throw new Error(data?.message || `Server responded with ${response.status}`);
       }
 
-      const data = await response.json();
-      console.log("✅ Webhook Response:", data);
-
-      if (data.status === "ok" || data.message?.includes("success")) {
-        setReport(
-          data.report ||
-            JSON.stringify(data, null, 2) ||
-            "Report received, but no text was provided."
-        );
+      // ✅ Handle successful submission
+      if (data?.status === "ok" || response.ok) {
+        setReport("Your report request was successfully submitted!");
       } else {
-        throw new Error(data.message || "Report generation failed.");
+        setError("We received an unexpected response. Please try again.");
       }
-    } catch (err: any) {
-      console.error("❌ Webhook error:", err);
-      setError(err.message || "Something went wrong. Please try again.");
+
+    } catch (error: any) {
+      console.error("Submission failed:", error);
+      setError("Server error. Please try again later.");
     } finally {
       setLoading(false);
     }
