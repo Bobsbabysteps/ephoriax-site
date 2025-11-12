@@ -44,17 +44,15 @@ export default function FreeReportGenerator() {
         console.warn("Could not parse JSON, raw text:", text);
       }
 
-      if (!response.ok) {
-        throw new Error(data?.message || `Server responded with ${response.status}`);
-      }
-
       if (data?.status === "ok") {
-        setMessage("Your submission was received successfully!");
+        setMessage(data?.message || "Your submission was received successfully!");
         setReport(
           `Your property report request for "${address}" was received.\n\n` +
-            `Run ID: ${data.run_id || "N/A"}\n` +
-            `Status: ${data.status}\n\nRaw:\n${text}`
+          `Run ID: ${data.run_id || "N/A"}\n` +
+          `Status: ${data.status}\n\nRaw:\n${text}`
         );
+      } else if (!response.ok) {
+        throw new Error(data?.message || `Server responded with ${response.status}`);
       } else {
         throw new Error(`Unexpected response: ${text}`);
       }
