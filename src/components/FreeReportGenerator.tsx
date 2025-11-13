@@ -37,11 +37,16 @@ export default function FreeReportGenerator() {
       const result = await response.json();
       console.log("Response from n8n:", result);
 
-      if (result.success && result.report) {
-        setReport(result.report);
+      if (result.status === "ok") {
+        const property = result.property;
+        setReport({
+          address: property.address,
+          yearBuilt: property.yearBuilt,
+          propType: property.propType,
+          sizeSqft: property.sizeSqft,
+        });
       } else {
-        console.warn("Unexpected response shape:", result);
-        setError("Unexpected server response format.");
+        setError("No property data found.");
       }
     } catch (err: any) {
       console.error("Error generating report:", err);
@@ -73,9 +78,8 @@ export default function FreeReportGenerator() {
           <button
             type="submit"
             disabled={isLoading}
-            className={`px-6 py-3 rounded-lg font-semibold text-white transition-all duration-200 ${
-              isLoading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
-            }`}
+            className={`px-6 py-3 rounded-lg font-semibold text-white transition-all duration-200 ${isLoading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+              }`}
           >
             {isLoading ? "Generating..." : "Generate Report"}
           </button>
