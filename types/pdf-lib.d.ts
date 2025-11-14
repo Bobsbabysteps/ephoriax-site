@@ -1,0 +1,1 @@
+declare declare module "pdf-lib";

@@ -5,7 +5,7 @@
 // ============================================================================
 
 import { Link } from "react-router-dom";
-import Button from "../components/Button"; // ✅ New unified button import
+import Button from "../components/Button.js"; 
 import { useLocation } from "react-router-dom";
 // ===== Types ================================================================
 type CardProps = {

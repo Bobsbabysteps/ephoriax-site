@@ -21,7 +21,7 @@
   },
   "include": [
     "api"
-  ],
+, "types"  ],
   "exclude": [
     "node_modules",
     "dist"

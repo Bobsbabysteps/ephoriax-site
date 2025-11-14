@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
-import FreeReportGenerator from "../components/FreeReportGenerator";
-
+import FreeReportGenerator from "../components/FreeReportGenerator.js";
 export default function PDF() {
   const [scrolled, setScrolled] = useState(false);
-
 
   // Detect scroll to toggle shadow
   useEffect(() => {

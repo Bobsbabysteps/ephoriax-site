@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
-import EphoriaXHome from "./pages/EphoriaXHome";
-import PDF from "./pages/PDF";
-import ThankYou from "./pages/ThankYou";
+import EphoriaXHome from "./pages/EphoriaXHome.js";
+import PDF from "./pages/PDF.js";
+import ThankYou from "./pages/ThankYou.js";
 
 export default function App() {
   return (
