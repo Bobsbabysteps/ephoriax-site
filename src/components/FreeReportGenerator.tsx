@@ -99,22 +99,30 @@ export default function FreeReportGenerator() {
       {error && <p className="text-red-600 text-center mt-3">{error}</p>}
 
       {report && (
-        <div className="mt-6 p-4 border rounded-xl bg-gray-50">
+        <div className="mt-6 p-4 border rounded-xl bg-gray-50 shadow-sm">
           <h3 className="font-semibold text-lg mb-2">{report.address}</h3>
-          <p><strong>Property Type:</strong> {report.propertyType}</p>
+          <p>
+            <strong>Property Type:</strong> {report.propertyType}
+          </p>
+
+          {/* Handle new AI summary */}
+          {report.summary && (
+            <div className="mt-3 text-gray-700 whitespace-pre-line">
+              <strong>Summary:</strong>
+              <p className="mt-2">
+                {report.summary.replace(/```json|```/g, "").trim()}
+              </p>
+            </div>
+          )}
+
+          {/* Keep legacy structured format (optional fallback) */}
           {report.details && (
             <>
               <p><strong>Year Built:</strong> {report.details.yearBuilt}</p>
               <p><strong>Lot Size:</strong> {report.details.lotSize}</p>
               <p><strong>Zoning:</strong> {report.details.zoning}</p>
+              <p className="mt-2">{report.details.description}</p>
             </>
-          )}
-          <p className="mt-2">{report.details?.description}</p>
-
-          {restored && (
-            <p className="text-xs text-gray-500 mt-3 text-center">
-              🔁 Restored from your last session
-            </p>
           )}
         </div>
       )}
