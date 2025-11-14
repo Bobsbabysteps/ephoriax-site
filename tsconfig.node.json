@@ -1,21 +1,29 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "moduleResolution": "node16",
+    "resolveJsonModule": true,
     "composite": true,
     "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "module": "Node16",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": [
+        "src/*"
+      ]
     },
     "noEmit": true,
     "allowJs": true
   },
-  "include": ["api"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "api"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

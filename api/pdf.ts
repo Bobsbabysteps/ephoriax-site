@@ -1,12 +1,12 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import OpenAI from "openai";
-import { PROPERTY_DATA_FINDER_INSTRUCTIONS } from "./gptInstructions";
+import { PROPERTY_DATA_FINDER_INSTRUCTIONS } from "./gptInstructions.js"; // 👈 Added .js extension
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
 });
 
-// Simple helper: detect property type from address keywords
+// Helper: detect property type from address
 function detectPropertyType(address: string): "Residential" | "Commercial" {
   const residentialIndicators = [
     "st", "street", "ave", "avenue", "rd", "road", "ln", "lane", "dr", "drive",
@@ -28,14 +28,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return;
     }
 
-    // Determine property type locally
     const propertyType = detectPropertyType(address);
 
-    // Ask OpenAI to generate property insights
-    const prompt = PROPERTY_DATA_FINDER_INSTRUCTIONS.replace(
-      "{address}",
-      address
-    ).replace("{type}", propertyType);
+    const prompt = PROPERTY_DATA_FINDER_INSTRUCTIONS
+      .replace("{address}", address)
+      .replace("{type}", propertyType);
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
@@ -51,7 +48,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       summary: data,
     });
   } catch (error: any) {
-    console.error("Error generating PDF:", error);
+    console.error("Error generating property report:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
