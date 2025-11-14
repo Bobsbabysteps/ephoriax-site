@@ -1,75 +1,93 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "./Button";
 
 export default function FreeReportGenerator() {
   const [address, setAddress] = useState("");
   const [report, setReport] = useState<any>(null);
-  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const generateReport = async () => {
+  // 🧠 Load last report from localStorage on mount
+  useEffect(() => {
+    const savedReport = localStorage.getItem("lastReport");
+    if (savedReport) {
+      try {
+        const parsed = JSON.parse(savedReport);
+        setReport(parsed);
+        setAddress(parsed.address || "");
+      } catch {
+        console.warn("⚠️ Failed to parse saved report");
+      }
+    }
+  }, []);
+
+  // 💾 Save report to localStorage whenever it changes
+  useEffect(() => {
+    if (report) {
+      localStorage.setItem("lastReport", JSON.stringify(report));
+    }
+  }, [report]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!address.trim()) {
       setError("Please enter a property address.");
       return;
     }
 
     setLoading(true);
-    setError(null);
-    setReport(null);
+    setError("");
 
     try {
-      const response = await fetch(`/api/pdf?address=${encodeURIComponent(address)}`);
-      const data = await response.json();
-
-      if (data.error) {
-        throw new Error(data.error);
-      }
-
+      const res = await fetch(`/api/pdf?address=${encodeURIComponent(address)}`);
+      if (!res.ok) throw new Error(`Server responded ${res.status}`);
+      const data = await res.json();
       setReport(data);
     } catch (err: any) {
-      console.error("Error fetching report:", err);
-      setError("Server error: Unable to generate report. Please try again later.");
+      console.error("Error:", err);
+      setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="p-6 max-w-lg mx-auto bg-white rounded-2xl shadow-md text-center">
-      <h1 className="text-2xl font-bold mb-2">Free Property Data Report</h1>
-      <p className="text-gray-500 mb-6">
-        Generate AI-powered insights instantly. Enter a property address to receive your free analysis.
+    <div className="max-w-lg mx-auto p-6 bg-white shadow-xl rounded-2xl">
+      <h2 className="text-center text-2xl font-bold mb-2">
+        Free Property Data Report
+      </h2>
+      <p className="text-center text-gray-600 mb-4">
+        Generate AI-powered insights instantly. Enter a property address to
+        receive your free analysis.
       </p>
 
-      <input
-        type="text"
-        value={address}
-        onChange={(e) => setAddress(e.target.value)}
-        placeholder="1240 W Robinhood Dr, Stockton CA"
-        className="w-full border border-gray-300 rounded-lg px-4 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-      <Button onClick={generateReport} disabled={loading} className="w-full py-2 text-lg">
-        {loading ? "Generating..." : "Generate Report"}
-      </Button>
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <input
+          type="text"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          placeholder="1240 W Robinhood Dr, Stockton CA"
+          className="w-full border rounded-lg px-4 py-2"
+        />
+        <Button type="submit" disabled={loading} className="w-full">
+          {loading ? "Generating..." : "Generate Report"}
+        </Button>
+      </form>
 
-      {error && <p className="text-red-600 mt-4">{error}</p>}
+      {error && <p className="text-red-600 text-center mt-3">{error}</p>}
 
       {report && (
-        <div className="mt-6 text-left bg-gray-50 p-4 rounded-lg border border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-700 mb-2">{report.address}</h2>
-          <p className="text-gray-600 mb-2">
-            <strong>Property Type:</strong> {report.propertyType}
-          </p>
-          <p className="text-gray-600 mb-2">
-            <strong>Year Built:</strong> {report.details.yearBuilt}
-          </p>
-          <p className="text-gray-600 mb-2">
-            <strong>Lot Size:</strong> {report.details.lotSize}
-          </p>
-          <p className="text-gray-600 mb-2">
-            <strong>Zoning:</strong> {report.details.zoning}
-          </p>
-          <p className="text-gray-700 mt-3">{report.details.description}</p>
+        <div className="mt-6 p-4 border rounded-xl bg-gray-50">
+          <h3 className="font-semibold text-lg mb-2">{report.address}</h3>
+          <p><strong>Property Type:</strong> {report.propertyType}</p>
+          {report.details && (
+            <>
+              <p><strong>Year Built:</strong> {report.details.yearBuilt}</p>
+              <p><strong>Lot Size:</strong> {report.details.lotSize}</p>
+              <p><strong>Zoning:</strong> {report.details.zoning}</p>
+            </>
+          )}
+          <p className="mt-2">{report.details?.description}</p>
         </div>
       )}
     </div>
