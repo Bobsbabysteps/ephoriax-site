@@ -6,6 +6,7 @@ export default function FreeReportGenerator() {
   const [report, setReport] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [restored, setRestored] = useState(false);
 
   // 🧠 Load last report from localStorage on mount
   useEffect(() => {
@@ -15,6 +16,7 @@ export default function FreeReportGenerator() {
         const parsed = JSON.parse(savedReport);
         setReport(parsed);
         setAddress(parsed.address || "");
+        setRestored(true);
       } catch {
         console.warn("⚠️ Failed to parse saved report");
       }
@@ -51,6 +53,15 @@ export default function FreeReportGenerator() {
     }
   };
 
+  // 🧹 Clear report + storage
+  const handleClear = () => {
+    localStorage.removeItem("lastReport");
+    setReport(null);
+    setAddress("");
+    setRestored(false);
+    setError("");
+  };
+
   return (
     <div className="max-w-lg mx-auto p-6 bg-white shadow-xl rounded-2xl">
       <h2 className="text-center text-2xl font-bold mb-2">
@@ -69,9 +80,20 @@ export default function FreeReportGenerator() {
           placeholder="1240 W Robinhood Dr, Stockton CA"
           className="w-full border rounded-lg px-4 py-2"
         />
-        <Button type="submit" disabled={loading} className="w-full">
-          {loading ? "Generating..." : "Generate Report"}
-        </Button>
+        <div className="flex gap-2">
+          <Button type="submit" disabled={loading} className="flex-1">
+            {loading ? "Generating..." : "Generate Report"}
+          </Button>
+          {report && (
+            <Button
+              type="button"
+              onClick={handleClear}
+              className="bg-gray-200 text-gray-700 hover:bg-gray-300 flex-1"
+            >
+              Clear
+            </Button>
+          )}
+        </div>
       </form>
 
       {error && <p className="text-red-600 text-center mt-3">{error}</p>}
@@ -88,6 +110,12 @@ export default function FreeReportGenerator() {
             </>
           )}
           <p className="mt-2">{report.details?.description}</p>
+
+          {restored && (
+            <p className="text-xs text-gray-500 mt-3 text-center">
+              🔁 Restored from your last session
+            </p>
+          )}
         </div>
       )}
     </div>
