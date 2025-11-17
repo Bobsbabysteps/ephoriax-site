@@ -1,45 +1,21 @@
 {
   "compilerOptions": {
-    /* === Core Environment === */
     "target": "ESNext",
     "lib": ["DOM", "ESNext"],
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-
-    /* === Strictness & Safety === */
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "noImplicitAny": true,
     "skipLibCheck": true,
-
-    /* === Paths & Types === */
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
     },
-    "typeRoots": ["./types", "./node_modules/@types"],
-
-    /* === React / JSX Support === */
-    "jsx": "react-jsx",
-
-    /* === Build Behavior === */
-    "resolveJsonModule": true,
-    "allowJs": true,
-    "esModuleInterop": true,
-    "isolatedModules": true,
-    "noEmit": true
+    "jsx": "react-jsx"
   },
-
-  /* === Project Structure === */
-  "include": [
-    "next-env.d.ts",
-    "src/**/*",
-    "api/**/*",
-    "types/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    ".next",
-    "dist"
-  ]
+  "include": ["src", "api", "vite.config.ts"],
+  "exclude": ["node_modules", "dist"]
 }
