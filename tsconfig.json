@@ -2,34 +2,38 @@
   "compilerOptions": {
     /* === Core Environment === */
     "target": "ESNext",
-    "lib": ["DOM", "ESNext"],
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-
+    "lib": [
+      "DOM",
+      "ESNext"
+    ],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
     /* === Strictness & Safety === */
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": true,
     "skipLibCheck": true,
-
     /* === Paths & Types === */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": [
+        "src/*"
+      ]
     },
-    "typeRoots": ["./types", "./node_modules/@types"],
-
+    "typeRoots": [
+      "./types",
+      "./node_modules/@types"
+    ],
     /* === React / JSX Support === */
     "jsx": "react-jsx",
-
     /* === Build Behavior === */
-    "resolveJsonModule": true,
     "allowJs": true,
-    "esModuleInterop": true,
     "isolatedModules": true,
     "noEmit": true
   },
-
   /* === Project Structure === */
   "include": [
     "next-env.d.ts",

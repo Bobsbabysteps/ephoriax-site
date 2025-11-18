@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import Button from "./Button.js";
 
 export default function FreeReportGenerator() {
@@ -64,7 +65,7 @@ export default function FreeReportGenerator() {
 
   return (
     <div className="max-w-lg mx-auto p-6 bg-white shadow-xl rounded-2xl">
-      <h2 className="text-center text-2xl font-bold mb-2">
+      <h2 className="text-center text-2xl font-bold mb-2 text-indigo-700">
         Free Property Data Report
       </h2>
       <p className="text-center text-gray-600 mb-4">
@@ -78,7 +79,7 @@ export default function FreeReportGenerator() {
           value={address}
           onChange={(e) => setAddress(e.target.value)}
           placeholder="1240 W Robinhood Dr, Stockton CA"
-          className="w-full border rounded-lg px-4 py-2"
+          className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
         />
         <div className="flex gap-2">
           <Button type="submit" disabled={loading} className="flex-1">
@@ -98,24 +99,32 @@ export default function FreeReportGenerator() {
 
       {error && <p className="text-red-600 text-center mt-3">{error}</p>}
 
+      {/* Animated Report Output */}
       {report && (
-        <div className="mt-6 p-4 border rounded-xl bg-gray-50 shadow-sm">
-          <h3 className="font-semibold text-lg mb-2">{report.address}</h3>
+        <motion.div
+          className="mt-6 p-4 border rounded-xl bg-gray-50 shadow-sm"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h3 className="font-semibold text-lg mb-2 text-indigo-700">
+            {report.address}
+          </h3>
           <p>
             <strong>Property Type:</strong> {report.propertyType}
           </p>
 
-          {/* Handle new AI summary */}
+          {/* AI Summary */}
           {report.summary && (
             <div className="mt-3 text-gray-700 whitespace-pre-line">
               <strong>Summary:</strong>
-              <p className="mt-2">
+              <p className="mt-2 leading-relaxed">
                 {report.summary.replace(/```json|```/g, "").trim()}
               </p>
             </div>
           )}
 
-          {/* Keep legacy structured format (optional fallback) */}
+          {/* Structured Fallback */}
           {report.details && (
             <>
               <p><strong>Year Built:</strong> {report.details.yearBuilt}</p>
@@ -124,7 +133,7 @@ export default function FreeReportGenerator() {
               <p className="mt-2">{report.details.description}</p>
             </>
           )}
-        </div>
+        </motion.div>
       )}
     </div>
   );
