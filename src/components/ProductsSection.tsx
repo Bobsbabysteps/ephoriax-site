@@ -1,6 +1,7 @@
 // src/components/ProductsSection.tsx
 import React from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const ProductsSection: React.FC = () => {
   const { scrollYProgress } = useScroll();
@@ -40,6 +41,7 @@ const ProductsSection: React.FC = () => {
           {
             title: "Property Data Finder (PDF)",
             text: "Locate and compare verified property data in seconds.",
+            link: "/pdf",
           },
           {
             title: "InsightHub (Coming Soon)",
@@ -49,15 +51,24 @@ const ProductsSection: React.FC = () => {
             title: "RiskLens",
             text: "Risk visualization and predictive scenario modeling.",
           },
-        ].map(({ title, text }) => (
+        ].map(({ title, text, link }) => (
           <motion.div
             key={title}
             whileHover={{ scale: 1.03 }}
             transition={{ duration: 0.3 }}
             className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-lg transition-all"
           >
-            <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
-            <p className="mt-2 text-sm text-slate-600 leading-6">{text}</p>
+            {link ? (
+              <Link to={link} className="block h-full">
+                <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
+                <p className="mt-2 text-sm text-slate-600 leading-6">{text}</p>
+              </Link>
+            ) : (
+              <>
+                <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
+                <p className="mt-2 text-sm text-slate-600 leading-6">{text}</p>
+              </>
+            )}
           </motion.div>
         ))}
       </div>
