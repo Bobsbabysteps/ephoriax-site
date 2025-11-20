@@ -1,34 +1,27 @@
+// src/components/MissionSection.tsx
 import React from "react";
 import { motion } from "framer-motion";
 
 const MissionSection: React.FC = () => {
   return (
-    <section className="w-full py-20 bg-gradient-to-b from-gray-50 to-white text-center">
-      <div className="max-w-5xl mx-auto px-6">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="text-4xl md:text-5xl font-bold mb-6 text-gray-900"
-        >
-          Our Mission
-        </motion.h2>
-
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          viewport={{ once: true }}
-          className="text-lg md:text-xl text-gray-600 leading-relaxed"
-        >
-          At EphoriaX, our mission is to empower property investors and
-          analysts with cutting-edge data insights. We believe in making
-          complex property intelligence accessible, transparent, and
-          actionable for everyone.
-        </motion.p>
+    <motion.section
+      id="mission"
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      viewport={{ once: true }}
+      className="bg-gradient-to-b from-indigo-50 to-white py-20 sm:py-24 text-center"
+    >
+      <div className="mx-auto max-w-5xl px-4 sm:px-6">
+        <h2 className="text-4xl font-bold text-slate-900 mb-6">Our Mission</h2>
+        <p className="text-lg text-slate-600 leading-relaxed">
+          At EphoriaX, our mission is to empower individuals and organizations 
+          with intelligent, data-driven tools that turn complexity into clarity. 
+          We believe in making insight accessible, transparent, and actionable 
+          for everyone.
+        </p>
       </div>
-    </section>
+    </motion.section>
   );
 };
 
