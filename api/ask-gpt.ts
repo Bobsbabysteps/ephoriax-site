@@ -1,21 +1,22 @@
-import type { VercelRequest, VercelResponse } from "@vercel/node";
+import type { NextApiRequest, NextApiResponse } from "next";
+
 export const config = {
   runtime: "nodejs",
 };
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  const { prompt } = req.body;
+
+  if (!prompt) {
+    return res.status(400).json({ error: "Missing prompt" });
+  }
+
   try {
-    if (req.method !== "POST") {
-      return res.status(405).json({ error: "Method not allowed" });
-    }
-
-    const { prompt } = req.body;
-
-    if (!prompt) {
-      return res.status(400).json({ error: "Missing prompt" });
-    }
-
-    console.log("🧠 Generating sample Property Report for:", prompt);
+    console.log("🧠 Generating Property Report for:", prompt);
 
     const response = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
@@ -23,61 +24,64 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
         "OpenAI-Project": process.env.OPENAI_PROJECT_ID ?? "",
-        "OpenAI-Beta": "assistants=v2",
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini-2024-07-18",
-        reasoning: { effort: "medium" },
-        temperature: 0.8,
-        max_output_tokens: 1200,
+        model: "gpt-4o-mini",
         input: [
           {
-            role: "system",
+            role: "user",
             content: [
               {
-                type: "input_file",
-                file_id: "file-CXew7agZen1NgJoB34e3uG",
-              },
-              {
                 type: "input_text",
-                text: `You are a professional property report generator for the EphoriaX Free Tool.
-Use the uploaded PDF instructions as a guide for structure and tone.
+                text: `
+You are a professional property research assistant that uses the **OpenAI Property Data Finder tool** to locate, cross-reference, and summarize accurate, publicly available data for any U.S. property address.
 
-Generate a realistic, fact-based *sample* Property Data Finder Report for the address: ${prompt}.
-You may infer reasonable property characteristics (year built, materials, lot size, etc.)
-based on regional building trends and typical local styles.
+Your process:
+1. Search major public real estate databases such as Zillow, Redfin, Realtor.com, Trulia, County Assessor records, and other verified public listings.
+2. Gather details including:
+   - Year built
+   - Square footage
+   - Lot size
+   - Bedrooms and bathrooms
+   - Exterior type and materials
+   - Amenities (pool, solar, garage, etc.)
+   - Last sale price and market trends
+3. Summarize this data in clear, client-ready language.
 
-Always include these sections:
-1. Property Overview
-2. Building Details
-3. Notable Features
-4. Risk / Hazard Observations
-5. Emergency Services Proximity
-6. Disclaimer
+When ready, generate an AI-written report with these sections:
+- **Overview**
+- **Building Details**
+- **Key Features**
+- **Market Insights**
+- **Conclusion**
 
-Under the “Disclaimer” section, add this line:
-“This sample report is generated using AI and regional property trends. It is for demonstration purposes only and does not reflect verified property data.”`,
+The property address for this report is:
+"${req.body.prompt}"
+
+If certain information cannot be confirmed, note it transparently (e.g. “Exact square footage not publicly listed”). Never invent facts.
+
+Always write in a clear, professional tone suitable for property clients.
+`,
               },
             ],
           },
         ],
+        temperature: 0.7,
+        max_output_tokens: 800,
       }),
     });
 
     const data = await response.json();
+    console.log("🌐 OpenAI Raw Response:", JSON.stringify(data, null, 2));
 
-    console.log("🧩 OpenAI Raw Response:", JSON.stringify(data, null, 2));
-
-    const reply =
-      data.output?.[0]?.content?.[0]?.text ||
-      data.output?.[1]?.content?.[0]?.text ||
-      "No response generated.";
-
-    return res.status(200).json({ reply });
-  } catch (error: any) {
-    console.error("❌ Error in ask-gpt API:", error);
-    return res.status(500).json({
-      error: error.message || "Error connecting to GPT service",
-    });
+    // Handle valid OpenAI output
+    if (data?.output?.[0]?.content?.[0]?.text) {
+      return res.status(200).json({ reply: data.output[0].content[0].text });
+    } else {
+      return res.status(200).json({ reply: "No response generated." });
+    }
+  } catch (error) {
+    console.error("❌ Error in GPT handler:", error);
+    return res.status(500).json({ error: "Error connecting to GPT service." });
   }
 }
