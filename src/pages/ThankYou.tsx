@@ -1,32 +1,49 @@
+// src/pages/ThankYou.tsx
+import React from "react";
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import Button from "../components/Button";
+
 export default function ThankYou() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-indigo-900 via-indigo-800 to-indigo-700 text-white text-center p-8">
-      {/* Header */}
-      <h1 className="text-4xl font-extrabold mb-4 animate-fadeIn">
-        🎉 You’re In!
-      </h1>
+    <motion.section
+      className="min-h-screen flex flex-col items-center justify-center text-center px-6 bg-gradient-to-b from-indigo-50 via-white to-indigo-100"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8 }}
+    >
+      {/* Main Message */}
+      <div className="max-w-2xl">
+        <h1 className="text-5xl font-extrabold text-indigo-900 mb-4">
+          🎉 Thanks for Reaching Out
+        </h1>
+        <p className="text-lg text-slate-700 leading-relaxed mb-6">
+          We’ve received your message and will be in touch soon.  
+          Our team reviews every inquiry personally to make sure  
+          you get the right answers — fast.
+        </p>
+        <p className="text-slate-600 mb-10">
+          Whether you’re looking for property data, planning support,  
+          or customized research, EphoriaX is here to help simplify your work.
+        </p>
 
-      {/* Subtext */}
-      <p className="text-indigo-100 max-w-lg leading-relaxed mb-8">
-        Thanks for joining the <span className="font-semibold">EphoriaX Beta Program</span> — 
-        you’re officially on the inside.  
-        <br />
-        Check your inbox for a confirmation email with important details and 
-        next steps on how to explore your tools and dashboard.
-      </p>
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row justify-center gap-4">
+          <Link to="/">
+            <Button>Back to Home</Button>
+          </Link>
+          <Link to="/pdf">
+            <Button className="bg-white text-indigo-700 border border-indigo-300 hover:bg-indigo-50">
+              Explore Property Tools
+            </Button>
+          </Link>
+        </div>
+      </div>
 
-      {/* Call-to-Action */}
-      <a
-        href="/"
-        className="bg-white text-indigo-900 font-semibold py-3 px-8 rounded-full shadow-md hover:bg-indigo-100 transition-all"
-      >
-        Return Home
-      </a>
-
-      {/* Optional Footer */}
-      <footer className="mt-12 text-sm text-indigo-200 opacity-80">
-        © {new Date().getFullYear()} EPHORIAX — All rights reserved.
-      </footer>
-    </div>
+      {/* Subtle Footer Note */}
+      <div className="mt-16 text-slate-500 text-sm">
+        <p>© {new Date().getFullYear()} EphoriaX. Empowering faster, smarter decisions.</p>
+      </div>
+    </motion.section>
   );
 }
