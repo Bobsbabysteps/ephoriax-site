@@ -7,22 +7,35 @@ const Hero: React.FC = () => {
   return (
     <motion.section
       className="relative isolate text-center text-white py-32 sm:py-40 overflow-hidden"
-      style={{
-        backgroundImage:
-          "linear-gradient(135deg, rgba(67,56,202,0.95) 0%, rgba(99,102,241,0.9) 50%, rgba(165,180,252,0.95) 100%)",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundAttachment: "fixed",
-      }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
     >
+      {/* 🎨 Animated Gradient Background */}
+      <motion.div
+        className="absolute inset-0"
+        animate={{
+          backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+        }}
+        transition={{
+          duration: 20,
+          repeat: Infinity,
+          ease: "linear",
+        }}
+        style={{
+          backgroundImage:
+            "linear-gradient(135deg, rgba(67,56,202,0.95) 0%, rgba(99,102,241,0.9) 50%, rgba(165,180,252,0.95) 100%)",
+          backgroundSize: "200% 200%",
+          backgroundAttachment: "fixed",
+        }}
+      />
+
+      {/* 🎯 Content */}
       <div className="relative mx-auto max-w-4xl px-4 sm:px-6">
         <p className="text-indigo-200 uppercase tracking-widest font-semibold mb-4">
           EphoriaX Platform
         </p>
-        <h1 className="text-5xl sm:text-6xl font-extrabold mb-6 drop-shadow-md">
+        <h1 className="text-5xl sm:text-6xl font-extrabold mb-6 drop-shadow-lg">
           Turning Complexity into Clarity
         </h1>
         <p className="text-lg text-indigo-100 mb-10 leading-relaxed">
@@ -46,7 +59,7 @@ const Hero: React.FC = () => {
         </div>
       </div>
 
-      {/* Subtle gradient overlay for depth */}
+      {/* Soft depth overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-indigo-800/10 to-indigo-900/20 pointer-events-none" />
     </motion.section>
   );
