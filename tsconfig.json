@@ -2,29 +2,48 @@
   "compilerOptions": {
     /* === Core Environment === */
     "target": "ESNext",
-    "lib": ["DOM", "ESNext"],
+    "lib": [
+      "DOM",
+      "ESNext"
+    ],
     "module": "ESNext",
-    "moduleResolution": "bundler",
-    "jsx": "react-jsx",
-
-    /* === TypeScript Behavior === */
-    "strict": true,
-    "noEmit": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "esModuleInterop": true,
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
-
-    /* === Paths & Module Aliases === */
+    "esModuleInterop": true,
+    /* === Strictness & Safety === */
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": true,
+    "skipLibCheck": true,
+    /* === Paths & Types === */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
-    }
+      "@/*": [
+        "src/*"
+      ]
+    },
+    "typeRoots": [
+      "./types",
+      "./node_modules/@types"
+    ],
+    /* === React / JSX Support === */
+    "jsx": "react-jsx",
+    /* === Build Behavior === */
+    "allowJs": true,
+    "isolatedModules": true,
+    "noEmit": true
   },
-
-  /* === Included Files === */
-  "include": ["src", "api", "vite.config.ts"],
-
-  /* === Excluded === */
-  "exclude": ["node_modules", "dist"]
+  /* === Project Structure === */
+  "include": [
+    "next-env.d.ts",
+    "src/**/*",
+    "api/**/*",
+    "types/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    "dist"
+  ]
 }

@@ -1,4 +1,5 @@
 // tailwind.config.cjs
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     "./index.html",
@@ -6,14 +7,19 @@ module.exports = {
   ],
   theme: {
     extend: {
-      keyframes: {
-        fadeIn: {
-          "0%": { opacity: "0", transform: "translateY(-10px)" },
-          "100%": { opacity: "1", transform: "translateY(0)" },
+      colors: {
+        brand: {
+          indigo: "#4338CA", // main accent
+          violet: "#6366F1", // lighter transition
+          light: "#A5B4FC",  // soft highlight
+          background: "#F8FAFC", // default background
         },
       },
-      animation: {
-        fadeIn: "fadeIn 0.6s ease-out forwards",
+      backgroundImage: {
+        "brand-gradient":
+          "linear-gradient(135deg, rgba(67,56,202,0.9) 0%, rgba(99,102,241,0.85) 50%, rgba(165,180,252,0.9) 100%)",
+        "brand-gradient-soft":
+          "linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(165,180,252,0.15) 100%)",
       },
     },
   },

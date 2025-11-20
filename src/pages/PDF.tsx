@@ -1,136 +1,190 @@
 // src/pages/PDF.tsx
+// ============================================================================
+// Property Data Finder (PDF)
+// Unified gradient styling + refined copy for EphoriaX brand consistency
+// ============================================================================
+
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import FreeReportGenerator from "../components/FreeReportGenerator";
-import BetaCTA from "../components/BetaCTA";
+import { Link } from "react-router-dom";
+import Button from "../components/Button.js";
+import FreeReportGenerator from "../components/FreeReportGenerator.js";
+import BetaCTA from "../components/BetaCTA.js";
+import { ThemeProvider } from "../context/ThemeContext.js";
+import { pdfTheme } from "../styles/theme/pdfTheme.js";
 
-// ================================================
-// Animated Feature Card Component
-// ================================================
-function Card({ title, body }: { title: string; body: string }) {
-  return (
-    <motion.div
-      className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm"
-      whileHover={{ y: -4 }}
-    >
-      <h3 className="text-xl font-semibold text-slate-900 mb-2">{title}</h3>
-      <p className="text-slate-600">{body}</p>
-    </motion.div>
-  );
-}
-
-// ================================================
-// Main PDF Page
-// ================================================
+// ============================================================================
+// MAIN PAGE COMPONENT
+// ============================================================================
 export default function PDF() {
+  // Detect scroll to toggle subtle header shadow
   const [scrolled, setScrolled] = useState(false);
-
-  // Detect scroll to toggle navbar shadow
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Smooth scroll to the FreeReportGenerator section
+  // Scroll helper for in-page navigation
   const scrollToReport = () => {
     const el = document.getElementById("report-generator");
     if (el) el.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
-    <div className="bg-gray-50 text-gray-800 min-h-screen">
-      {/* Navigation Bar */}
-      <nav
-        className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-          scrolled
-            ? "bg-white shadow-md border-b border-gray-200"
-            : "bg-white/90 border-transparent"
-        }`}
-      >
-        <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between">
-          <a
-            href="/"
-            className="text-indigo-900 font-bold text-xl tracking-tight"
-          >
-            EPHORIAX
-          </a>
-          <a
-            href="/"
-            className="text-indigo-700 hover:text-indigo-900 font-medium"
-          >
-            ← Back to Home
-          </a>
-        </div>
-      </nav>
-
-      {/* Intro Section */}
-      <motion.section
-        className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-indigo-100 flex flex-col justify-center items-center text-center pt-24 pb-16"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        <div className="max-w-3xl mx-auto px-4">
-          <h1 className="text-5xl font-bold text-slate-900 mb-4">
-            The EphoriaX Property Data Finder
-          </h1>
-          <p className="text-slate-600 text-lg mb-8">
-            Ready to experience a real time-saver? Just enter an address below
-            and see how fast real property intelligence happens.
-          </p>
-          <button
-            onClick={scrollToReport}
-            className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-medium shadow hover:bg-indigo-700 transition"
-          >
-            Generate My Free Report
-          </button>
-        </div>
-      </motion.section>
-
-      {/* Feature Cards */}
-      <section className="py-16 bg-white">
-        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 px-6">
-          <Card
-            title="Speed"
-            body="Search dozens of assessor and planning databases instantly for the property you need."
-          />
-          <Card
-            title="Accuracy"
-            body="We collect, compare, and verify property details from trusted official sources."
-          />
-          <Card
-            title="Ease of Use"
-            body="All you do is enter an address — we do the rest. No forms, no waiting, just data."
-          />
-        </div>
-      </section>
-
-      {/* Free Report Generator */}
-      <section id="report-generator" className="py-16 bg-indigo-50">
-        <div className="max-w-4xl mx-auto px-6">
-          <FreeReportGenerator />
-        </div>
-      </section>
-
-      {/* Beta Call-To-Action */}
-      <section className="py-20 bg-gradient-to-t from-indigo-100 to-white text-center">
-        <div className="max-w-3xl mx-auto px-6">
-          <BetaCTA />
-          <p className="text-slate-500 text-sm mt-8">
-            Built for inspectors, analysts, and real estate professionals who
-            rely on accurate, fast, and clear property intelligence.
-          </p>
-          <div className="mt-10">
+    <ThemeProvider theme={pdfTheme}>
+      <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+        {/* HEADER */}
+        <header
+          className={`sticky top-0 z-50 w-full backdrop-blur bg-white/80 border-b transition-shadow ${scrolled ? "shadow-sm" : ""
+            }`}
+        >
+          <div className="max-w-7xl mx-auto flex justify-between items-center py-4 px-6">
+            <Link
+              to="/"
+              className="text-lg font-bold text-indigo-700 tracking-tight"
+            >
+              Property Data Finder
+            </Link>
             <a
               href="/"
-              className="text-indigo-600 font-medium hover:underline"
+              className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1"
             >
               ← Back to Home
             </a>
           </div>
-        </div>
-      </section>
-    </div>
+        </header>
+
+        <main className="flex-grow">
+          {/* HERO SECTION */}
+          <motion.section
+            className="relative isolate text-center text-white py-24 sm:py-32"
+            style={{
+              backgroundImage:
+                "linear-gradient(135deg, rgba(67,56,202,0.9) 0%, rgba(99,102,241,0.85) 50%, rgba(165,180,252,0.9) 100%), url('/city.jpg')",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundBlendMode: "overlay",
+            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
+          >
+            <div className="relative mx-auto max-w-3xl px-4 sm:px-6">
+              <p className="text-indigo-200 uppercase tracking-wide font-semibold">
+                EphoriaX | Property Data Finder
+              </p>
+              <h1 className="mt-3 font-bold tracking-tight text-4xl sm:text-5xl md:text-6xl drop-shadow-lg">
+                Ready to Experience a Real Time-Saver?
+              </h1>
+              <p className="mt-5 text-indigo-100 text-base sm:text-lg leading-7 sm:leading-8">
+                Search dozens of websites, assessor and planning records instantly
+                by entering a single property address. Our system locates,
+                filters, and compares data from verified sources — giving you fast,
+                accurate insight in one easy step.
+              </p>
+              <div className="mt-8 flex justify-center">
+                <Button onClick={scrollToReport}>Get Started</Button>
+              </div>
+            </div>
+          </motion.section>
+
+          {/* WHY PROFESSIONALS CHOOSE PROPERTY DATA FINDER */}
+          <section className="bg-gradient-to-b from-indigo-50 to-white py-20 sm:py-24">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
+              <h2 className="text-4xl font-bold text-slate-900 mb-4">
+                Why Professionals Choose Property Data Finder
+              </h2>
+              <p className="text-slate-600 mb-12 text-lg">
+                Designed for speed, accuracy, and total clarity — PDF transforms how professionals find property data.
+              </p>
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {[
+                  {
+                    title: "Efficiency",
+                    text: "Turn hours of research into instant results. PDF searches dozens of trusted websites, assessor and planning databases at once to find exactly what you need.",
+                  },
+                  {
+                    title: "Clarity",
+                    text: "All the verified data, none of the noise. PDF delivers clear, structured answers you can trust.",
+                  },
+                  {
+                    title: "Confidence",
+                    text: "No more uncertainty — our Property Data Finder compiles, compares, and presents public data with the precision professionals rely on.",
+                  },
+                ].map(({ title, text }) => (
+                  <motion.div
+                    key={title}
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ duration: 0.3 }}
+                    className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
+                  >
+                    <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
+                    <p className="mt-2 text-sm text-slate-600 leading-6">{text}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* FREE REPORT GENERATOR */}
+          <section
+            id="report-generator"
+            className="py-20 sm:py-24 bg-gradient-to-b from-white to-indigo-50"
+          >
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">
+                Free Property Data Report
+              </h2>
+              <p className="text-slate-600 mb-10">
+                Generate a complete property profile instantly using verified
+                public data. Just enter an address to begin.
+              </p>
+              <FreeReportGenerator />
+            </div>
+          </section>
+
+          {/* PRIVATE BETA CTA */}
+          <section id="beta" className="bg-indigo-50 py-16">
+            <div className="mx-auto max-w-3xl px-4 sm:px-6 text-center">
+              <p className="text-sm font-semibold tracking-wider text-indigo-600">
+                Private Beta Enrollment
+              </p>
+              <h3 className="mt-2 text-2xl font-semibold text-slate-900">
+                Join now to lock in your access
+              </h3>
+              <p className="mt-2 text-slate-600">
+                For a short time we're seeking help to evaluate and shape the Property Data Finder. In return, you will have full access to the tool for some period of time.
+              </p>
+
+              <div className="mt-8 flex justify-center">
+                <a
+                  href="https://ephoriax.kit.com/b0ab7abf0b"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Button>Join Beta</Button>
+                </a>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        {/* FOOTER */}
+        <footer className="border-t border-slate-200 bg-white">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 flex flex-col sm:flex-row items-center justify-between">
+            <p className="text-sm text-slate-500">
+              © {new Date().getFullYear()} EphoriaX. All rights reserved.
+            </p>
+            <a
+              href="mailto:hello@ephoriax.com"
+              className="text-sm text-slate-500 hover:text-slate-700"
+            >
+              hello@ephoriax.com
+            </a>
+          </div>
+        </footer>
+      </div>
+    </ThemeProvider>
   );
 }

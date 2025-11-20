@@ -1,93 +1,138 @@
-// src/components/FreeReportGenerator.tsx
-import React, { useState } from "react";
-import { motion } from "framer-motion"; // ← Add this line
-// ================================================
-// Free Report Generator Component
-// ================================================
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import Button from "./Button.js";
+
 export default function FreeReportGenerator() {
   const [address, setAddress] = useState("");
+  const [report, setReport] = useState<any>(null);
   const [loading, setLoading] = useState(false);
-  const [report, setReport] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState("");
+  const [restored, setRestored] = useState(false);
 
-  // Simulated async report generation
-  const handleGenerateReport = async () => {
+  // 🧠 Load last report from localStorage on mount
+  useEffect(() => {
+    const savedReport = localStorage.getItem("lastReport");
+    if (savedReport) {
+      try {
+        const parsed = JSON.parse(savedReport);
+        setReport(parsed);
+        setAddress(parsed.address || "");
+        setRestored(true);
+      } catch {
+        console.warn("⚠️ Failed to parse saved report");
+      }
+    }
+  }, []);
+
+  // 💾 Save report to localStorage whenever it changes
+  useEffect(() => {
+    if (report) {
+      localStorage.setItem("lastReport", JSON.stringify(report));
+    }
+  }, [report]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!address.trim()) {
-      setError("Please enter a valid address.");
+      setError("Please enter a property address.");
       return;
     }
 
-    setError(null);
-    setReport(null);
     setLoading(true);
+    setError("");
 
     try {
-      // Simulate API latency for realism
-      await new Promise((res) => setTimeout(res, 1500));
-
-      // Simulated result data
-      const fakeData = `
-        🔍 Report Summary for ${address}
-
-        • Property located in a high-value growth area.
-        • Zoning: Residential (R-1)
-        • Assessed Value: $384,200
-        • Lot Size: 0.28 acres
-        • Built: 1987
-        • Nearby sales confirm stable property trends.
-
-        ✅ Data compiled from verified county, planning, and assessor sources.
-      `;
-
-      setReport(fakeData.trim());
-    } catch {
-      setError("Something went wrong while generating the report.");
+      const res = await fetch(`/api/pdf?address=${encodeURIComponent(address)}`);
+      if (!res.ok) throw new Error(`Server responded ${res.status}`);
+      const data = await res.json();
+      setReport(data);
+    } catch (err: any) {
+      console.error("Error:", err);
+      setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
+  // 🧹 Clear report + storage
+  const handleClear = () => {
+    localStorage.removeItem("lastReport");
+    setReport(null);
+    setAddress("");
+    setRestored(false);
+    setError("");
+  };
+
   return (
-    <div className="bg-white shadow-sm rounded-2xl border border-slate-200 p-8 max-w-2xl mx-auto text-center">
-      <h2 className="text-2xl font-semibold text-slate-900 mb-4">
-        Free Property Report Generator
+    <div className="max-w-lg mx-auto p-6 bg-white shadow-xl rounded-2xl">
+      <h2 className="text-center text-2xl font-bold mb-2 text-indigo-700">
+        Free Property Data Report
       </h2>
-      <p className="text-slate-600 mb-6">
-        Enter a property address below to instantly generate a property data
-        summary — sourced from assessor and planning databases.
+      <p className="text-center text-gray-600 mb-4">
+        Generate AI-powered insights instantly. Enter a property address to
+        receive your free analysis.
       </p>
 
-      {/* Input + Button */}
-      <div className="flex flex-col sm:flex-row gap-3 justify-center mb-6">
+      <form onSubmit={handleSubmit} className="space-y-3">
         <input
           type="text"
-          placeholder="Enter property address"
           value={address}
           onChange={(e) => setAddress(e.target.value)}
-          className="flex-1 px-4 py-3 border border-slate-300 rounded-xl text-slate-700 shadow-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+          placeholder="1240 W Robinhood Dr, Stockton CA"
+          className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
         />
-        <button
-          onClick={handleGenerateReport}
-          disabled={loading}
-          className={`px-6 py-3 rounded-xl font-medium text-white shadow transition ${loading
-              ? "bg-indigo-400 cursor-not-allowed"
-              : "bg-indigo-600 hover:bg-indigo-700"
-            }`}
-        >
-          {loading ? "Generating..." : "Generate Report"}
-        </button>
-      </div>
+        <div className="flex gap-2">
+          <Button type="submit" disabled={loading} className="flex-1">
+            {loading ? "Generating..." : "Generate Report"}
+          </Button>
+          {report && (
+            <Button
+              type="button"
+              onClick={handleClear}
+              className="bg-gray-200 text-gray-700 hover:bg-gray-300 flex-1"
+            >
+              Clear
+            </Button>
+          )}
+        </div>
+      </form>
 
-      {/* Error or Result */}
-      {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+      {error && <p className="text-red-600 text-center mt-3">{error}</p>}
+
+      {/* Animated Report Output */}
       {report && (
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          className="mt-6 p-4 border rounded-xl bg-gray-50 shadow-sm"
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="bg-slate-50 border border-slate-200 rounded-xl p-6 text-left text-sm whitespace-pre-line font-mono text-slate-700 overflow-auto"
+          transition={{ duration: 0.5 }}
         >
-          {report}
+          <h3 className="font-semibold text-lg mb-2 text-indigo-700">
+            {report.address}
+          </h3>
+          <p>
+            <strong>Property Type:</strong> {report.propertyType}
+          </p>
+
+          {/* AI Summary */}
+          {report.summary && (
+            <div className="mt-3 text-gray-700 whitespace-pre-line">
+              <strong>Summary:</strong>
+              <p className="mt-2 leading-relaxed">
+                {report.summary.replace(/```json|```/g, "").trim()}
+              </p>
+            </div>
+          )}
+
+          {/* Structured Fallback */}
+          {report.details && (
+            <>
+              <p><strong>Year Built:</strong> {report.details.yearBuilt}</p>
+              <p><strong>Lot Size:</strong> {report.details.lotSize}</p>
+              <p><strong>Zoning:</strong> {report.details.zoning}</p>
+              <p className="mt-2">{report.details.description}</p>
+            </>
+          )}
         </motion.div>
       )}
     </div>
