@@ -13,7 +13,6 @@
     "node": "20.x"
   },
   "dependencies": {
-    "@tailwindcss/typography": "^0.5.19",
     "framer-motion": "^12.23.24",
     "jspdf": "^3.0.3",
     "next": "^15.5.6",
@@ -26,6 +25,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
+    "@tailwindcss/typography": "^0.5.19",
     "@types/next": "^8.0.7",
     "@types/node": "^24.8.1",
     "@types/react": "^19.1.10",

@@ -100,28 +100,6 @@ const EphoriaXHome: React.FC = () => {
       {/* ===== ABOUT ===== */}
       <AboutSection />
 
-      {/* ===== CUSTOM TOOL CTA ===== */}
-      <section id="custom-tools" className="bg-indigo-50 py-16">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 text-center">
-          <h3 className="text-3xl font-bold text-indigo-800">
-            Custom Tool Creation
-          </h3>
-          <p className="mt-4 text-slate-600 text-lg">
-            We create custom tools to help you learn, create, solve problems and
-            build.
-          </p>
-          <div className="mt-8 flex justify-center">
-            <a
-              href="https://ephoriax.kit.com/b0ab7abf0b"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button>Let Us Know How We Can Help</Button>
-            </a>
-          </div>
-        </div>
-      </section>
-
       {/* ===== BETA CTA ===== */}
       <BetaCTA />
 

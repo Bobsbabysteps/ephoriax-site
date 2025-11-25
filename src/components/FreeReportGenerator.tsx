@@ -1,140 +1,147 @@
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import Button from "./Button.js";
+import { useState } from "react";
 
 export default function FreeReportGenerator() {
   const [address, setAddress] = useState("");
   const [report, setReport] = useState<any>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [restored, setRestored] = useState(false);
-
-  // 🧠 Load last report from localStorage on mount
-  useEffect(() => {
-    const savedReport = localStorage.getItem("lastReport");
-    if (savedReport) {
-      try {
-        const parsed = JSON.parse(savedReport);
-        setReport(parsed);
-        setAddress(parsed.address || "");
-        setRestored(true);
-      } catch {
-        console.warn("⚠️ Failed to parse saved report");
-      }
-    }
-  }, []);
-
-  // 💾 Save report to localStorage whenever it changes
-  useEffect(() => {
-    if (report) {
-      localStorage.setItem("lastReport", JSON.stringify(report));
-    }
-  }, [report]);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!address.trim()) {
-      setError("Please enter a property address.");
-      return;
-    }
-
+    setError(null);
     setLoading(true);
-    setError("");
+    setReport(null);
 
     try {
-      const res = await fetch(`/api/pdf?address=${encodeURIComponent(address)}`);
-      if (!res.ok) throw new Error(`Server responded ${res.status}`);
+      const res = await fetch(
+        "https://doble.app.n8n.cloud/webhook/property-data", // ← your webhook URL
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ address }),
+        }
+      );
+
+      if (!res.ok) throw new Error(`n8n returned ${res.status}`);
+
       const data = await res.json();
       setReport(data);
     } catch (err: any) {
-      console.error("Error:", err);
+      console.error("Error fetching report:", err);
       setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  // 🧹 Clear report + storage
-  const handleClear = () => {
-    localStorage.removeItem("lastReport");
-    setReport(null);
-    setAddress("");
-    setRestored(false);
-    setError("");
-  };
-
   return (
-    <div className="max-w-lg mx-auto p-6 bg-white shadow-xl rounded-2xl">
-      <h2 className="text-center text-2xl font-bold mb-2 text-indigo-700">
-        Free Property Data Report
-      </h2>
-      <p className="text-center text-gray-600 mb-4">
-        Generate AI-powered insights instantly. Enter a property address to
-        receive your free analysis.
-      </p>
-
-      <form onSubmit={handleSubmit} className="space-y-3">
+    <div className="report-form">
+      <form onSubmit={handleSubmit}>
         <input
           type="text"
+          placeholder="Enter property address"
           value={address}
           onChange={(e) => setAddress(e.target.value)}
-          placeholder="1240 W Robinhood Dr, Stockton CA"
-          className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+          className="border p-2 rounded w-full"
         />
-        <div className="flex gap-2">
-          <Button type="submit" disabled={loading} className="flex-1">
+        <div className="flex gap-2 mt-3">
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-blue-600 text-white px-4 py-2 rounded"
+          >
             {loading ? "Generating..." : "Generate Report"}
-          </Button>
-          {report && (
-            <Button
-              type="button"
-              onClick={handleClear}
-              className="bg-gray-200 text-gray-700 hover:bg-gray-300 flex-1"
-            >
-              Clear
-            </Button>
-          )}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setAddress("");
+              setReport(null);
+            }}
+            className="bg-gray-200 px-4 py-2 rounded"
+          >
+            Clear
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              if (report) {
+                navigator.clipboard.writeText(JSON.stringify(report, null, 2));
+              }
+            }}
+            className="bg-green-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded"
+          >
+            Copy Report
+          </button>
         </div>
       </form>
 
-      {error && <p className="text-red-600 text-center mt-3">{error}</p>}
+      {error && <p className="text-red-500 mt-2">{error}</p>}
 
-      {/* Animated Report Output */}
-      {report && (
-        <motion.div
-          className="mt-6 p-4 border rounded-xl bg-gray-50 shadow-sm"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <h3 className="font-semibold text-lg mb-2 text-indigo-700">
-            {report.address}
-          </h3>
-          <p>
-            <strong>Property Type:</strong> {report.propertyType}
-          </p>
+      {report &&
+        report.choices &&
+        report.choices[0]?.message?.content?.["Property Physical Characteristics Report"] && (
+          <div className="mt-6 p-6 bg-white rounded-2xl shadow-md text-gray-800">
+            {(() => {
+              const data =
+                report.choices[0].message.content["Property Physical Characteristics Report"];
+              return (
+                <>
+                  <h2 className="text-xl font-semibold mb-2">
+                    {data.Address}
+                  </h2>
+                  <p className="text-sm text-gray-500 mb-4">
+                    Property Type: {data["Property Type"] || "N/A"}
+                  </p>
 
-          {/* AI Summary */}
-          {report.summary && (
-            <div className="mt-3 text-gray-700 whitespace-pre-line">
-              <strong>Summary:</strong>
-              <p className="mt-2 leading-relaxed">
-                {report.summary.replace(/```json|```/g, "").trim()}
-              </p>
-            </div>
-          )}
+                  <div className="space-y-1 text-sm">
+                    <p><strong>Property Class:</strong> {data["Property Class"] || "N/A"}</p>
+                    <p><strong>Intended Use:</strong> {data["Intended Use"] || "N/A"}</p>
+                    <p><strong>Year Built:</strong> {data["Year Built"] || "N/A"}</p>
+                    <p><strong>Lot Size (acres):</strong> {data["Lot Size (acres)"] || "N/A"}</p>
+                    <p><strong>Total Building Area (sqft):</strong> {data["Total Building Area (sqft)"] || "N/A"}</p>
+                    <p><strong>Construction Type:</strong> {data["Construction Type"] || "N/A"}</p>
+                    <p><strong>Roof Type:</strong> {data.Roof?.Type || "N/A"}</p>
+                    <p><strong>Roof Condition:</strong> {data.Roof?.Condition || "N/A"}</p>
+                  </div>
 
-          {/* Structured Fallback */}
-          {report.details && (
-            <>
-              <p><strong>Year Built:</strong> {report.details.yearBuilt}</p>
-              <p><strong>Lot Size:</strong> {report.details.lotSize}</p>
-              <p><strong>Zoning:</strong> {report.details.zoning}</p>
-              <p className="mt-2">{report.details.description}</p>
-            </>
-          )}
-        </motion.div>
-      )}
+                  {Array.isArray(data["Renovation and Permit History"]) &&
+                    data["Renovation and Permit History"].length > 0 && (
+                      <div className="mt-4">
+                        <h3 className="font-semibold mb-2">Renovations & Permits</h3>
+                        <ul className="list-disc list-inside text-sm space-y-1">
+                          {data["Renovation and Permit History"].map(
+                            (permit: any, index: number) => (
+                              <li key={index}>
+                                <strong>{permit.Date}</strong> — {permit.Description}
+                                {permit.Contractor && (
+                                  <span> ({permit.Contractor})</span>
+                                )}
+                              </li>
+                            )
+                          )}
+                        </ul>
+                      </div>
+                    )}
+
+                  {Array.isArray(data["Observable Risk Factors"]) &&
+                    data["Observable Risk Factors"].length > 0 && (
+                      <div className="mt-4">
+                        <h3 className="font-semibold mb-2">Observable Risk Factors</h3>
+                        <ul className="list-disc list-inside text-sm space-y-1">
+                          {data["Observable Risk Factors"].map(
+                            (risk: string, index: number) => (
+                              <li key={index}>{risk}</li>
+                            )
+                          )}
+                        </ul>
+                      </div>
+                    )}
+                </>
+              );
+            })()}
+          </div>
+        )}
     </div>
-  );
+  )
 }

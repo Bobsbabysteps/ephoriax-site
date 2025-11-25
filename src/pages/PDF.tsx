@@ -30,6 +30,10 @@ export default function PDF() {
     const el = document.getElementById("report-generator");
     if (el) el.scrollIntoView({ behavior: "smooth" });
   };
+  // 👇 ADD THIS
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   return (
     <ThemeProvider theme={pdfTheme}>
