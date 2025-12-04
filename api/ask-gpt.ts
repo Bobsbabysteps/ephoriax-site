@@ -1,15 +1,15 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 
 export const config = {
   runtime: "nodejs",
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { prompt } = req.body;
+  const { prompt } = req.body || {};
 
   if (!prompt) {
     return res.status(400).json({ error: "Missing prompt" });
@@ -56,7 +56,7 @@ When ready, generate an AI-written report with these sections:
 - **Conclusion**
 
 The property address for this report is:
-"${req.body.prompt}"
+"${prompt}"
 
 If certain information cannot be confirmed, note it transparently (e.g. “Exact square footage not publicly listed”). Never invent facts.
 
@@ -74,7 +74,6 @@ Always write in a clear, professional tone suitable for property clients.
     const data = await response.json();
     console.log("🌐 OpenAI Raw Response:", JSON.stringify(data, null, 2));
 
-    // Handle valid OpenAI output
     if (data?.output?.[0]?.content?.[0]?.text) {
       return res.status(200).json({ reply: data.output[0].content[0].text });
     } else {

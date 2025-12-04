@@ -38,3 +38,4 @@ pnpm-debug.log*
 *.bak
 .DS_Store
 .vercel
+.env*.local

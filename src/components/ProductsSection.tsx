@@ -31,7 +31,7 @@ const ProductsSection: React.FC = () => {
           viewport={{ once: true }}
           className="mt-4 text-slate-600 text-lg"
         >
-          From property intelligence to decision-making insights, our products 
+          From property intelligence to decision-making insights, our products
           simplify how professionals and individuals connect with data.
         </motion.p>
       </div>
@@ -42,6 +42,11 @@ const ProductsSection: React.FC = () => {
             title: "Property Data Finder (PDF)",
             text: "Locate and compare verified property data in seconds.",
             link: "/pdf",
+          },
+          {
+            title: "ViaLumina",
+            text: "Your Scripture companion for clarity, context, and spiritual growth — built for anyone seeking Jesus Christ.",
+            link: "/tools/vialumina",
           },
           {
             title: "InsightHub (Coming Soon)",
