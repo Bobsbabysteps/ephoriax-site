@@ -32,9 +32,8 @@ export default function ViaLumina() {
       <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
         {/* HEADER */}
         <header
-          className={`sticky top-0 z-50 w-full backdrop-blur bg-white/80 dark:bg-slate-900/80 border-b transition-shadow ${
-            scrolled ? "shadow-sm" : ""
-          }`}
+          className={`sticky top-0 z-50 w-full backdrop-blur bg-white/80 dark:bg-slate-900/80 border-b transition-shadow ${scrolled ? "shadow-sm" : ""
+            }`}
         >
           <div className="max-w-7xl mx-auto flex justify-between items-center py-4 px-6">
             <Link
@@ -84,7 +83,13 @@ export default function ViaLumina() {
                 heart for His truth.
               </p>
               <div className="mt-8 flex justify-center">
-                <Button>Begin Your Exploration</Button>
+                <a
+                  href="https://ephoriax.kit.com/b0ab7abf0b"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Button>Begin Your Exploration</Button>
+                </a>
               </div>
             </div>
           </motion.section>

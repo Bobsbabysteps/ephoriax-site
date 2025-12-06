@@ -18,24 +18,18 @@ export default function ThankYou() {
           🎉 Thanks for Reaching Out
         </h1>
         <p className="text-lg text-slate-700 leading-relaxed mb-6">
-          We’ve received your message and will be in touch soon.  
-          Our team reviews every inquiry personally to make sure  
+          We’ve received your message and will be in touch soon.
+          Our team reviews every inquiry personally to make sure
           you get the right answers — fast.
         </p>
         <p className="text-slate-600 mb-10">
-          Whether you’re looking for property data, planning support,  
-          or customized research, EphoriaX is here to help simplify your work.
+          Whatever your next step, EphoriaX is here to help you move forward with clarity and purpose.
         </p>
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row justify-center gap-4">
           <Link to="/">
             <Button>Back to Home</Button>
-          </Link>
-          <Link to="/pdf">
-            <Button className="bg-white text-indigo-700 border border-indigo-300 hover:bg-indigo-50">
-              Explore Property Tools
-            </Button>
           </Link>
         </div>
       </div>
