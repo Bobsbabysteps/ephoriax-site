@@ -9,15 +9,11 @@ import ThankYou from "./pages/ThankYou";
 import ViaLumina from "./pages/tools/vialumina/ViaLumina";
 
 export default function App() {
-  // 🔗 Backend connection check
   useEffect(() => {
-    const API = import.meta.env.VITE_API_BASE_URL;
-    console.log("Connecting to backend:", API);
-
-    fetch(`${API}/health`)
+    fetch("/api/health")
       .then((res) => res.json())
-      .then((data) => console.log("Backend response:", data))
-      .catch((err) => console.error("Error connecting to backend:", err));
+      .then((data) => console.log("Backend connected:", data))
+      .catch((err) => console.error("Backend connection error:", err));
   }, []);
 
   return (
