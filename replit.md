@@ -24,5 +24,12 @@ This is the EphoriaX platform website - a React + TypeScript + Vite application 
 ## Development
 The development server runs on port 5000 using Vite.
 
+## Testing
+- **Framework**: Vitest with React Testing Library
+- **Run tests**: `npm test`
+- **Watch mode**: `npm run test:watch`
+- **Coverage report**: `npm run test:coverage`
+- **Test files**: Located alongside components with `.test.tsx` extension
+
 ## Deployment
 Configured as a static deployment with `npm run build` outputting to `dist/` directory.
