@@ -29,7 +29,10 @@ The development server runs on port 5000 using Vite.
 - **Run tests**: `npm test`
 - **Watch mode**: `npm run test:watch`
 - **Coverage report**: `npm run test:coverage`
-- **Test files**: Located alongside components with `.test.tsx` extension
+- **Test locations**:
+  - Frontend: `src/components/*.test.tsx`
+  - API: `api/*.test.ts` and `api/**/*.test.ts`
+- **Test utilities**: `api/test/utils.ts` for mocking Vercel request/response
 
 ## Deployment
 Configured as a static deployment with `npm run build` outputting to `dist/` directory.
