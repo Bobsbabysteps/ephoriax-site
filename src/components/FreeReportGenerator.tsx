@@ -18,62 +18,39 @@ interface PropertyData {
         postalCode: string;
         country: string;
       };
-      propertyType: string;
-      lotSizeAcres: number;
-      parcelNumber: string;
+      propertyType?: string;
+      propertySubType?: string;
+      propertyClass?: string;
+      lotSizeAcres?: number;
+      parcelNumber?: string;
+      apn?: string;
       landUse?: string;
-      yearBuilt: number;
+      yearBuilt?: number;
+      latitude?: number;
+      longitude?: number;
     };
     building?: {
-      primaryStructure?: {
-        type?: string;
-        sizeSqFt?: number;
-        yearBuilt?: number;
-      };
-      primaryResidence?: {
-        sizeSqFt?: number;
-        yearBuilt?: number;
-      };
-      mainStructure?: {
-        type?: string;
-        grossAreaSqFt?: number;
-        yearBuilt?: number;
-        bedrooms?: number;
-        bathrooms?: number;
-        garage?: boolean;
-        attic?: boolean;
-      };
-      structures?: Array<{
-        type?: string;
-        areaSqFt?: number;
-        sizeSqFt?: number;
-        yearBuilt?: number;
-      }>;
+      primaryStructure?: { type?: string; sizeSqFt?: number; yearBuilt?: number; };
+      primaryResidence?: { sizeSqFt?: number; yearBuilt?: number; };
+      mainResidence?: { sizeSqFt?: number; yearBuilt?: number; permitNumber?: string; };
+      mainStructure?: { type?: string; grossAreaSqFt?: number; yearBuilt?: number; bedrooms?: number; bathrooms?: number; garage?: boolean; attic?: boolean; };
+      structures?: Array<{ type?: string; areaSqFt?: number; sizeSqFt?: number; yearBuilt?: number; }>;
+      additionalStructures?: Array<{ type?: string; sizeSqFt?: number; yearBuilt?: number; permitNumber?: string; }>;
       totalBuildingAreaSqFt?: number;
       yearBuilt?: number;
-      secondaryStructures?: Array<{
-        type?: string;
-        sizeSqFt?: number;
-        yearBuilt?: number;
-      }>;
-      outbuildings?: Array<{
-        type?: string;
-        sizeSqFt?: number;
-        yearBuilt?: number;
-      }>;
-      otherStructures?: Array<{
-        type?: string;
-        areaSqFt?: number;
-        yearBuilt?: number;
-      }>;
+      secondaryStructures?: Array<{ type?: string; sizeSqFt?: number; yearBuilt?: number; }>;
+      outbuildings?: Array<{ type?: string; sizeSqFt?: number; yearBuilt?: number; }>;
+      otherStructures?: Array<{ type?: string; areaSqFt?: number; yearBuilt?: number; }>;
     };
     construction?: {
       buildingSizeSqFt?: number;
       yearBuilt?: number;
       mainDwellingConstructionYear?: number;
+      mainResidenceYearBuilt?: number;
       agExemptBuildingConstructionYear?: number;
       isoConstructionClass?: string | null;
       roofType?: string | null;
+      permits?: any[];
       buildingPermits?: any[];
       permitHistory?: any[];
       additions?: any[];
@@ -85,7 +62,7 @@ interface PropertyData {
       attic?: boolean;
     };
     systems?: {
-      hvac?: boolean | string | { present?: boolean; details?: string };
+      hvac?: boolean | string | { present?: boolean; updated?: boolean; details?: string; notes?: string };
       solar?: Array<{
         systemSizeKw?: number;
         sizeKw?: number;
@@ -197,22 +174,32 @@ export default function FreeReportGenerator() {
   const summary = report?.[0]?.summary;
   const systems = prop?.systems;
 
-  const yearBuilt = prop?.building?.yearBuilt || prop?.building?.mainStructure?.yearBuilt || prop?.overview?.yearBuilt || prop?.construction?.yearBuilt || prop?.construction?.mainDwellingConstructionYear;
+  const yearBuilt = prop?.building?.yearBuilt || prop?.building?.mainResidence?.yearBuilt || prop?.building?.mainStructure?.yearBuilt || prop?.overview?.yearBuilt || prop?.construction?.yearBuilt || prop?.construction?.mainDwellingConstructionYear || prop?.construction?.mainResidenceYearBuilt;
   const buildingAge = yearBuilt ? new Date().getFullYear() - yearBuilt : null;
-  const buildingSize = prop?.building?.totalBuildingAreaSqFt || prop?.building?.mainStructure?.grossAreaSqFt || prop?.building?.primaryResidence?.sizeSqFt || prop?.building?.primaryStructure?.sizeSqFt || prop?.construction?.buildingSizeSqFt || 
+  const buildingSize = prop?.building?.mainResidence?.sizeSqFt || prop?.building?.totalBuildingAreaSqFt || prop?.building?.mainStructure?.grossAreaSqFt || prop?.building?.primaryResidence?.sizeSqFt || prop?.building?.primaryStructure?.sizeSqFt || prop?.construction?.buildingSizeSqFt || 
     (prop?.building?.structures?.find((s: any) => s.type === 'Main Dwelling')?.areaSqFt);
   
-  const mainStructure = prop?.building?.structures?.find((s: any) => s.type === 'Main Dwelling' || s.type?.includes('Residence'));
-  const outbuildings = prop?.building?.otherStructures || prop?.building?.outbuildings || prop?.building?.secondaryStructures || 
+  const parcelNumber = prop?.overview?.parcelNumber || prop?.overview?.apn;
+  const landUse = prop?.overview?.landUse || prop?.overview?.propertySubType;
+  
+  const mainStructure = prop?.building?.mainResidence || prop?.building?.structures?.find((s: any) => s.type === 'Main Dwelling' || s.type?.includes('Residence'));
+  const outbuildings = prop?.building?.additionalStructures || prop?.building?.otherStructures || prop?.building?.outbuildings || prop?.building?.secondaryStructures || 
     prop?.building?.structures?.filter((s: any) => s.type !== 'Main Dwelling' && !s.type?.includes('Residence')) || [];
   
   const bedrooms = prop?.building?.mainStructure?.bedrooms || prop?.interior?.bedrooms;
   const bathrooms = prop?.building?.mainStructure?.bathrooms || prop?.interior?.totalBathrooms || prop?.interior?.bathrooms;
-  const buildingPermits = prop?.construction?.buildingPermits || prop?.construction?.permitHistory || prop?.permits || [];
+  const buildingPermits = prop?.construction?.permits || prop?.construction?.buildingPermits || prop?.construction?.permitHistory || prop?.permits || [];
   
   const solarSystems = Array.isArray(systems?.solar) ? systems.solar : 
     (systems?.electrical as any)?.solarSystems || 
     (systems?.solar as any)?.systems || [];
+  
+  const hvacStatus = systems?.hvac !== undefined ? (
+    typeof systems.hvac === 'boolean' ? (systems.hvac ? "Present" : "Not present") :
+    typeof systems.hvac === 'string' ? (systems.hvac.toLowerCase() === 'present' ? "Present" : systems.hvac) :
+    (systems.hvac?.updated ? "Present" : systems.hvac?.present ? "Present" : "Not present")
+  ) : null;
+  const hvacNotes = typeof systems?.hvac === 'object' ? (systems.hvac?.notes || systems.hvac?.details) : null;
 
   return (
     <div className="report-form max-w-4xl mx-auto">
@@ -309,13 +296,13 @@ export default function FreeReportGenerator() {
               <div className="bg-slate-50 rounded-lg p-3">
                 <p className="text-xs text-slate-500 mb-1">Parcel Number</p>
                 <p className="font-semibold text-slate-800 text-sm">
-                  {prop.overview?.parcelNumber || "N/A"}
+                  {parcelNumber || "N/A"}
                 </p>
               </div>
               <div className="bg-slate-50 rounded-lg p-3">
                 <p className="text-xs text-slate-500 mb-1">Land Use</p>
                 <p className="font-semibold text-slate-800 text-sm">
-                  {prop.overview?.landUse || "N/A"}
+                  {landUse || "N/A"}
                 </p>
               </div>
             </div>
@@ -352,16 +339,12 @@ export default function FreeReportGenerator() {
                 <h3 className="text-lg font-bold text-slate-900">Property Systems</h3>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {systems.hvac !== undefined && (
+                {hvacStatus && (
                   <div className="bg-slate-50 rounded-lg p-3">
                     <p className="text-sm font-semibold text-slate-700">HVAC</p>
-                    <p className="text-sm text-slate-600">
-                      {typeof systems.hvac === 'boolean' ? (systems.hvac ? "Present" : "Not present") : 
-                       typeof systems.hvac === 'string' ? (systems.hvac.toLowerCase() === 'present' ? "Present" : systems.hvac) : 
-                       (systems.hvac?.present ? "Present" : "Not present")}
-                    </p>
-                    {typeof systems.hvac === 'object' && systems.hvac?.details && (
-                      <p className="text-xs text-slate-500 mt-1">{systems.hvac.details}</p>
+                    <p className="text-sm text-slate-600">{hvacStatus}</p>
+                    {hvacNotes && (
+                      <p className="text-xs text-slate-500 mt-1">{hvacNotes}</p>
                     )}
                   </div>
                 )}
