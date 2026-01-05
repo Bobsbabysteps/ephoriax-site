@@ -1,49 +1,106 @@
 import { useState } from "react";
-import { Home, AlertTriangle, FileText, Flame, Building2 } from "lucide-react";
+import { Home, AlertTriangle, FileText, Flame, Building2, Zap, Droplets, Sun } from "lucide-react";
 
 interface PropertyData {
   version: string;
   generatedAt: string;
   property: {
     address: string;
+    coordinates?: {
+      lat: number;
+      lng: number;
+    };
     overview: {
+      address?: {
+        line1: string;
+        city: string;
+        state: string;
+        postalCode: string;
+        country: string;
+      };
       propertyType: string;
       lotSizeAcres: number;
       parcelNumber: string;
+      landUse?: string;
       yearBuilt: number;
     };
     building: {
-      buildingSizeSqFt: number;
-      structures: Array<{
+      primaryStructure?: {
+        type: string;
+        sizeSqFt: number;
+        yearBuilt: number;
+      };
+      secondaryStructures?: Array<{
         type: string;
         sizeSqFt: number;
         yearBuilt: number;
       }>;
-      lastMajorRenovationYear: number;
     };
     construction: {
+      buildingSizeSqFt: number;
+      yearBuilt: number;
       isoConstructionClass: string | null;
+      roofType?: string | null;
     };
     interior: {
       bedrooms: number;
-      bathrooms: number;
+      totalBathrooms: number;
+    };
+    systems?: {
+      hvac?: { present: boolean; details?: string };
+      solar?: {
+        present: boolean;
+        systems?: Array<{ capacityKw: number; panels: number; installYear: number }>;
+      };
+      electrical?: { recentUpgrades: boolean; notes?: string };
+      plumbing?: { recentUpgrades: boolean; notes?: string };
+      mechanical?: { recentUpgrades: boolean; notes?: string };
     };
     permits: any[];
+    riskAndHazards?: {
+      fireDamageHistory?: boolean;
+      fireDamageDetails?: string;
+    };
+    occupancy?: {
+      description?: string;
+    };
+    operations?: {
+      description?: string;
+    };
   };
   fireServices: {
     name: string;
     address: string;
+    coordinates?: {
+      lat: number;
+      lng: number;
+    };
     distance: {
+      km?: number;
       miles: number;
+      meters?: number;
       time: string;
+      seconds?: number;
     };
   };
   diagnostics: {
     completenessScore: number;
+    validationPassed?: boolean;
+    missingFields?: string[];
   };
   summary: {
     headline: string;
     keyHighlights: string[];
+  };
+  resources?: {
+    apiUsage?: any[];
+    totalEstimatedCostUSD?: number;
+  };
+  meta?: {
+    dataSource?: string;
+    version?: string;
+    processedAt?: string;
+    status?: string;
   };
 }
 
@@ -87,10 +144,11 @@ export default function FreeReportGenerator() {
   const fire = report?.[0]?.fireServices;
   const diag = report?.[0]?.diagnostics;
   const summary = report?.[0]?.summary;
+  const systems = prop?.systems;
 
-  const yearBuilt = prop?.overview?.yearBuilt;
+  const yearBuilt = prop?.overview?.yearBuilt || prop?.construction?.yearBuilt;
   const buildingAge = yearBuilt ? new Date().getFullYear() - yearBuilt : null;
-  const buildingSize = prop?.building?.buildingSizeSqFt;
+  const buildingSize = prop?.building?.primaryStructure?.sizeSqFt || prop?.construction?.buildingSizeSqFt;
 
   return (
     <div className="report-form max-w-4xl mx-auto">
@@ -171,7 +229,7 @@ export default function FreeReportGenerator() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mt-4 text-center">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 text-center">
               <div className="bg-slate-50 rounded-lg p-3">
                 <p className="text-xs text-slate-500 mb-1">Building Age</p>
                 <p className="font-semibold text-slate-800 text-sm">
@@ -184,16 +242,101 @@ export default function FreeReportGenerator() {
                   {diag?.completenessScore ? `${diag.completenessScore}%` : "N/A"}
                 </p>
               </div>
+              <div className="bg-slate-50 rounded-lg p-3">
+                <p className="text-xs text-slate-500 mb-1">Parcel Number</p>
+                <p className="font-semibold text-slate-800 text-sm">
+                  {prop.overview?.parcelNumber || "N/A"}
+                </p>
+              </div>
+              <div className="bg-slate-50 rounded-lg p-3">
+                <p className="text-xs text-slate-500 mb-1">Land Use</p>
+                <p className="font-semibold text-slate-800 text-sm">
+                  {prop.overview?.landUse || "N/A"}
+                </p>
+              </div>
             </div>
 
             {prop.interior && (
               <div className="mt-4 pt-4 border-t border-slate-100">
                 <p className="text-sm text-slate-600">
-                  <strong>Interior:</strong> {prop.interior.bedrooms} bedrooms, {prop.interior.bathrooms} bathrooms
+                  <strong>Interior:</strong> {prop.interior.bedrooms} bedrooms, {prop.interior.totalBathrooms} bathrooms
                 </p>
               </div>
             )}
+
+            {/* Secondary Structures */}
+            {prop.building?.secondaryStructures && prop.building.secondaryStructures.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-slate-100">
+                <p className="text-sm font-semibold text-slate-700 mb-2">Secondary Structures:</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  {prop.building.secondaryStructures.map((struct, i) => (
+                    <div key={i} className="bg-slate-50 rounded-lg p-2 text-sm">
+                      <p><strong>{struct.type}</strong></p>
+                      <p className="text-slate-600">{struct.sizeSqFt?.toLocaleString()} sq ft | Built {struct.yearBuilt}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
+
+          {/* Systems Card */}
+          {systems && (
+            <div className="bg-white rounded-2xl shadow-md p-6 border border-slate-100">
+              <div className="flex items-center gap-3 mb-4">
+                <Zap className="w-6 h-6 text-yellow-500" />
+                <h3 className="text-lg font-bold text-slate-900">Property Systems</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {systems.hvac && (
+                  <div className="bg-slate-50 rounded-lg p-3">
+                    <p className="text-sm font-semibold text-slate-700">HVAC</p>
+                    <p className="text-sm text-slate-600">{systems.hvac.present ? "Present" : "Not present"}</p>
+                    {systems.hvac.details && <p className="text-xs text-slate-500 mt-1">{systems.hvac.details}</p>}
+                  </div>
+                )}
+                {systems.solar?.present && (
+                  <div className="bg-slate-50 rounded-lg p-3">
+                    <div className="flex items-center gap-2">
+                      <Sun className="w-4 h-4 text-yellow-500" />
+                      <p className="text-sm font-semibold text-slate-700">Solar System</p>
+                    </div>
+                    {systems.solar.systems?.map((s, i) => (
+                      <p key={i} className="text-xs text-slate-600 mt-1">
+                        {s.capacityKw} kW ({s.panels} panels) - Installed {s.installYear}
+                      </p>
+                    ))}
+                  </div>
+                )}
+                {systems.electrical?.recentUpgrades && (
+                  <div className="bg-slate-50 rounded-lg p-3">
+                    <p className="text-sm font-semibold text-slate-700">Electrical Upgrades</p>
+                    <p className="text-xs text-slate-500 mt-1">{systems.electrical.notes}</p>
+                  </div>
+                )}
+                {systems.plumbing?.recentUpgrades && (
+                  <div className="bg-slate-50 rounded-lg p-3">
+                    <div className="flex items-center gap-2">
+                      <Droplets className="w-4 h-4 text-blue-500" />
+                      <p className="text-sm font-semibold text-slate-700">Plumbing Upgrades</p>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1">{systems.plumbing.notes}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Risk & Hazards Card */}
+          {prop.riskAndHazards?.fireDamageHistory && (
+            <div className="bg-orange-50 rounded-2xl shadow-md p-6 border border-orange-200">
+              <div className="flex items-center gap-3 mb-4">
+                <Flame className="w-6 h-6 text-orange-500" />
+                <h3 className="text-lg font-bold text-orange-900">Fire Damage History</h3>
+              </div>
+              <p className="text-sm text-orange-800">{prop.riskAndHazards.fireDamageDetails}</p>
+            </div>
+          )}
 
           {/* Fire Department Card */}
           {fire && (
@@ -202,12 +345,21 @@ export default function FreeReportGenerator() {
                 <AlertTriangle className="w-6 h-6 text-red-500" />
                 <h3 className="text-lg font-bold text-slate-900">Fire Department Information</h3>
               </div>
-              <div className="space-y-2 text-sm">
-                <p><strong>Name:</strong> {fire.name}</p>
-                <p><strong>Address:</strong> {fire.address}</p>
-                <p><strong>Distance:</strong> {fire.distance?.miles} miles</p>
-                <p><strong>Drive Time:</strong> {fire.distance?.time}</p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div className="bg-slate-50 rounded-lg p-3 col-span-2">
+                  <p className="text-xs text-slate-500 mb-1">Station Name</p>
+                  <p className="font-semibold text-slate-800 text-sm">{fire.name}</p>
+                </div>
+                <div className="bg-slate-50 rounded-lg p-3">
+                  <p className="text-xs text-slate-500 mb-1">Distance</p>
+                  <p className="font-semibold text-slate-800 text-sm">{fire.distance?.miles} miles</p>
+                </div>
+                <div className="bg-slate-50 rounded-lg p-3">
+                  <p className="text-xs text-slate-500 mb-1">Drive Time</p>
+                  <p className="font-semibold text-slate-800 text-sm">{fire.distance?.time}</p>
+                </div>
               </div>
+              <p className="text-sm text-slate-500 mt-3">{fire.address}</p>
             </div>
           )}
 
@@ -264,6 +416,25 @@ export default function FreeReportGenerator() {
                     <li key={i}>{h}</li>
                   ))}
                 </ul>
+              )}
+            </div>
+          )}
+
+          {/* Occupancy & Operations */}
+          {(prop.occupancy?.description || prop.operations?.description) && (
+            <div className="bg-white rounded-2xl shadow-md p-6 border border-slate-100">
+              <h3 className="text-lg font-bold text-slate-900 mb-4">Property Details</h3>
+              {prop.occupancy?.description && (
+                <div className="mb-3">
+                  <p className="text-sm font-semibold text-slate-700">Occupancy</p>
+                  <p className="text-sm text-slate-600">{prop.occupancy.description}</p>
+                </div>
+              )}
+              {prop.operations?.description && (
+                <div>
+                  <p className="text-sm font-semibold text-slate-700">Operations</p>
+                  <p className="text-sm text-slate-600">{prop.operations.description}</p>
+                </div>
               )}
             </div>
           )}
