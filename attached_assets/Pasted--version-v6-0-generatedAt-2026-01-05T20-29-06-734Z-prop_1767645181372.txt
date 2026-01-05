@@ -1,0 +1,191 @@
+[
+  {
+    "version": "v6.0",
+    "generatedAt": "2026-01-05T20:29:06.734Z",
+    "property": {
+      "address": "11919 Colony Rd, Galt, CA 95632, USA",
+      "coordinates": {
+        "lat": 38.32434,
+        "lng": -121.240917
+      },
+      "overview": {
+        "address": {
+          "line1": "11919 COLONY RD",
+          "city": "GALT",
+          "state": "CA",
+          "postalCode": "95632",
+          "country": "US"
+        },
+        "parcelNumber": "138-0090-112-0000",
+        "lotSizeAcres": 4.77,
+        "propertyType": "RURAL RESIDENCE",
+        "landUse": "RURAL HOMESITE",
+        "propertyClass": "Single Family Residence / Townhouse",
+        "latitude": 38.32434,
+        "longitude": -121.240917
+      },
+      "building": {
+        "mainStructure": {
+          "type": "Single Family Residence",
+          "grossAreaSqFt": 4210,
+          "yearBuilt": 2001,
+          "garage": true,
+          "bedrooms": 4,
+          "bathrooms": 4,
+          "attic": true
+        },
+        "otherStructures": [
+          {
+            "type": "Ag Exempt Building",
+            "areaSqFt": 1600,
+            "yearBuilt": 2000
+          }
+        ]
+      },
+      "construction": {
+        "yearBuilt": 2001,
+        "additions": [
+          {
+            "description": "Ag exempt building 1600sf",
+            "year": 2000,
+            "sizeSqFt": 1600
+          }
+        ],
+        "isoConstructionClass": null,
+        "buildingPermits": [
+          {
+            "permitNumber": "CBN2000-02439",
+            "date": "2000-09-11",
+            "description": "4170 S.F. New single family dwelling plans on file",
+            "status": "final"
+          },
+          {
+            "permitNumber": "CBN2000-01345",
+            "date": "2000-05-24",
+            "description": "Ag exempt building 1600sf",
+            "status": "Finaled"
+          }
+        ]
+      },
+      "interior": {
+        "bedrooms": 4,
+        "bathrooms": 4,
+        "attic": true
+      },
+      "systems": {
+        "hvac": true,
+        "solar": [
+          {
+            "systemSizeKw": 12.4,
+            "installDate": "2017-10-06",
+            "panels": 35
+          },
+          {
+            "systemSizeKw": 17.7,
+            "installDate": "2017-11-02",
+            "panels": 50
+          }
+        ],
+        "electrical": {
+          "mainServiceAmps": 150,
+          "upgrades": [
+            {
+              "date": "2017-10-06",
+              "description": "Derate 200 amp to 175 amp"
+            },
+            {
+              "date": "2017-11-02",
+              "description": "Derate breaker from 200 amp to 150 amp; change in SMUD meter socket"
+            }
+          ]
+        },
+        "plumbing": true
+      },
+      "permits": [],
+      "riskAndHazards": {
+        "fireDamageRepairs": [
+          {
+            "date": "2020-07-21",
+            "description": "Repair scope: replacing interior finishes, attic insulation, some electrical, truss repair (canceled permit)"
+          },
+          {
+            "date": "2020-11-16",
+            "description": "Repair scope: replacing interior finishes, attic insulation, some electrical, truss repair (completed permit)"
+          }
+        ],
+        "emergencyServicesProximity": null
+      },
+      "occupancy": {
+        "narrative": "The property is configured as a rural single-family residence with four bedrooms and four bathrooms. Presence of agricultural structures and solar installations is reported."
+      },
+      "operations": {
+        "narrative": "The main structure serves as a residential dwelling, supplemented by a 1600 sq ft ag exempt building. The property underwent solar upgrades in 2017 and fire damage repairs in 2020. Maintenance and electrical improvements are indicated by permits."
+      }
+    },
+    "fireServices": {
+      "name": "Herald Fire Protection District Station 88",
+      "address": "11620 Clay Station Rd, Herald, CA 95638, USA",
+      "coordinates": {
+        "lat": 38.3346655,
+        "lng": -121.1602769
+      },
+      "distance": {
+        "km": 7.13,
+        "miles": 6.6,
+        "meters": 10681,
+        "time": "9 mins",
+        "seconds": 538
+      }
+    },
+    "diagnostics": {
+      "completenessScore": 33,
+      "validationPassed": true,
+      "missingFields": []
+    },
+    "summary": {
+      "headline": "Rural property with 4 bedrooms on 4.77 acres.",
+      "keyHighlights": [
+        "Built 2001",
+        "Lot size: 4.77 acres",
+        "Fire station: Herald Fire Protection District Station 88 (6.6 mi mi)"
+      ]
+    },
+    "resources": {
+      "apiUsage": [
+        {
+          "service": "ATTOM Property API",
+          "endpoint": "propertyapi/v1.0.0",
+          "calls": 1,
+          "costPerCallUSD": 0.02,
+          "totalCostUSD": 0.02
+        },
+        {
+          "service": "Google Maps API",
+          "endpoint": "distanceMatrix",
+          "calls": 1,
+          "costPerCallUSD": 0.005,
+          "totalCostUSD": 0.005
+        },
+        {
+          "service": "OpenAI GPT",
+          "model": "gpt-4-turbo",
+          "tokensUsed": 1000,
+          "costPer1kTokensUSD": 0.01,
+          "totalCostUSD": 0.01
+        }
+      ],
+      "totalEstimatedCostUSD": 0.035,
+      "executionMetrics": {
+        "executionTimeMs": null,
+        "workflowId": "a5tqSfooNyBDKwFm",
+        "runId": "2499"
+      }
+    },
+    "meta": {
+      "dataSource": "ATTOM + EphoriaX Integration",
+      "version": "v5.5",
+      "processedAt": "2026-01-05T20:29:06.716Z",
+      "status": "ok"
+    }
+  }
+]

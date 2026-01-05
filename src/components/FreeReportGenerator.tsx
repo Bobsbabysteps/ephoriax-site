@@ -24,48 +24,79 @@ interface PropertyData {
       landUse?: string;
       yearBuilt: number;
     };
-    building: {
+    building?: {
       primaryStructure?: {
-        type: string;
-        sizeSqFt: number;
-        yearBuilt: number;
+        type?: string;
+        sizeSqFt?: number;
+        yearBuilt?: number;
       };
       primaryResidence?: {
-        sizeSqFt: number;
-        yearBuilt: number;
+        sizeSqFt?: number;
+        yearBuilt?: number;
+      };
+      mainStructure?: {
+        type?: string;
+        grossAreaSqFt?: number;
+        yearBuilt?: number;
+        bedrooms?: number;
+        bathrooms?: number;
+        garage?: boolean;
+        attic?: boolean;
       };
       secondaryStructures?: Array<{
-        type: string;
-        sizeSqFt: number;
-        yearBuilt: number;
+        type?: string;
+        sizeSqFt?: number;
+        yearBuilt?: number;
       }>;
       outbuildings?: Array<{
-        type: string;
-        sizeSqFt: number;
-        yearBuilt: number;
+        type?: string;
+        sizeSqFt?: number;
+        yearBuilt?: number;
+      }>;
+      otherStructures?: Array<{
+        type?: string;
+        areaSqFt?: number;
+        yearBuilt?: number;
       }>;
     };
-    construction: {
-      buildingSizeSqFt: number;
-      yearBuilt: number;
-      isoConstructionClass: string | null;
+    construction?: {
+      buildingSizeSqFt?: number;
+      yearBuilt?: number;
+      isoConstructionClass?: string | null;
       roofType?: string | null;
+      buildingPermits?: any[];
+      additions?: any[];
     };
-    interior: {
-      bedrooms: number;
-      totalBathrooms: number;
+    interior?: {
+      bedrooms?: number;
+      totalBathrooms?: number;
+      bathrooms?: number;
+      attic?: boolean;
     };
     systems?: {
-      hvac?: { present: boolean; details?: string };
-      solar?: {
-        present: boolean;
-        systems?: Array<{ capacityKw: number; panels: number; installYear: number }>;
+      hvac?: boolean | string | { present?: boolean; details?: string };
+      solar?: Array<{
+        systemSizeKw?: number;
+        sizeKw?: number;
+        capacityKw?: number;
+        panels?: number;
+        installDate?: string;
+        yearInstalled?: number;
+        installYear?: number;
+      }> | {
+        present?: boolean;
+        systems?: Array<{ capacityKw?: number; panels?: number; installYear?: number }>;
       };
-      electrical?: { recentUpgrades: boolean; notes?: string };
-      plumbing?: { recentUpgrades: boolean; notes?: string };
-      mechanical?: { recentUpgrades: boolean; notes?: string };
+      electrical?: boolean | string | {
+        mainServiceAmps?: number;
+        recentUpgrades?: boolean;
+        notes?: string;
+        upgrades?: Array<{ date?: string; description?: string }>;
+      };
+      plumbing?: boolean | string | { recentUpgrades?: boolean; notes?: string };
+      mechanical?: boolean | string | { recentUpgrades?: boolean; notes?: string };
     };
-    permits: any[];
+    permits?: any[];
     riskAndHazards?: {
       fireDamageHistory?: boolean;
       fireDamageDetails?: string;
@@ -155,10 +186,13 @@ export default function FreeReportGenerator() {
   const summary = report?.[0]?.summary;
   const systems = prop?.systems;
 
-  const yearBuilt = prop?.overview?.yearBuilt || prop?.construction?.yearBuilt;
+  const yearBuilt = prop?.building?.mainStructure?.yearBuilt || prop?.overview?.yearBuilt || prop?.construction?.yearBuilt;
   const buildingAge = yearBuilt ? new Date().getFullYear() - yearBuilt : null;
-  const buildingSize = prop?.building?.primaryResidence?.sizeSqFt || prop?.building?.primaryStructure?.sizeSqFt || prop?.construction?.buildingSizeSqFt;
-  const outbuildings = prop?.building?.outbuildings || prop?.building?.secondaryStructures || [];
+  const buildingSize = prop?.building?.mainStructure?.grossAreaSqFt || prop?.building?.primaryResidence?.sizeSqFt || prop?.building?.primaryStructure?.sizeSqFt || prop?.construction?.buildingSizeSqFt;
+  const outbuildings = prop?.building?.otherStructures || prop?.building?.outbuildings || prop?.building?.secondaryStructures || [];
+  const bedrooms = prop?.building?.mainStructure?.bedrooms || prop?.interior?.bedrooms;
+  const bathrooms = prop?.building?.mainStructure?.bathrooms || prop?.interior?.totalBathrooms || prop?.interior?.bathrooms;
+  const buildingPermits = prop?.construction?.buildingPermits || prop?.permits || [];
 
   return (
     <div className="report-form max-w-4xl mx-auto">
@@ -266,10 +300,10 @@ export default function FreeReportGenerator() {
               </div>
             </div>
 
-            {prop.interior && (
+            {(bedrooms || bathrooms) && (
               <div className="mt-4 pt-4 border-t border-slate-100">
                 <p className="text-sm text-slate-600">
-                  <strong>Interior:</strong> {prop.interior.bedrooms} bedrooms, {prop.interior.totalBathrooms} bathrooms
+                  <strong>Interior:</strong> {bedrooms} bedrooms, {bathrooms} bathrooms
                 </p>
               </div>
             )}
@@ -282,7 +316,7 @@ export default function FreeReportGenerator() {
                   {outbuildings.map((struct: any, i: number) => (
                     <div key={i} className="bg-slate-50 rounded-lg p-2 text-sm">
                       <p><strong>{struct.type}</strong></p>
-                      <p className="text-slate-600">{struct.sizeSqFt?.toLocaleString()} sq ft | Built {struct.yearBuilt}</p>
+                      <p className="text-slate-600">{(struct.areaSqFt || struct.sizeSqFt)?.toLocaleString()} sq ft | Built {struct.yearBuilt}</p>
                     </div>
                   ))}
                 </div>
@@ -298,13 +332,15 @@ export default function FreeReportGenerator() {
                 <h3 className="text-lg font-bold text-slate-900">Property Systems</h3>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {systems.hvac && (
+                {systems.hvac !== undefined && (
                   <div className="bg-slate-50 rounded-lg p-3">
                     <p className="text-sm font-semibold text-slate-700">HVAC</p>
                     <p className="text-sm text-slate-600">
-                      {typeof systems.hvac === 'string' ? systems.hvac : (systems.hvac.present ? "Present" : "Not present")}
+                      {typeof systems.hvac === 'boolean' ? (systems.hvac ? "Present" : "Not present") : 
+                       typeof systems.hvac === 'string' ? systems.hvac : 
+                       (systems.hvac?.present ? "Present" : "Not present")}
                     </p>
-                    {typeof systems.hvac === 'object' && systems.hvac.details && (
+                    {typeof systems.hvac === 'object' && systems.hvac?.details && (
                       <p className="text-xs text-slate-500 mt-1">{systems.hvac.details}</p>
                     )}
                   </div>
@@ -315,30 +351,46 @@ export default function FreeReportGenerator() {
                       <Sun className="w-4 h-4 text-yellow-500" />
                       <p className="text-sm font-semibold text-slate-700">Solar System</p>
                     </div>
-                    {(Array.isArray(systems.solar) ? systems.solar : systems.solar.systems || []).map((s: any, i: number) => (
-                      <p key={i} className="text-xs text-slate-600 mt-1">
-                        {s.sizeKw || s.capacityKw} kW ({s.panels} panels) - Installed {s.yearInstalled || s.installYear}
-                        {s.notes && <span className="text-slate-500"> - {s.notes}</span>}
-                      </p>
-                    ))}
+                    {(Array.isArray(systems.solar) ? systems.solar : systems.solar.systems || []).map((s: any, i: number) => {
+                      const kw = s.systemSizeKw || s.sizeKw || s.capacityKw;
+                      const installed = s.installDate ? new Date(s.installDate).getFullYear() : (s.yearInstalled || s.installYear);
+                      return (
+                        <p key={i} className="text-xs text-slate-600 mt-1">
+                          {kw} kW ({s.panels} panels) - Installed {installed}
+                          {s.notes && <span className="text-slate-500"> - {s.notes}</span>}
+                        </p>
+                      );
+                    })}
                   </div>
                 )}
                 {systems.electrical && (
                   <div className="bg-slate-50 rounded-lg p-3">
                     <p className="text-sm font-semibold text-slate-700">Electrical</p>
-                    <p className="text-xs text-slate-500 mt-1">
-                      {typeof systems.electrical === 'string' ? systems.electrical : systems.electrical.notes || (systems.electrical.recentUpgrades ? "Recent upgrades" : "")}
-                    </p>
+                    {typeof systems.electrical === 'object' && systems.electrical.mainServiceAmps && (
+                      <p className="text-xs text-slate-600 mt-1">Main Service: {systems.electrical.mainServiceAmps} amps</p>
+                    )}
+                    {typeof systems.electrical === 'object' && (systems.electrical.upgrades?.length ?? 0) > 0 && (
+                      <div className="text-xs text-slate-500 mt-1">
+                        {systems.electrical.upgrades?.map((u: any, i: number) => (
+                          <p key={i}>{u.date}: {u.description}</p>
+                        ))}
+                      </div>
+                    )}
+                    {typeof systems.electrical === 'string' && (
+                      <p className="text-xs text-slate-500 mt-1">{systems.electrical}</p>
+                    )}
                   </div>
                 )}
-                {systems.plumbing && (
+                {systems.plumbing !== undefined && (
                   <div className="bg-slate-50 rounded-lg p-3">
                     <div className="flex items-center gap-2">
                       <Droplets className="w-4 h-4 text-blue-500" />
                       <p className="text-sm font-semibold text-slate-700">Plumbing</p>
                     </div>
                     <p className="text-xs text-slate-500 mt-1">
-                      {typeof systems.plumbing === 'string' ? systems.plumbing : systems.plumbing.notes || (systems.plumbing.recentUpgrades ? "Recent upgrades" : "")}
+                      {typeof systems.plumbing === 'boolean' ? (systems.plumbing ? "Present" : "Not present") :
+                       typeof systems.plumbing === 'string' ? systems.plumbing : 
+                       systems.plumbing?.notes || (systems.plumbing?.recentUpgrades ? "Recent upgrades" : "Present")}
                     </p>
                   </div>
                 )}
@@ -346,7 +398,9 @@ export default function FreeReportGenerator() {
                   <div className="bg-slate-50 rounded-lg p-3">
                     <p className="text-sm font-semibold text-slate-700">Mechanical</p>
                     <p className="text-xs text-slate-500 mt-1">
-                      {typeof systems.mechanical === 'string' ? systems.mechanical : systems.mechanical.notes || ""}
+                      {typeof systems.mechanical === 'boolean' ? (systems.mechanical ? "Present" : "Not present") :
+                       typeof systems.mechanical === 'string' ? systems.mechanical : 
+                       (systems.mechanical as any)?.notes || "Present"}
                     </p>
                   </div>
                 )}
@@ -395,32 +449,26 @@ export default function FreeReportGenerator() {
             <div className="flex items-center gap-3 mb-4">
               <FileText className="w-6 h-6 text-emerald-600" />
               <h3 className="text-lg font-bold text-slate-900">
-                Building Permits ({prop.permits?.length || 0})
+                Building Permits ({buildingPermits.length})
               </h3>
             </div>
-            {prop.permits && prop.permits.length > 0 ? (
+            {buildingPermits.length > 0 ? (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-slate-200">
                       <th className="text-left py-2 px-2">Date</th>
                       <th className="text-left py-2 px-2">Permit #</th>
-                      <th className="text-left py-2 px-2">Type</th>
                       <th className="text-left py-2 px-2">Description</th>
-                      <th className="text-left py-2 px-2">Value ($)</th>
-                      <th className="text-left py-2 px-2">Contractor</th>
                       <th className="text-left py-2 px-2">Status</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {prop.permits.map((permit: any, i: number) => (
+                    {buildingPermits.map((permit: any, i: number) => (
                       <tr key={i} className="border-b border-slate-100">
                         <td className="py-2 px-2">{permit.date || "-"}</td>
-                        <td className="py-2 px-2">{permit.number || "-"}</td>
-                        <td className="py-2 px-2">{permit.type || "-"}</td>
+                        <td className="py-2 px-2">{permit.permitNumber || permit.number || "-"}</td>
                         <td className="py-2 px-2">{permit.description || "-"}</td>
-                        <td className="py-2 px-2">{permit.value || "-"}</td>
-                        <td className="py-2 px-2">{permit.contractor || "-"}</td>
                         <td className="py-2 px-2">{permit.status || "-"}</td>
                       </tr>
                     ))}
