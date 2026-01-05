@@ -10,17 +10,19 @@ interface PropertyData {
       propertyType: string;
       lotSizeAcres: number;
       parcelNumber: string;
+      yearBuilt: number;
     };
     building: {
-      primaryResidence: {
+      buildingSizeSqFt: number;
+      structures: Array<{
+        type: string;
         sizeSqFt: number;
         yearBuilt: number;
-      };
-      grossLivingAreaSqFt: number;
+      }>;
+      lastMajorRenovationYear: number;
     };
     construction: {
-      yearBuilt: number;
-      lastMajorRenovationYear: number;
+      isoConstructionClass: string | null;
     };
     interior: {
       bedrooms: number;
@@ -82,8 +84,9 @@ export default function FreeReportGenerator() {
   const diag = report?.[0]?.diagnostics;
   const summary = report?.[0]?.summary;
 
-  const yearBuilt = prop?.construction?.yearBuilt || prop?.building?.primaryResidence?.yearBuilt;
+  const yearBuilt = prop?.overview?.yearBuilt;
   const buildingAge = yearBuilt ? new Date().getFullYear() - yearBuilt : null;
+  const buildingSize = prop?.building?.buildingSizeSqFt;
 
   return (
     <div className="report-form max-w-4xl mx-auto">
@@ -159,7 +162,7 @@ export default function FreeReportGenerator() {
               <div className="bg-slate-50 rounded-lg p-3">
                 <p className="text-xs text-slate-500 mb-1">Building Area (ft²)</p>
                 <p className="font-semibold text-slate-800 text-sm">
-                  {prop.building?.grossLivingAreaSqFt?.toLocaleString() || "N/A"}
+                  {buildingSize?.toLocaleString() || "N/A"}
                 </p>
               </div>
             </div>
