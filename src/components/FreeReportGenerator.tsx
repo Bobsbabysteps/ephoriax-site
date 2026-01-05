@@ -43,6 +43,14 @@ interface PropertyData {
         garage?: boolean;
         attic?: boolean;
       };
+      structures?: Array<{
+        type?: string;
+        areaSqFt?: number;
+        sizeSqFt?: number;
+        yearBuilt?: number;
+      }>;
+      totalBuildingAreaSqFt?: number;
+      yearBuilt?: number;
       secondaryStructures?: Array<{
         type?: string;
         sizeSqFt?: number;
@@ -62,9 +70,12 @@ interface PropertyData {
     construction?: {
       buildingSizeSqFt?: number;
       yearBuilt?: number;
+      mainDwellingConstructionYear?: number;
+      agExemptBuildingConstructionYear?: number;
       isoConstructionClass?: string | null;
       roofType?: string | null;
       buildingPermits?: any[];
+      permitHistory?: any[];
       additions?: any[];
     };
     interior?: {
@@ -186,13 +197,22 @@ export default function FreeReportGenerator() {
   const summary = report?.[0]?.summary;
   const systems = prop?.systems;
 
-  const yearBuilt = prop?.building?.mainStructure?.yearBuilt || prop?.overview?.yearBuilt || prop?.construction?.yearBuilt;
+  const yearBuilt = prop?.building?.yearBuilt || prop?.building?.mainStructure?.yearBuilt || prop?.overview?.yearBuilt || prop?.construction?.yearBuilt || prop?.construction?.mainDwellingConstructionYear;
   const buildingAge = yearBuilt ? new Date().getFullYear() - yearBuilt : null;
-  const buildingSize = prop?.building?.mainStructure?.grossAreaSqFt || prop?.building?.primaryResidence?.sizeSqFt || prop?.building?.primaryStructure?.sizeSqFt || prop?.construction?.buildingSizeSqFt;
-  const outbuildings = prop?.building?.otherStructures || prop?.building?.outbuildings || prop?.building?.secondaryStructures || [];
+  const buildingSize = prop?.building?.totalBuildingAreaSqFt || prop?.building?.mainStructure?.grossAreaSqFt || prop?.building?.primaryResidence?.sizeSqFt || prop?.building?.primaryStructure?.sizeSqFt || prop?.construction?.buildingSizeSqFt || 
+    (prop?.building?.structures?.find((s: any) => s.type === 'Main Dwelling')?.areaSqFt);
+  
+  const mainStructure = prop?.building?.structures?.find((s: any) => s.type === 'Main Dwelling' || s.type?.includes('Residence'));
+  const outbuildings = prop?.building?.otherStructures || prop?.building?.outbuildings || prop?.building?.secondaryStructures || 
+    prop?.building?.structures?.filter((s: any) => s.type !== 'Main Dwelling' && !s.type?.includes('Residence')) || [];
+  
   const bedrooms = prop?.building?.mainStructure?.bedrooms || prop?.interior?.bedrooms;
   const bathrooms = prop?.building?.mainStructure?.bathrooms || prop?.interior?.totalBathrooms || prop?.interior?.bathrooms;
-  const buildingPermits = prop?.construction?.buildingPermits || prop?.permits || [];
+  const buildingPermits = prop?.construction?.buildingPermits || prop?.construction?.permitHistory || prop?.permits || [];
+  
+  const solarSystems = Array.isArray(systems?.solar) ? systems.solar : 
+    (systems?.electrical as any)?.solarSystems || 
+    (systems?.solar as any)?.systems || [];
 
   return (
     <div className="report-form max-w-4xl mx-auto">
@@ -337,7 +357,7 @@ export default function FreeReportGenerator() {
                     <p className="text-sm font-semibold text-slate-700">HVAC</p>
                     <p className="text-sm text-slate-600">
                       {typeof systems.hvac === 'boolean' ? (systems.hvac ? "Present" : "Not present") : 
-                       typeof systems.hvac === 'string' ? systems.hvac : 
+                       typeof systems.hvac === 'string' ? (systems.hvac.toLowerCase() === 'present' ? "Present" : systems.hvac) : 
                        (systems.hvac?.present ? "Present" : "Not present")}
                     </p>
                     {typeof systems.hvac === 'object' && systems.hvac?.details && (
@@ -345,18 +365,18 @@ export default function FreeReportGenerator() {
                     )}
                   </div>
                 )}
-                {systems.solar && (Array.isArray(systems.solar) ? systems.solar.length > 0 : systems.solar.present) && (
+                {solarSystems.length > 0 && (
                   <div className="bg-slate-50 rounded-lg p-3">
                     <div className="flex items-center gap-2">
                       <Sun className="w-4 h-4 text-yellow-500" />
                       <p className="text-sm font-semibold text-slate-700">Solar System</p>
                     </div>
-                    {(Array.isArray(systems.solar) ? systems.solar : systems.solar.systems || []).map((s: any, i: number) => {
+                    {solarSystems.map((s: any, i: number) => {
                       const kw = s.systemSizeKw || s.sizeKw || s.capacityKw;
-                      const installed = s.installDate ? new Date(s.installDate).getFullYear() : (s.yearInstalled || s.installYear);
+                      const installed = s.installDate ? new Date(s.installDate).getFullYear() : (s.yearInstalled || s.installYear || s.year);
                       return (
                         <p key={i} className="text-xs text-slate-600 mt-1">
-                          {kw} kW ({s.panels} panels) - Installed {installed}
+                          {kw} kW {s.panels ? `(${s.panels} panels)` : ''} {installed ? `- Installed ${installed}` : ''}
                           {s.notes && <span className="text-slate-500"> - {s.notes}</span>}
                         </p>
                       );
@@ -366,8 +386,8 @@ export default function FreeReportGenerator() {
                 {systems.electrical && (
                   <div className="bg-slate-50 rounded-lg p-3">
                     <p className="text-sm font-semibold text-slate-700">Electrical</p>
-                    {typeof systems.electrical === 'object' && systems.electrical.mainServiceAmps && (
-                      <p className="text-xs text-slate-600 mt-1">Main Service: {systems.electrical.mainServiceAmps} amps</p>
+                    {typeof systems.electrical === 'object' && (systems.electrical.mainServiceAmps || (systems.electrical as any).mainBreakerAmps) && (
+                      <p className="text-xs text-slate-600 mt-1">Main Service: {systems.electrical.mainServiceAmps || (systems.electrical as any).mainBreakerAmps} amps</p>
                     )}
                     {typeof systems.electrical === 'object' && (systems.electrical.upgrades?.length ?? 0) > 0 && (
                       <div className="text-xs text-slate-500 mt-1">
@@ -466,7 +486,7 @@ export default function FreeReportGenerator() {
                   <tbody>
                     {buildingPermits.map((permit: any, i: number) => (
                       <tr key={i} className="border-b border-slate-100">
-                        <td className="py-2 px-2">{permit.date || "-"}</td>
+                        <td className="py-2 px-2">{permit.date || permit.effectiveDate || "-"}</td>
                         <td className="py-2 px-2">{permit.permitNumber || permit.number || "-"}</td>
                         <td className="py-2 px-2">{permit.description || "-"}</td>
                         <td className="py-2 px-2">{permit.status || "-"}</td>
