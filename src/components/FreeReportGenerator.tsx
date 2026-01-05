@@ -30,7 +30,16 @@ interface PropertyData {
         sizeSqFt: number;
         yearBuilt: number;
       };
+      primaryResidence?: {
+        sizeSqFt: number;
+        yearBuilt: number;
+      };
       secondaryStructures?: Array<{
+        type: string;
+        sizeSqFt: number;
+        yearBuilt: number;
+      }>;
+      outbuildings?: Array<{
         type: string;
         sizeSqFt: number;
         yearBuilt: number;
@@ -148,7 +157,8 @@ export default function FreeReportGenerator() {
 
   const yearBuilt = prop?.overview?.yearBuilt || prop?.construction?.yearBuilt;
   const buildingAge = yearBuilt ? new Date().getFullYear() - yearBuilt : null;
-  const buildingSize = prop?.building?.primaryStructure?.sizeSqFt || prop?.construction?.buildingSizeSqFt;
+  const buildingSize = prop?.building?.primaryResidence?.sizeSqFt || prop?.building?.primaryStructure?.sizeSqFt || prop?.construction?.buildingSizeSqFt;
+  const outbuildings = prop?.building?.outbuildings || prop?.building?.secondaryStructures || [];
 
   return (
     <div className="report-form max-w-4xl mx-auto">
@@ -264,12 +274,12 @@ export default function FreeReportGenerator() {
               </div>
             )}
 
-            {/* Secondary Structures */}
-            {prop.building?.secondaryStructures && prop.building.secondaryStructures.length > 0 && (
+            {/* Secondary Structures / Outbuildings */}
+            {outbuildings.length > 0 && (
               <div className="mt-4 pt-4 border-t border-slate-100">
-                <p className="text-sm font-semibold text-slate-700 mb-2">Secondary Structures:</p>
+                <p className="text-sm font-semibold text-slate-700 mb-2">Outbuildings / Secondary Structures:</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                  {prop.building.secondaryStructures.map((struct, i) => (
+                  {outbuildings.map((struct: any, i: number) => (
                     <div key={i} className="bg-slate-50 rounded-lg p-2 text-sm">
                       <p><strong>{struct.type}</strong></p>
                       <p className="text-slate-600">{struct.sizeSqFt?.toLocaleString()} sq ft | Built {struct.yearBuilt}</p>
@@ -291,36 +301,53 @@ export default function FreeReportGenerator() {
                 {systems.hvac && (
                   <div className="bg-slate-50 rounded-lg p-3">
                     <p className="text-sm font-semibold text-slate-700">HVAC</p>
-                    <p className="text-sm text-slate-600">{systems.hvac.present ? "Present" : "Not present"}</p>
-                    {systems.hvac.details && <p className="text-xs text-slate-500 mt-1">{systems.hvac.details}</p>}
+                    <p className="text-sm text-slate-600">
+                      {typeof systems.hvac === 'string' ? systems.hvac : (systems.hvac.present ? "Present" : "Not present")}
+                    </p>
+                    {typeof systems.hvac === 'object' && systems.hvac.details && (
+                      <p className="text-xs text-slate-500 mt-1">{systems.hvac.details}</p>
+                    )}
                   </div>
                 )}
-                {systems.solar?.present && (
+                {systems.solar && (Array.isArray(systems.solar) ? systems.solar.length > 0 : systems.solar.present) && (
                   <div className="bg-slate-50 rounded-lg p-3">
                     <div className="flex items-center gap-2">
                       <Sun className="w-4 h-4 text-yellow-500" />
                       <p className="text-sm font-semibold text-slate-700">Solar System</p>
                     </div>
-                    {systems.solar.systems?.map((s, i) => (
+                    {(Array.isArray(systems.solar) ? systems.solar : systems.solar.systems || []).map((s: any, i: number) => (
                       <p key={i} className="text-xs text-slate-600 mt-1">
-                        {s.capacityKw} kW ({s.panels} panels) - Installed {s.installYear}
+                        {s.sizeKw || s.capacityKw} kW ({s.panels} panels) - Installed {s.yearInstalled || s.installYear}
+                        {s.notes && <span className="text-slate-500"> - {s.notes}</span>}
                       </p>
                     ))}
                   </div>
                 )}
-                {systems.electrical?.recentUpgrades && (
+                {systems.electrical && (
                   <div className="bg-slate-50 rounded-lg p-3">
-                    <p className="text-sm font-semibold text-slate-700">Electrical Upgrades</p>
-                    <p className="text-xs text-slate-500 mt-1">{systems.electrical.notes}</p>
+                    <p className="text-sm font-semibold text-slate-700">Electrical</p>
+                    <p className="text-xs text-slate-500 mt-1">
+                      {typeof systems.electrical === 'string' ? systems.electrical : systems.electrical.notes || (systems.electrical.recentUpgrades ? "Recent upgrades" : "")}
+                    </p>
                   </div>
                 )}
-                {systems.plumbing?.recentUpgrades && (
+                {systems.plumbing && (
                   <div className="bg-slate-50 rounded-lg p-3">
                     <div className="flex items-center gap-2">
                       <Droplets className="w-4 h-4 text-blue-500" />
-                      <p className="text-sm font-semibold text-slate-700">Plumbing Upgrades</p>
+                      <p className="text-sm font-semibold text-slate-700">Plumbing</p>
                     </div>
-                    <p className="text-xs text-slate-500 mt-1">{systems.plumbing.notes}</p>
+                    <p className="text-xs text-slate-500 mt-1">
+                      {typeof systems.plumbing === 'string' ? systems.plumbing : systems.plumbing.notes || (systems.plumbing.recentUpgrades ? "Recent upgrades" : "")}
+                    </p>
+                  </div>
+                )}
+                {systems.mechanical && (
+                  <div className="bg-slate-50 rounded-lg p-3">
+                    <p className="text-sm font-semibold text-slate-700">Mechanical</p>
+                    <p className="text-xs text-slate-500 mt-1">
+                      {typeof systems.mechanical === 'string' ? systems.mechanical : systems.mechanical.notes || ""}
+                    </p>
                   </div>
                 )}
               </div>
