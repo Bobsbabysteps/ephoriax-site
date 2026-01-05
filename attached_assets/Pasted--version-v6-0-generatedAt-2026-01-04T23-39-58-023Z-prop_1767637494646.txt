@@ -1,0 +1,164 @@
+[
+  {
+    "version": "v6.0",
+    "generatedAt": "2026-01-04T23:39:58.023Z",
+    "property": {
+      "address": "11919 Colony Rd, Galt, CA 95632, USA",
+      "coordinates": {
+        "lat": 38.32434,
+        "lng": -121.240917
+      },
+      "overview": {
+        "address": {
+          "line1": "11919 COLONY RD",
+          "city": "GALT",
+          "state": "CA",
+          "postalCode": "95632",
+          "country": "US"
+        },
+        "parcelNumber": "138-0090-112-0000",
+        "lotSizeAcres": 4.77,
+        "propertyType": "RURAL RESIDENCE",
+        "landUse": "RURAL HOMESITE",
+        "latitude": 38.32434,
+        "longitude": -121.240917,
+        "yearBuilt": 2001
+      },
+      "building": {
+        "primaryStructure": {
+          "type": "Single Family Residence",
+          "sizeSqFt": 4210,
+          "yearBuilt": 2001
+        },
+        "secondaryStructures": [
+          {
+            "type": "Ag exempt building",
+            "sizeSqFt": 1600,
+            "yearBuilt": 2000
+          }
+        ]
+      },
+      "construction": {
+        "buildingSizeSqFt": 4210,
+        "yearBuilt": 2001,
+        "isoConstructionClass": null,
+        "roofType": null
+      },
+      "interior": {
+        "bedrooms": 4,
+        "totalBathrooms": 4
+      },
+      "systems": {
+        "hvac": {
+          "present": true,
+          "details": "HVAC work cited in permits (2017)"
+        },
+        "solar": {
+          "present": true,
+          "systems": [
+            {
+              "capacityKw": 12.4,
+              "panels": 35,
+              "installYear": 2017
+            },
+            {
+              "capacityKw": 17.7,
+              "panels": 50,
+              "installYear": 2017
+            }
+          ]
+        },
+        "electrical": {
+          "recentUpgrades": true,
+          "notes": "Electrical upgrades and repairs in 2017 and 2020"
+        },
+        "plumbing": {
+          "recentUpgrades": true,
+          "notes": "Plumbing upgrades in 2017"
+        },
+        "mechanical": {
+          "recentUpgrades": true,
+          "notes": "Mechanical work in 2017"
+        }
+      },
+      "permits": [],
+      "riskAndHazards": {
+        "fireDamageHistory": true,
+        "fireDamageDetails": "Fire repair permits issued in 2020 for attic insulation, interior finishes, truss repair, and electrical components",
+        "emergencyServicesProximity": null
+      },
+      "occupancy": {
+        "description": "The property is a rural single family residence with 4 bedrooms and 4 bathrooms. Agricultural exempt structures may support limited farming or storage activities.",
+        "likelyOwnerOccupied": null
+      },
+      "operations": {
+        "description": "Residential operations with solar energy systems, electrical and mechanical upgrades, and fire restoration work. No commercial or multifamily operations indicated."
+      }
+    },
+    "fireServices": {
+      "name": "Herald Fire Protection District Station 88",
+      "address": "11620 Clay Station Rd, Herald, CA 95638, USA",
+      "coordinates": {
+        "lat": 38.3346655,
+        "lng": -121.1602769
+      },
+      "distance": {
+        "km": 7.13,
+        "miles": 6.6,
+        "meters": 10681,
+        "time": "9 mins",
+        "seconds": 538
+      }
+    },
+    "diagnostics": {
+      "completenessScore": 44,
+      "validationPassed": true,
+      "missingFields": []
+    },
+    "summary": {
+      "headline": "Rural property with 4 bedrooms on 4.77 acres.",
+      "keyHighlights": [
+        "Built 2001",
+        "Lot size: 4.77 acres",
+        "Fire station: Herald Fire Protection District Station 88 (6.6 mi mi)"
+      ]
+    },
+    "resources": {
+      "apiUsage": [
+        {
+          "service": "ATTOM Property API",
+          "endpoint": "propertyapi/v1.0.0",
+          "calls": 1,
+          "costPerCallUSD": 0.02,
+          "totalCostUSD": 0.02
+        },
+        {
+          "service": "Google Maps API",
+          "endpoint": "distanceMatrix",
+          "calls": 1,
+          "costPerCallUSD": 0.005,
+          "totalCostUSD": 0.005
+        },
+        {
+          "service": "OpenAI GPT",
+          "model": "gpt-4-turbo",
+          "tokensUsed": 1000,
+          "costPer1kTokensUSD": 0.01,
+          "totalCostUSD": 0.01
+        }
+      ],
+      "totalEstimatedCostUSD": 0.035,
+      "executionMetrics": {
+        "executionTimeMs": null,
+        "workflowId": "a5tqSfooNyBDKwFm",
+        "runId": "2467"
+      }
+    },
+    "meta": {
+      "dataSource": "ATTOM + EphoriaX Integration",
+      "version": "v5.5",
+      "processedAt": "2026-01-04T23:39:58.013Z",
+      "status": "ok"
+    }
+  }
+]
