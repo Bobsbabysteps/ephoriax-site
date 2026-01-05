@@ -13,14 +13,11 @@ export default function FreeReportGenerator() {
     setReport(null);
 
     try {
-      const res = await fetch(
-        "https://doble.app.n8n.cloud/webhook/property-data", // ← your webhook URL
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ address }),
-        }
-      );
+      const res = await fetch("/api/n8n-proxy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ address }),
+      });
 
       if (!res.ok) throw new Error(`n8n returned ${res.status}`);
 

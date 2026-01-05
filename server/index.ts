@@ -8,6 +8,7 @@ import healthRouter from "./routes/health.js";
 import askGptRouter from "./routes/ask-gpt.js";
 import propertyGptRouter from "./routes/property-gpt.js";
 import sampleRouter from "./routes/sample.js";
+import n8nProxyRouter from "./routes/n8n-proxy.js";
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ app.use("/api/health", healthRouter);
 app.use("/api/ask-gpt", askGptRouter);
 app.use("/api/property-gpt", propertyGptRouter);
 app.use("/api/sample", sampleRouter);
+app.use("/api/n8n-proxy", n8nProxyRouter);
 
 if (process.env.NODE_ENV === "production") {
   const distPath = path.join(__dirname, "../dist");
