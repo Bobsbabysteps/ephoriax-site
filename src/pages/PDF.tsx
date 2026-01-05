@@ -8,7 +8,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import Button from "../components/Button.js";
-import FreeReportGenerator from "../components/FreeReportGenerator.js";
+import FreeReportGenerator from "../components/FreeReportGenerator";
 import BetaCTA from "../components/BetaCTA.js";
 import { ThemeProvider } from "../context/ThemeContext.js";
 import { pdfTheme } from "../styles/theme/pdfTheme.js";
