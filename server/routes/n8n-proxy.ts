@@ -54,6 +54,8 @@ router.post("/", async (req: Request, res: Response) => {
       headers: { "Accept": "application/json" },
     });
 
+    console.log("📡 n8n response status:", response.status);
+
     if (!response.ok) {
       console.error("❌ n8n returned status:", response.status);
       return res.status(response.status).json({ 
@@ -61,7 +63,26 @@ router.post("/", async (req: Request, res: Response) => {
       });
     }
 
-    const data = await response.json();
+    const text = await response.text();
+    console.log("📡 n8n raw response length:", text.length, "chars");
+    
+    if (!text || text.trim() === "") {
+      console.error("❌ n8n returned empty response - workflow may be inactive");
+      return res.status(502).json({ 
+        error: "n8n workflow returned empty response. Please check that the n8n workflow is active and configured to return data." 
+      });
+    }
+
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (parseErr) {
+      console.error("❌ n8n returned invalid JSON:", text.substring(0, 500));
+      return res.status(502).json({ 
+        error: "n8n returned invalid JSON response" 
+      });
+    }
+
     console.log("✅ n8n response received");
     console.log("📦 Response structure:", JSON.stringify(data, null, 2).substring(0, 2000));
     

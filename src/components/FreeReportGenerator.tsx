@@ -73,7 +73,11 @@ export default function FreeReportGenerator() {
       setReport(data);
     } catch (err: any) {
       console.error("Error fetching report:", err);
-      setError("Something went wrong. Please try again.");
+      if (err.message?.includes("502") || err.message?.includes("empty")) {
+        setError("The n8n workflow is not responding. Please ensure it is active in your n8n dashboard.");
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
