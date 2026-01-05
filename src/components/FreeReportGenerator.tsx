@@ -181,7 +181,8 @@ export default function FreeReportGenerator() {
   const yearBuilt = prop?.building?.yearBuilt || prop?.building?.mainResidence?.yearBuilt || prop?.building?.mainStructure?.yearBuilt || prop?.overview?.yearBuilt || prop?.construction?.yearBuilt || prop?.construction?.mainDwellingConstructionYear || prop?.construction?.mainResidenceYearBuilt;
   const buildingAge = yearBuilt ? new Date().getFullYear() - yearBuilt : null;
   const buildingSize = prop?.building?.grossLivingAreaSqFt || prop?.building?.mainResidence?.sizeSqFt || prop?.building?.totalBuildingAreaSqFt || prop?.building?.mainStructure?.grossAreaSqFt || prop?.building?.primaryResidence?.sizeSqFt || prop?.building?.primaryStructure?.sizeSqFt || prop?.construction?.buildingSizeSqFt || 
-    (prop?.building?.structures?.find((s: any) => s.type === 'Primary Dwelling' || s.type === 'Main Dwelling' || s.type?.includes('Residence') || s.type?.includes('Dwelling'))?.areaSqFt);
+    (prop?.building?.structures?.find((s: any) => s.type === 'Primary Dwelling' || s.type === 'Main Dwelling' || s.type?.includes('Residence') || s.type?.includes('Dwelling'))?.areaSqFt) ||
+    (prop?.building?.structures?.find((s: any) => s.type === 'Primary Dwelling' || s.type === 'Main Dwelling' || s.type?.includes('Residence') || s.type?.includes('Dwelling'))?.sizeSqFt);
   
   const parcelNumber = prop?.overview?.parcelNumber || prop?.overview?.apn;
   const landUse = prop?.overview?.landUse || prop?.overview?.propertySubType;
@@ -195,8 +196,8 @@ export default function FreeReportGenerator() {
   const buildingPermits = prop?.permits || prop?.construction?.permits || prop?.construction?.buildingPermits || prop?.construction?.permitHistory || [];
   
   const solarSystems = Array.isArray(systems?.solar) ? systems.solar : 
-    (systems?.electrical as any)?.solarSystems || 
-    (systems?.solar as any)?.systems || [];
+    (systems?.solar as any)?.systems || 
+    (systems?.electrical as any)?.solarSystems || [];
   
   const hvacStatus = systems?.hvac !== undefined ? (
     typeof systems.hvac === 'boolean' ? (systems.hvac ? "Present" : "Not present") :
@@ -361,10 +362,11 @@ export default function FreeReportGenerator() {
                     </div>
                     {solarSystems.map((s: any, i: number) => {
                       const kw = s.systemSizeKw || s.sizeKw || s.capacityKw;
+                      const panelCount = s.panels || s.panelCount;
                       const installed = s.installDate ? new Date(s.installDate).getFullYear() : (s.yearInstalled || s.installYear || s.year);
                       return (
                         <p key={i} className="text-xs text-slate-600 mt-1">
-                          {kw} kW {s.panels ? `(${s.panels} panels)` : ''} {installed ? `- Installed ${installed}` : ''}
+                          {kw} kW {panelCount ? `(${panelCount} panels)` : ''} {installed ? `- Installed ${installed}` : ''}
                           {s.notes && <span className="text-slate-500"> - {s.notes}</span>}
                         </p>
                       );
