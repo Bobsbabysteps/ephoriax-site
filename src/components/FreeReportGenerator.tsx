@@ -47,11 +47,13 @@ interface PropertyData {
     construction?: {
       buildingSizeSqFt?: number;
       yearBuilt?: number;
+      constructionYear?: number;
       mainDwellingConstructionYear?: number;
       mainResidenceYearBuilt?: number;
       agExemptBuildingConstructionYear?: number;
       isoConstructionClass?: string | null;
       roofType?: string | null;
+      requiredPhotos?: string[];
       permits?: any[];
       buildingPermits?: any[];
       permitHistory?: any[];
@@ -92,12 +94,22 @@ interface PropertyData {
     riskAndHazards?: {
       fireDamageHistory?: boolean;
       fireDamageDetails?: string;
+      fire?: {
+        recentFireRepair?: boolean;
+        lastRepairYear?: number;
+      };
+      emergencyServicesProximity?: any;
     };
     occupancy?: {
       description?: string;
+      occupancyType?: string;
+      narrative?: string;
+      occupancyNarrative?: string;
     };
     operations?: {
       description?: string;
+      operationsDescription?: string;
+      operationsNarrative?: string;
     };
   };
   fireServices: {
@@ -125,8 +137,22 @@ interface PropertyData {
     keyHighlights: string[];
   };
   resources?: {
-    apiUsage?: any[];
+    apiUsage?: Array<{
+      service?: string;
+      endpoint?: string;
+      model?: string;
+      calls?: number;
+      tokensUsed?: number;
+      costPerCallUSD?: number;
+      costPer1kTokensUSD?: number;
+      totalCostUSD?: number;
+    }>;
     totalEstimatedCostUSD?: number;
+    executionMetrics?: {
+      executionTimeMs?: number | null;
+      workflowId?: string;
+      runId?: string;
+    };
   };
   meta?: {
     dataSource?: string;
@@ -176,6 +202,10 @@ export default function FreeReportGenerator() {
   const fire = report?.[0]?.fireServices;
   const diag = report?.[0]?.diagnostics;
   const summary = report?.[0]?.summary;
+  const resources = report?.[0]?.resources;
+  const meta = report?.[0]?.meta;
+  const reportVersion = report?.[0]?.version;
+  const generatedAt = report?.[0]?.generatedAt;
   const systems = prop?.systems;
 
   const yearBuilt = prop?.building?.yearBuilt || prop?.building?.mainResidence?.yearBuilt || prop?.building?.mainStructure?.yearBuilt || prop?.overview?.yearBuilt || prop?.construction?.yearBuilt || prop?.construction?.mainDwellingConstructionYear || prop?.construction?.mainResidenceYearBuilt;
@@ -206,6 +236,16 @@ export default function FreeReportGenerator() {
      systems.hvac?.updated ? "Present" : systems.hvac?.present ? "Present" : "Present")
   ) : null;
   const hvacNotes = typeof systems?.hvac === 'object' ? (systems.hvac?.notes || systems.hvac?.details) : null;
+  
+  const lastRenovation = prop?.building?.lastMajorRenovationYear;
+  const requiredPhotos = prop?.construction?.requiredPhotos || [];
+  const isoClass = prop?.construction?.isoConstructionClass;
+  const fireRepair = prop?.riskAndHazards?.fire?.recentFireRepair || prop?.riskAndHazards?.fireDamageHistory;
+  const fireRepairYear = prop?.riskAndHazards?.fire?.lastRepairYear;
+  const occupancyInfo = prop?.occupancy?.narrative || prop?.occupancy?.occupancyNarrative || prop?.occupancy?.occupancyType || prop?.occupancy?.description;
+  const operationsInfo = prop?.operations?.operationsDescription || prop?.operations?.operationsNarrative || prop?.operations?.description;
+  const coordinates = prop?.coordinates || { lat: prop?.overview?.latitude, lng: prop?.overview?.longitude };
+  const allStructures = prop?.building?.structures || [];
 
   return (
     <div className="report-form max-w-4xl mx-auto">
@@ -313,16 +353,54 @@ export default function FreeReportGenerator() {
               </div>
             </div>
 
-            {(bedrooms || bathrooms) && (
+            {(bedrooms || bathrooms || lastRenovation || isoClass) && (
+              <div className="mt-4 pt-4 border-t border-slate-100 space-y-1">
+                {(bedrooms || bathrooms) && (
+                  <p className="text-sm text-slate-600">
+                    <strong>Interior:</strong> {bedrooms} bedrooms, {bathrooms} bathrooms
+                  </p>
+                )}
+                {lastRenovation && (
+                  <p className="text-sm text-slate-600">
+                    <strong>Last Major Renovation:</strong> {lastRenovation}
+                  </p>
+                )}
+                {isoClass && (
+                  <p className="text-sm text-slate-600">
+                    <strong>ISO Construction Class:</strong> {isoClass}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {coordinates?.lat && coordinates?.lng && (
               <div className="mt-4 pt-4 border-t border-slate-100">
                 <p className="text-sm text-slate-600">
-                  <strong>Interior:</strong> {bedrooms} bedrooms, {bathrooms} bathrooms
+                  <strong>Coordinates:</strong> {coordinates.lat}, {coordinates.lng}
                 </p>
               </div>
             )}
 
-            {/* Secondary Structures / Outbuildings */}
-            {outbuildings.length > 0 && (
+            {/* All Structures with descriptions */}
+            {allStructures.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-slate-100">
+                <p className="text-sm font-semibold text-slate-700 mb-2">Building Structures:</p>
+                <div className="space-y-2">
+                  {allStructures.map((struct: any, i: number) => (
+                    <div key={i} className="bg-slate-50 rounded-lg p-3 text-sm">
+                      <p className="font-semibold text-slate-800">{struct.type}</p>
+                      <p className="text-slate-600">{(struct.areaSqFt || struct.sizeSqFt)?.toLocaleString()} sq ft | Built {struct.yearBuilt}</p>
+                      {struct.description && (
+                        <p className="text-slate-500 text-xs mt-1">{struct.description}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Fallback for secondary structures if no allStructures */}
+            {allStructures.length === 0 && outbuildings.length > 0 && (
               <div className="mt-4 pt-4 border-t border-slate-100">
                 <p className="text-sm font-semibold text-slate-700 mb-2">Outbuildings / Secondary Structures:</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -423,13 +501,20 @@ export default function FreeReportGenerator() {
           )}
 
           {/* Risk & Hazards Card */}
-          {prop.riskAndHazards?.fireDamageHistory && (
+          {(fireRepair || prop.riskAndHazards?.fireDamageDetails) && (
             <div className="bg-orange-50 rounded-2xl shadow-md p-6 border border-orange-200">
               <div className="flex items-center gap-3 mb-4">
                 <Flame className="w-6 h-6 text-orange-500" />
                 <h3 className="text-lg font-bold text-orange-900">Fire Damage History</h3>
               </div>
-              <p className="text-sm text-orange-800">{prop.riskAndHazards.fireDamageDetails}</p>
+              {fireRepair && (
+                <p className="text-sm text-orange-800">
+                  Fire repair completed{fireRepairYear ? ` in ${fireRepairYear}` : ''}
+                </p>
+              )}
+              {prop.riskAndHazards?.fireDamageDetails && (
+                <p className="text-sm text-orange-800 mt-2">{prop.riskAndHazards.fireDamageDetails}</p>
+              )}
             </div>
           )}
 
@@ -447,14 +532,17 @@ export default function FreeReportGenerator() {
                 </div>
                 <div className="bg-slate-50 rounded-lg p-3">
                   <p className="text-xs text-slate-500 mb-1">Distance</p>
-                  <p className="font-semibold text-slate-800 text-sm">{fire.distance?.miles} miles</p>
+                  <p className="font-semibold text-slate-800 text-sm">{fire.distance?.miles} miles ({fire.distance?.km} km)</p>
                 </div>
                 <div className="bg-slate-50 rounded-lg p-3">
                   <p className="text-xs text-slate-500 mb-1">Drive Time</p>
-                  <p className="font-semibold text-slate-800 text-sm">{fire.distance?.time}</p>
+                  <p className="font-semibold text-slate-800 text-sm">{fire.distance?.time} ({fire.distance?.seconds ? `${fire.distance.seconds}s` : ''})</p>
                 </div>
               </div>
               <p className="text-sm text-slate-500 mt-3">{fire.address}</p>
+              {fire.coordinates && (
+                <p className="text-xs text-slate-400 mt-1">Coordinates: {fire.coordinates.lat}, {fire.coordinates.lng}</p>
+              )}
             </div>
           )}
 
@@ -467,27 +555,26 @@ export default function FreeReportGenerator() {
               </h3>
             </div>
             {buildingPermits.length > 0 ? (
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-slate-200">
-                      <th className="text-left py-2 px-2">Date</th>
-                      <th className="text-left py-2 px-2">Permit #</th>
-                      <th className="text-left py-2 px-2">Description</th>
-                      <th className="text-left py-2 px-2">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {buildingPermits.map((permit: any, i: number) => (
-                      <tr key={i} className="border-b border-slate-100">
-                        <td className="py-2 px-2">{permit.date || permit.effectiveDate || "-"}</td>
-                        <td className="py-2 px-2">{permit.permitNumber || permit.number || "-"}</td>
-                        <td className="py-2 px-2">{permit.description || "-"}</td>
-                        <td className="py-2 px-2">{permit.status || "-"}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="space-y-3">
+                {buildingPermits.map((permit: any, i: number) => (
+                  <div key={i} className="bg-slate-50 rounded-lg p-3 text-sm">
+                    <div className="flex justify-between items-start mb-1">
+                      <span className="font-semibold text-slate-800">{permit.permitNumber || permit.number || "-"}</span>
+                      <span className={`text-xs px-2 py-0.5 rounded ${permit.status?.toLowerCase() === 'complete' || permit.status?.toLowerCase() === 'finaled' || permit.status?.toLowerCase() === 'final' ? 'bg-green-100 text-green-800' : permit.status?.toLowerCase() === 'canceled' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'}`}>
+                        {permit.status || "-"}
+                      </span>
+                    </div>
+                    <p className="text-slate-600 text-xs mb-1">{permit.date || permit.effectiveDate || "-"}</p>
+                    {permit.type && <p className="text-slate-500 text-xs mb-1"><strong>Type:</strong> {permit.type}</p>}
+                    <p className="text-slate-700">{permit.description || "-"}</p>
+                    <div className="flex gap-4 mt-2 text-xs text-slate-500">
+                      {permit.value !== null && permit.value !== undefined && (
+                        <span><strong>Value:</strong> ${permit.value?.toLocaleString()}</span>
+                      )}
+                      {permit.contractor && <span><strong>Contractor:</strong> {permit.contractor}</span>}
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : (
               <p className="text-slate-500 text-sm">No permits available</p>
@@ -509,21 +596,131 @@ export default function FreeReportGenerator() {
             </div>
           )}
 
+          {/* Required Photos */}
+          {requiredPhotos.length > 0 && (
+            <div className="bg-white rounded-2xl shadow-md p-6 border border-slate-100">
+              <h3 className="text-lg font-bold text-slate-900 mb-4">Required Photos for Inspection</h3>
+              <ul className="list-disc list-inside text-sm text-slate-600 space-y-1">
+                {requiredPhotos.map((photo: string, i: number) => (
+                  <li key={i}>{photo}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           {/* Occupancy & Operations */}
-          {(prop.occupancy?.description || prop.operations?.description) && (
+          {(occupancyInfo || operationsInfo) && (
             <div className="bg-white rounded-2xl shadow-md p-6 border border-slate-100">
               <h3 className="text-lg font-bold text-slate-900 mb-4">Property Details</h3>
-              {prop.occupancy?.description && (
+              {occupancyInfo && (
                 <div className="mb-3">
                   <p className="text-sm font-semibold text-slate-700">Occupancy</p>
-                  <p className="text-sm text-slate-600">{prop.occupancy.description}</p>
+                  <p className="text-sm text-slate-600">{occupancyInfo}</p>
                 </div>
               )}
-              {prop.operations?.description && (
+              {operationsInfo && (
                 <div>
                   <p className="text-sm font-semibold text-slate-700">Operations</p>
-                  <p className="text-sm text-slate-600">{prop.operations.description}</p>
+                  <p className="text-sm text-slate-600">{operationsInfo}</p>
                 </div>
+              )}
+            </div>
+          )}
+
+          {/* Diagnostics */}
+          {diag && (
+            <div className="bg-white rounded-2xl shadow-md p-6 border border-slate-100">
+              <h3 className="text-lg font-bold text-slate-900 mb-4">Data Quality & Diagnostics</h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-center">
+                <div className="bg-slate-50 rounded-lg p-3">
+                  <p className="text-xs text-slate-500 mb-1">Completeness Score</p>
+                  <p className="font-semibold text-slate-800 text-sm">{diag.completenessScore}%</p>
+                </div>
+                <div className="bg-slate-50 rounded-lg p-3">
+                  <p className="text-xs text-slate-500 mb-1">Validation</p>
+                  <p className={`font-semibold text-sm ${diag.validationPassed ? 'text-green-600' : 'text-red-600'}`}>
+                    {diag.validationPassed ? 'Passed' : 'Failed'}
+                  </p>
+                </div>
+                {diag.missingFields && diag.missingFields.length > 0 && (
+                  <div className="bg-slate-50 rounded-lg p-3 col-span-2 md:col-span-1">
+                    <p className="text-xs text-slate-500 mb-1">Missing Fields</p>
+                    <p className="font-semibold text-slate-800 text-sm">{diag.missingFields.join(', ')}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* API Usage & Resources */}
+          {resources && (
+            <div className="bg-white rounded-2xl shadow-md p-6 border border-slate-100">
+              <h3 className="text-lg font-bold text-slate-900 mb-4">API Resources & Costs</h3>
+              {resources.apiUsage && resources.apiUsage.length > 0 && (
+                <div className="space-y-2 mb-4">
+                  {resources.apiUsage.map((api: any, i: number) => (
+                    <div key={i} className="bg-slate-50 rounded-lg p-3 text-sm flex justify-between items-center">
+                      <div>
+                        <p className="font-semibold text-slate-700">{api.service}</p>
+                        <p className="text-xs text-slate-500">
+                          {api.endpoint && `Endpoint: ${api.endpoint}`}
+                          {api.model && `Model: ${api.model}`}
+                          {api.calls && ` | Calls: ${api.calls}`}
+                          {api.tokensUsed && ` | Tokens: ${api.tokensUsed}`}
+                        </p>
+                      </div>
+                      <p className="text-sm text-slate-600">${api.totalCostUSD?.toFixed(3)}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className="flex justify-between items-center border-t border-slate-200 pt-3">
+                <p className="font-semibold text-slate-700">Total Estimated Cost</p>
+                <p className="font-bold text-lg text-slate-900">${resources.totalEstimatedCostUSD?.toFixed(3)}</p>
+              </div>
+              {resources.executionMetrics && (
+                <div className="mt-3 text-xs text-slate-500">
+                  <p>Workflow ID: {resources.executionMetrics.workflowId} | Run ID: {resources.executionMetrics.runId}</p>
+                  {resources.executionMetrics.executionTimeMs && (
+                    <p>Execution Time: {resources.executionMetrics.executionTimeMs}ms</p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Meta Information */}
+          {(meta || reportVersion || generatedAt) && (
+            <div className="bg-slate-100 rounded-2xl p-6 border border-slate-200">
+              <h3 className="text-lg font-bold text-slate-700 mb-3">Report Metadata</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                {reportVersion && (
+                  <div>
+                    <p className="text-xs text-slate-500">Report Version</p>
+                    <p className="font-semibold text-slate-700">{reportVersion}</p>
+                  </div>
+                )}
+                {generatedAt && (
+                  <div>
+                    <p className="text-xs text-slate-500">Generated At</p>
+                    <p className="font-semibold text-slate-700">{new Date(generatedAt).toLocaleString()}</p>
+                  </div>
+                )}
+                {meta?.dataSource && (
+                  <div>
+                    <p className="text-xs text-slate-500">Data Source</p>
+                    <p className="font-semibold text-slate-700">{meta.dataSource}</p>
+                  </div>
+                )}
+                {meta?.status && (
+                  <div>
+                    <p className="text-xs text-slate-500">Status</p>
+                    <p className={`font-semibold ${meta.status === 'ok' ? 'text-green-600' : 'text-red-600'}`}>{meta.status}</p>
+                  </div>
+                )}
+              </div>
+              {meta?.processedAt && (
+                <p className="text-xs text-slate-500 mt-3">Processed: {new Date(meta.processedAt).toLocaleString()}</p>
               )}
             </div>
           )}
