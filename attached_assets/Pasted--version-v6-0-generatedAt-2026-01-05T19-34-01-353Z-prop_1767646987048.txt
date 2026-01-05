@@ -1,0 +1,241 @@
+[
+  {
+    "version": "v6.0",
+    "generatedAt": "2026-01-05T19:34:01.353Z",
+    "property": {
+      "address": "11919 Colony Rd, Galt, CA 95632, USA",
+      "coordinates": {
+        "lat": 38.32434,
+        "lng": -121.240917
+      },
+      "overview": {
+        "address": {
+          "line1": "11919 COLONY RD",
+          "line2": "GALT, CA 95632",
+          "city": "GALT",
+          "state": "CA",
+          "postalCode": "95632",
+          "country": "US"
+        },
+        "parcelNumber": "138-0090-112-0000",
+        "lotSizeAcres": 4.77,
+        "propertyType": "RURAL RESIDENCE",
+        "latitude": 38.32434,
+        "longitude": -121.240917,
+        "yearBuilt": 2001
+      },
+      "building": {
+        "structures": [
+          {
+            "type": "Primary Dwelling",
+            "description": "Single family rural residence",
+            "areaSqFt": 4210,
+            "yearBuilt": 2001
+          },
+          {
+            "type": "Ag Exempt Building",
+            "description": "Agricultural building, 1600 sq ft, constructed per permit CBN2000-01345",
+            "areaSqFt": 1600,
+            "yearBuilt": 2000
+          }
+        ],
+        "grossLivingAreaSqFt": 4210,
+        "lastMajorRenovationYear": 2020
+      },
+      "construction": {
+        "yearBuilt": 2001,
+        "isoConstructionClass": null,
+        "requiredPhotos": [
+          "Front and rear elevations of primary residence",
+          "All sides of agricultural building",
+          "Roof surfaces (showing solar panels)",
+          "Main electrical panel",
+          "Interior common areas",
+          "HVAC equipment",
+          "Any recent repairs (fire affected areas if visible)"
+        ]
+      },
+      "interior": {
+        "bedrooms": 4,
+        "bathrooms": 4
+      },
+      "systems": {
+        "hvac": {
+          "yearUpdated": 2017
+        },
+        "plumbing": {
+          "yearUpdated": 2017
+        },
+        "electrical": {
+          "serviceAmps": "150-200",
+          "yearUpdated": 2017
+        },
+        "solar": [
+          {
+            "capacityKw": 12.4,
+            "panels": 35,
+            "installYear": 2017
+          },
+          {
+            "capacityKw": 17.7,
+            "panels": 50,
+            "installYear": 2017
+          }
+        ]
+      },
+      "permits": [
+        {
+          "permitNumber": "CBN2000-02439",
+          "type": "New building addition adu (not a garage conversion) deck patio cover garage barn ground mount solar",
+          "status": "final",
+          "date": "2000-09-11",
+          "value": 386000,
+          "description": "4170 S.F. New single family dwelling plans on file",
+          "contractor": "BBM Construction INC"
+        },
+        {
+          "permitNumber": "CBN2000-01345",
+          "type": "New building addition adu (not a garage conversion) deck patio cover garage barn ground mount solar; Building/residential/building combo new add/cbnr",
+          "status": "Finaled",
+          "date": "2000-05-24",
+          "value": 1,
+          "description": "Ag exempt building 1600sf",
+          "contractor": "CALVIN JEPSEN"
+        },
+        {
+          "permitNumber": "MIS2000-02955",
+          "type": "Miscellaneous electrical plumbing mechanical solar/pv electric vehicle charger generator (not for re",
+          "status": "final",
+          "date": "2000-06-09",
+          "value": 1000,
+          "description": "Electrical for ag. Exempt building. (cbn2000-01345)",
+          "contractor": null
+        },
+        {
+          "permitNumber": "MISR2017-04251",
+          "type": "Miscellaneous water heater electrical plumbing HVAC mechanical solar/pv electric vehicle equip. Gene",
+          "status": "complete",
+          "date": "2017-10-06",
+          "value": 65000,
+          "description": "Residence - install 12.4 kw roof mount solar system wtih 35 panels - derate 200 amp to 175 amp",
+          "contractor": "Fisher Electric INC; Troy Fair"
+        },
+        {
+          "permitNumber": "MISR2017-04253",
+          "type": "Miscellaneous water heater electrical plumbing HVAC mechanical solar/pv electric vehicle equip. Gene",
+          "status": "complete",
+          "date": "2017-11-02",
+          "value": 65000,
+          "description": "Residence - install 17.7 kw roof mount solar system with 50 panels - derate breaker from 200 amp to 150 amp ch-01 change in smud meter socket",
+          "contractor": "Fisher Electric INC; Troy Fair"
+        },
+        {
+          "permitNumber": "MISR2017-04253-01",
+          "type": "Residential/single-family/duplex - change order",
+          "status": "complete",
+          "date": "2017-11-01",
+          "value": null,
+          "description": "Ch-01 change in smud meter socket",
+          "contractor": null
+        },
+        {
+          "permitNumber": "APPR2020-01480",
+          "type": "Electronic submittals. Remodels repairs including fire/vehicle damage alterations ti's new buildings",
+          "status": "canceled",
+          "date": "2020-07-21",
+          "value": 52000,
+          "description": "The repair scope consists of replacing interior finishes attic insulation and some electrical components at the west wing of the house along with a truss repair",
+          "contractor": "JP Gallagher Construction INC"
+        },
+        {
+          "permitNumber": "CBRR2020-01140",
+          "type": "Replace windows or siding fire repair other repairs",
+          "status": "complete",
+          "date": "2020-11-16",
+          "value": 52000,
+          "description": "The repair scope consists of replacing interior finishes attic insulation and some electrical components at the west wing of the house along with a truss repair",
+          "contractor": "JP Gallagher Construction INC"
+        }
+      ],
+      "riskAndHazards": {
+        "fire": {
+          "recentFireRepair": true,
+          "lastRepairYear": 2020
+        },
+        "emergencyServicesProximity": null
+      },
+      "occupancy": {
+        "occupancyType": "Owner-occupied rural single family residence",
+        "narrative": "Owner-occupied rural single family residence, likely primary residence based on address and permit activity."
+      },
+      "operations": {
+        "operationsDescription": "Property is operated as a rural residential homestead with supporting agricultural structures. Recent repairs related to fire damage have been completed. Property has significant solar installation for energy production."
+      }
+    },
+    "fireServices": {
+      "name": "Herald Fire Protection District Station 88",
+      "address": "11620 Clay Station Rd, Herald, CA 95638, USA",
+      "coordinates": {
+        "lat": 38.3346655,
+        "lng": -121.1602769
+      },
+      "distance": {
+        "km": 7.13,
+        "miles": 6.6,
+        "meters": 10681,
+        "time": "9 mins",
+        "seconds": 538
+      }
+    },
+    "diagnostics": {
+      "completenessScore": 33,
+      "validationPassed": true,
+      "missingFields": []
+    },
+    "summary": {
+      "headline": "Rural property with 4 bedrooms on 4.77 acres.",
+      "keyHighlights": [
+        "Built 2001",
+        "Lot size: 4.77 acres",
+        "Fire station: Herald Fire Protection District Station 88 (6.6 mi mi)"
+      ]
+    },
+    "resources": {
+      "apiUsage": [
+        {
+          "service": "ATTOM Property API",
+          "endpoint": "propertyapi/v1.0.0",
+          "calls": 1,
+          "costPerCallUSD": 0.02,
+          "totalCostUSD": 0.02
+        },
+        {
+          "service": "Google Maps API",
+          "endpoint": "distanceMatrix",
+          "calls": 1,
+          "costPerCallUSD": 0.005,
+          "totalCostUSD": 0.005
+        },
+        {
+          "service": "OpenAI GPT",
+          "model": "gpt-4-turbo",
+          "tokensUsed": 1000,
+          "costPer1kTokensUSD": 0.01,
+          "totalCostUSD": 0.01
+        }
+      ],
+      "totalEstimatedCostUSD": 0.035,
+      "executionMetrics": {
+        "executionTimeMs": null,
+        "workflowId": "a5tqSfooNyBDKwFm",
+        "runId": "2492"
+      }
+    },
+    "meta": {
+      "dataSource": "ATTOM + EphoriaX Integration",
+      "version": "v5.5",
+      "processedAt": "2026-01-05T19:34:01.340Z",
+      "status": "ok"
+    }
+  }
+]

@@ -34,9 +34,11 @@ interface PropertyData {
       primaryResidence?: { sizeSqFt?: number; yearBuilt?: number; };
       mainResidence?: { sizeSqFt?: number; yearBuilt?: number; permitNumber?: string; };
       mainStructure?: { type?: string; grossAreaSqFt?: number; yearBuilt?: number; bedrooms?: number; bathrooms?: number; garage?: boolean; attic?: boolean; };
-      structures?: Array<{ type?: string; areaSqFt?: number; sizeSqFt?: number; yearBuilt?: number; }>;
+      structures?: Array<{ type?: string; areaSqFt?: number; sizeSqFt?: number; yearBuilt?: number; description?: string; }>;
       additionalStructures?: Array<{ type?: string; sizeSqFt?: number; yearBuilt?: number; permitNumber?: string; }>;
+      grossLivingAreaSqFt?: number;
       totalBuildingAreaSqFt?: number;
+      lastMajorRenovationYear?: number;
       yearBuilt?: number;
       secondaryStructures?: Array<{ type?: string; sizeSqFt?: number; yearBuilt?: number; }>;
       outbuildings?: Array<{ type?: string; sizeSqFt?: number; yearBuilt?: number; }>;
@@ -62,7 +64,8 @@ interface PropertyData {
       attic?: boolean;
     };
     systems?: {
-      hvac?: boolean | string | { present?: boolean; updated?: boolean; details?: string; notes?: string };
+      hvac?: boolean | string | { present?: boolean; updated?: boolean; yearUpdated?: number; details?: string; notes?: string };
+      plumbing?: boolean | string | { yearUpdated?: number; recentUpgrades?: boolean; notes?: string };
       solar?: Array<{
         systemSizeKw?: number;
         sizeKw?: number;
@@ -77,11 +80,12 @@ interface PropertyData {
       };
       electrical?: boolean | string | {
         mainServiceAmps?: number;
+        serviceAmps?: string;
+        yearUpdated?: number;
         recentUpgrades?: boolean;
         notes?: string;
         upgrades?: Array<{ date?: string; description?: string }>;
       };
-      plumbing?: boolean | string | { recentUpgrades?: boolean; notes?: string };
       mechanical?: boolean | string | { recentUpgrades?: boolean; notes?: string };
     };
     permits?: any[];
@@ -176,19 +180,19 @@ export default function FreeReportGenerator() {
 
   const yearBuilt = prop?.building?.yearBuilt || prop?.building?.mainResidence?.yearBuilt || prop?.building?.mainStructure?.yearBuilt || prop?.overview?.yearBuilt || prop?.construction?.yearBuilt || prop?.construction?.mainDwellingConstructionYear || prop?.construction?.mainResidenceYearBuilt;
   const buildingAge = yearBuilt ? new Date().getFullYear() - yearBuilt : null;
-  const buildingSize = prop?.building?.mainResidence?.sizeSqFt || prop?.building?.totalBuildingAreaSqFt || prop?.building?.mainStructure?.grossAreaSqFt || prop?.building?.primaryResidence?.sizeSqFt || prop?.building?.primaryStructure?.sizeSqFt || prop?.construction?.buildingSizeSqFt || 
-    (prop?.building?.structures?.find((s: any) => s.type === 'Main Dwelling')?.areaSqFt);
+  const buildingSize = prop?.building?.grossLivingAreaSqFt || prop?.building?.mainResidence?.sizeSqFt || prop?.building?.totalBuildingAreaSqFt || prop?.building?.mainStructure?.grossAreaSqFt || prop?.building?.primaryResidence?.sizeSqFt || prop?.building?.primaryStructure?.sizeSqFt || prop?.construction?.buildingSizeSqFt || 
+    (prop?.building?.structures?.find((s: any) => s.type === 'Primary Dwelling' || s.type === 'Main Dwelling' || s.type?.includes('Residence') || s.type?.includes('Dwelling'))?.areaSqFt);
   
   const parcelNumber = prop?.overview?.parcelNumber || prop?.overview?.apn;
   const landUse = prop?.overview?.landUse || prop?.overview?.propertySubType;
   
-  const mainStructure = prop?.building?.mainResidence || prop?.building?.structures?.find((s: any) => s.type === 'Main Dwelling' || s.type?.includes('Residence'));
+  const mainStructure = prop?.building?.mainResidence || prop?.building?.structures?.find((s: any) => s.type === 'Primary Dwelling' || s.type === 'Main Dwelling' || s.type?.includes('Residence') || s.type?.includes('Dwelling'));
   const outbuildings = prop?.building?.additionalStructures || prop?.building?.otherStructures || prop?.building?.outbuildings || prop?.building?.secondaryStructures || 
-    prop?.building?.structures?.filter((s: any) => s.type !== 'Main Dwelling' && !s.type?.includes('Residence')) || [];
+    prop?.building?.structures?.filter((s: any) => s.type !== 'Primary Dwelling' && s.type !== 'Main Dwelling' && !s.type?.includes('Residence') && !s.type?.includes('Dwelling')) || [];
   
   const bedrooms = prop?.building?.mainStructure?.bedrooms || prop?.interior?.bedrooms;
   const bathrooms = prop?.building?.mainStructure?.bathrooms || prop?.interior?.totalBathrooms || prop?.interior?.bathrooms;
-  const buildingPermits = prop?.construction?.permits || prop?.construction?.buildingPermits || prop?.construction?.permitHistory || prop?.permits || [];
+  const buildingPermits = prop?.permits || prop?.construction?.permits || prop?.construction?.buildingPermits || prop?.construction?.permitHistory || [];
   
   const solarSystems = Array.isArray(systems?.solar) ? systems.solar : 
     (systems?.electrical as any)?.solarSystems || 
@@ -197,7 +201,8 @@ export default function FreeReportGenerator() {
   const hvacStatus = systems?.hvac !== undefined ? (
     typeof systems.hvac === 'boolean' ? (systems.hvac ? "Present" : "Not present") :
     typeof systems.hvac === 'string' ? (systems.hvac.toLowerCase() === 'present' ? "Present" : systems.hvac) :
-    (systems.hvac?.updated ? "Present" : systems.hvac?.present ? "Present" : "Not present")
+    (systems.hvac?.yearUpdated ? `Updated ${systems.hvac.yearUpdated}` : 
+     systems.hvac?.updated ? "Present" : systems.hvac?.present ? "Present" : "Present")
   ) : null;
   const hvacNotes = typeof systems?.hvac === 'object' ? (systems.hvac?.notes || systems.hvac?.details) : null;
 
@@ -369,8 +374,11 @@ export default function FreeReportGenerator() {
                 {systems.electrical && (
                   <div className="bg-slate-50 rounded-lg p-3">
                     <p className="text-sm font-semibold text-slate-700">Electrical</p>
-                    {typeof systems.electrical === 'object' && (systems.electrical.mainServiceAmps || (systems.electrical as any).mainBreakerAmps) && (
-                      <p className="text-xs text-slate-600 mt-1">Main Service: {systems.electrical.mainServiceAmps || (systems.electrical as any).mainBreakerAmps} amps</p>
+                    {typeof systems.electrical === 'object' && (systems.electrical.mainServiceAmps || (systems.electrical as any).mainBreakerAmps || (systems.electrical as any).serviceAmps) && (
+                      <p className="text-xs text-slate-600 mt-1">Main Service: {systems.electrical.mainServiceAmps || (systems.electrical as any).mainBreakerAmps || (systems.electrical as any).serviceAmps} amps</p>
+                    )}
+                    {typeof systems.electrical === 'object' && (systems.electrical as any).yearUpdated && (
+                      <p className="text-xs text-slate-500 mt-1">Updated {(systems.electrical as any).yearUpdated}</p>
                     )}
                     {typeof systems.electrical === 'object' && (systems.electrical.upgrades?.length ?? 0) > 0 && (
                       <div className="text-xs text-slate-500 mt-1">
@@ -393,6 +401,7 @@ export default function FreeReportGenerator() {
                     <p className="text-xs text-slate-500 mt-1">
                       {typeof systems.plumbing === 'boolean' ? (systems.plumbing ? "Present" : "Not present") :
                        typeof systems.plumbing === 'string' ? systems.plumbing : 
+                       (systems.plumbing as any)?.yearUpdated ? `Updated ${(systems.plumbing as any).yearUpdated}` :
                        systems.plumbing?.notes || (systems.plumbing?.recentUpgrades ? "Recent upgrades" : "Present")}
                     </p>
                   </div>
