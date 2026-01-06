@@ -106,6 +106,11 @@ interface PropertyData {
         upgrades?: Array<{ date?: string; description?: string }>;
       };
       mechanical?: boolean | string | { recentUpgrades?: boolean; notes?: string };
+      roof?: {
+        material?: string;
+        lastKnownWork?: number;
+        notes?: string;
+      };
     };
     permits?: any[];
     riskAndHazards?: {
@@ -116,6 +121,8 @@ interface PropertyData {
         lastRepairYear?: number;
       };
       emergencyServicesProximity?: any;
+      emergencyServices?: any[];
+      nearbyEmergencyServices?: any[];
     };
     occupancy?: {
       description?: string;
@@ -177,6 +184,10 @@ interface PropertyData {
     processedAt?: string;
     status?: string;
   };
+  occupancy?: string;
+  operations?: string;
+  riskAndHazards?: any;
+  permits?: any[];
 }
 
 export default function FreeReportGenerator() {
@@ -246,6 +257,7 @@ export default function FreeReportGenerator() {
   const bedrooms = prop?.building?.mainStructure?.bedrooms ?? prop?.interior?.bedrooms;
   const bathrooms = prop?.building?.mainStructure?.bathrooms ?? prop?.interior?.totalBathrooms ?? prop?.interior?.bathrooms;
   const buildingPermits = [
+    ...(report?.[0]?.permits ?? []),
     ...(prop?.permits ?? []),
     ...(prop?.construction?.permits ?? []),
     ...(prop?.construction?.buildingPermits ?? []),
@@ -271,8 +283,10 @@ export default function FreeReportGenerator() {
   const fireRepair = fireRisk?.recentFireRepair;
   const fireRepairYear = fireRisk?.lastRepairYear;
   const hasFireData = fireRisk !== undefined || prop?.riskAndHazards?.fireDamageHistory !== undefined || prop?.riskAndHazards?.fireDamageDetails !== undefined;
-  const occupancyInfo = prop?.occupancy?.narrative ?? prop?.occupancy?.occupancyNarrative ?? prop?.occupancy?.occupancyType ?? prop?.occupancy?.description;
-  const operationsInfo = prop?.operations?.operationsDescription ?? prop?.operations?.operationsNarrative ?? prop?.operations?.description;
+  const occupancyInfo = report?.[0]?.occupancy ?? prop?.occupancy?.narrative ?? prop?.occupancy?.occupancyNarrative ?? prop?.occupancy?.occupancyType ?? prop?.occupancy?.description ?? prop?.occupancy;
+  const operationsInfo = report?.[0]?.operations ?? prop?.operations?.operationsDescription ?? prop?.operations?.operationsNarrative ?? prop?.operations?.description ?? prop?.operations;
+  const riskAndHazards = report?.[0]?.riskAndHazards ?? prop?.riskAndHazards;
+  const permitsFromReport = report?.[0]?.permits ?? [];
   const coordinates = prop?.coordinates ?? { lat: prop?.overview?.latitude, lng: prop?.overview?.longitude };
   const allStructures = prop?.building?.structures ?? [];
   const emergencyServicesRaw = [
@@ -516,29 +530,40 @@ export default function FreeReportGenerator() {
                     </p>
                   </div>
                 )}
+                {systems.roof !== undefined && (
+                  <div className="bg-slate-50 rounded-lg p-3">
+                    <p className="text-sm font-semibold text-slate-700">Roof</p>
+                    <p className="text-xs text-slate-500 mt-1">
+                      {renderValue(systems.roof)}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           )}
 
           {/* Risk & Hazards Card */}
-          {hasFireData && (
+          {(hasFireData || riskAndHazards !== undefined) && (
             <div className="bg-orange-50 rounded-2xl shadow-md p-6 border border-orange-200">
               <div className="flex items-center gap-3 mb-4">
                 <Flame className="w-6 h-6 text-orange-500" />
-                <h3 className="text-lg font-bold text-orange-900">Fire Damage History</h3>
+                <h3 className="text-lg font-bold text-orange-900">Risk & Hazards</h3>
               </div>
               <div className="space-y-2 text-sm text-orange-800">
+                {riskAndHazards !== undefined && (
+                  <p><strong>Risk and Hazards:</strong> {renderValue(riskAndHazards)}</p>
+                )}
                 {fireRepair !== undefined && (
                   <p><strong>Recent Fire Repair:</strong> {renderValue(fireRepair)}</p>
                 )}
                 {fireRepairYear !== undefined && (
                   <p><strong>Last Repair Year:</strong> {renderValue(fireRepairYear)}</p>
                 )}
-                {prop.riskAndHazards?.fireDamageHistory !== undefined && (
-                  <p><strong>Fire Damage History:</strong> {renderValue(prop.riskAndHazards.fireDamageHistory)}</p>
+                {riskAndHazards?.fireDamageHistory !== undefined && (
+                  <p><strong>Fire Damage History:</strong> {renderValue(riskAndHazards.fireDamageHistory)}</p>
                 )}
-                {prop.riskAndHazards?.fireDamageDetails !== undefined && (
-                  <p><strong>Details:</strong> {renderValue(prop.riskAndHazards.fireDamageDetails)}</p>
+                {riskAndHazards?.fireDamageDetails !== undefined && (
+                  <p><strong>Details:</strong> {renderValue(riskAndHazards.fireDamageDetails)}</p>
                 )}
               </div>
             </div>
