@@ -169,15 +169,20 @@ export default function FreeReportGenerator() {
     }
   };
 
+  const sectionsToRemove = ['_raw', '_debug_fire_v53', 'fireDepartment', 'diagnostics'];
+  
+  const cleanReportData = report?.[0] ? 
+    Object.fromEntries(
+      Object.entries(report[0]).filter(([key]) => !sectionsToRemove.includes(key))
+    ) : null;
+
   const handleCopyJson = () => {
-    if (report) {
-      navigator.clipboard.writeText(JSON.stringify(report, null, 2));
+    if (cleanReportData) {
+      navigator.clipboard.writeText(JSON.stringify([cleanReportData], null, 2));
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
   };
-
-  const reportData = report?.[0];
 
   return (
     <div className="report-form max-w-4xl mx-auto">
@@ -217,7 +222,7 @@ export default function FreeReportGenerator() {
         </div>
       )}
 
-      {reportData && (
+      {cleanReportData && (
         <div className="space-y-4">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-slate-900">Property Report</h2>
@@ -231,7 +236,7 @@ export default function FreeReportGenerator() {
             </button>
           </div>
 
-          {Object.entries(reportData).map(([key, value]) => (
+          {Object.entries(cleanReportData).map(([key, value]) => (
             <CollapsibleSection key={key} title={key} defaultOpen={true} level={0}>
               <DataRenderer data={value} level={0} />
             </CollapsibleSection>

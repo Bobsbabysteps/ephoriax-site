@@ -1,0 +1,376 @@
+[
+  {
+    "propertyOverview": {
+      "address": {
+        "line1": "11919 COLONY RD",
+        "city": "GALT",
+        "state": "CA",
+        "postalCode": "95632",
+        "country": "US"
+      },
+      "parcelNumber": "138-0090-112-0000",
+      "lotSizeAcres": 4.77,
+      "propertyType": "RURAL RESIDENCE",
+      "landUse": "RURAL HOMESITE",
+      "yearBuilt": 2001,
+      "latitude": 38.32434,
+      "longitude": -121.240917
+    },
+    "buildingOverview": {
+      "grossAreaSqFt": 4210,
+      "yearBuilt": 2001,
+      "lastMajorRenovationYear": 2020
+    },
+    "constructionSummary": {
+      "structures": [
+        {
+          "type": "Primary Residence",
+          "areaSqFt": 4210,
+          "yearBuilt": 2001
+        },
+        {
+          "type": "Ag Exempt Building",
+          "areaSqFt": 1600,
+          "yearBuilt": 2000
+        }
+      ]
+    },
+    "interiorSummary": {
+      "bedrooms": 4,
+      "bathrooms": 4,
+      "attic": {
+        "present": true,
+        "lastKnownInsulationUpdateYear": 2020
+      }
+    },
+    "systemsSummary": {
+      "hvac": {
+        "present": true,
+        "lastKnownUpdateYear": 2017
+      },
+      "electrical": {
+        "mainServiceAmps": 150,
+        "lastKnownUpdateYear": 2017,
+        "solarPanels": [
+          {
+            "sizeKw": 12.4,
+            "panelCount": 35,
+            "installYear": 2017
+          },
+          {
+            "sizeKw": 17.7,
+            "panelCount": 50,
+            "installYear": 2017
+          }
+        ]
+      },
+      "plumbing": {
+        "lastKnownUpdateYear": 2017
+      }
+    },
+    "permitSummary": {
+      "total": 8,
+      "summary": [
+        {
+          "year": "2000",
+          "types": [
+            {
+              "type": "New building addition adu (not a garage conversion) deck patio cover garage barn ground mount solar",
+              "count": 1
+            },
+            {
+              "type": "New building addition adu (not a garage conversion) deck patio cover garage barn ground mount solar; Building/residential/building combo new add/cbnr",
+              "count": 1
+            },
+            {
+              "type": "Miscellaneous electrical plumbing mechanical solar/pv electric vehicle charger generator (not for re",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "year": "2017",
+          "types": [
+            {
+              "type": "Miscellaneous water heater electrical plumbing HVAC mechanical solar/pv electric vehicle equip. Gene",
+              "count": 2
+            },
+            {
+              "type": "Residential/single-family/duplex - change order",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "year": "2020",
+          "types": [
+            {
+              "type": "Electronic submittals. Remodels repairs including fire/vehicle damage alterations ti's new buildings",
+              "count": 1
+            },
+            {
+              "type": "Replace windows or siding fire repair other repairs",
+              "count": 1
+            }
+          ]
+        }
+      ],
+      "details": [
+        {
+          "permitNumber": "CBN2000-02439",
+          "type": "New building addition adu (not a garage conversion) deck patio cover garage barn ground mount solar",
+          "status": "final",
+          "date": "2000-09-11",
+          "value": 386000,
+          "description": "4170 S.F. New single family dwelling plans on file",
+          "contractor": "BBM Construction INC"
+        },
+        {
+          "permitNumber": "CBN2000-01345",
+          "type": "New building addition adu (not a garage conversion) deck patio cover garage barn ground mount solar; Building/residential/building combo new add/cbnr",
+          "status": "Finaled",
+          "date": "2000-05-24",
+          "value": 1,
+          "description": "Ag exempt building 1600sf",
+          "contractor": "CALVIN JEPSEN"
+        },
+        {
+          "permitNumber": "MIS2000-02955",
+          "type": "Miscellaneous electrical plumbing mechanical solar/pv electric vehicle charger generator (not for re",
+          "status": "final",
+          "date": "2000-06-09",
+          "value": 1000,
+          "description": "Electrical for ag. Exempt building. (cbn2000-01345)",
+          "contractor": null
+        },
+        {
+          "permitNumber": "MISR2017-04251",
+          "type": "Miscellaneous water heater electrical plumbing HVAC mechanical solar/pv electric vehicle equip. Gene",
+          "status": "complete",
+          "date": "2017-10-06",
+          "value": 65000,
+          "description": "Residence - install 12.4 kw roof mount solar system wtih 35 panels - derate 200 amp to 175 amp",
+          "contractor": "Fisher Electric INC; Troy Fair"
+        },
+        {
+          "permitNumber": "MISR2017-04253",
+          "type": "Miscellaneous water heater electrical plumbing HVAC mechanical solar/pv electric vehicle equip. Gene",
+          "status": "complete",
+          "date": "2017-11-02",
+          "value": 65000,
+          "description": "Residence - install 17.7 kw roof mount solar system with 50 panels - derate breaker from 200 amp to 150 amp ch-01 change in smud meter socket",
+          "contractor": "Fisher Electric INC; Troy Fair"
+        },
+        {
+          "permitNumber": "MISR2017-04253-01",
+          "type": "Residential/single-family/duplex - change order",
+          "status": "complete",
+          "date": "2017-11-01",
+          "value": null,
+          "description": "Ch-01 change in smud meter socket",
+          "contractor": null
+        },
+        {
+          "permitNumber": "APPR2020-01480",
+          "type": "Electronic submittals. Remodels repairs including fire/vehicle damage alterations ti's new buildings",
+          "status": "canceled",
+          "date": "2020-07-21",
+          "value": 52000,
+          "description": "The repair scope consists of replacing interior finishes attic insulation and some electrical components at the west wing of the house along with a truss repair",
+          "contractor": "JP Gallagher Construction INC"
+        },
+        {
+          "permitNumber": "CBRR2020-01140",
+          "type": "Replace windows or siding fire repair other repairs",
+          "status": "complete",
+          "date": "2020-11-16",
+          "value": 52000,
+          "description": "The repair scope consists of replacing interior finishes attic insulation and some electrical components at the west wing of the house along with a truss repair",
+          "contractor": "JP Gallagher Construction INC"
+        }
+      ]
+    },
+    "riskAndHazards": {
+      "fireDamageHistory": {
+        "reported": true,
+        "lastRepairYear": 2020,
+        "affectedAreas": [
+          "west wing of the house"
+        ]
+      }
+    },
+    "occupancySummary": "The property is a rural single-family residence with associated agricultural outbuildings, presumed owner-occupied.",
+    "operationsSummary": "Operations appear residential in nature with additional agricultural use of accessory structures. Significant solar energy systems are present for residence power. Fire repairs were completed in 2020 to the west wing of the house.",
+    "location": {
+      "latitude": 38.32434,
+      "longitude": -121.240917
+    },
+    "meta": {
+      "source": "gpt-4.1-2025-04-14",
+      "openaiId": "chatcmpl-CwTJK6xNlJftQ6fRXF5JOctEbTSvb",
+      "created": 1768051730,
+      "usage": {
+        "prompt_tokens": 2115,
+        "completion_tokens": 1776,
+        "total_tokens": 3891,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      }
+    },
+    "_raw": {
+      "id": "chatcmpl-CwTJK6xNlJftQ6fRXF5JOctEbTSvb",
+      "object": "chat.completion",
+      "created": 1768051730,
+      "model": "gpt-4.1-2025-04-14",
+      "usage": {
+        "prompt_tokens": 2115,
+        "completion_tokens": 1776,
+        "total_tokens": 3891,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "service_tier": "default",
+      "system_fingerprint": "fp_1a2c4a5ede",
+      "property": {},
+      "fireDept": {
+        "name": "Herald Fire Protection District Station 88",
+        "address": "11620 Clay Station Road, Herald",
+        "lat": 38.3346655,
+        "lng": -121.1602769
+      },
+      "distances": {
+        "directKm": null,
+        "drivingKm": null,
+        "drivingMiles": 6.6,
+        "drivingMinutes": 9,
+        "drivingDistanceText": "6.6 mi",
+        "drivingDurationText": "9 mins"
+      },
+      "meta": {
+        "note": "Resolved FireDept distance successfully (miles + minutes)",
+        "hasPropertyCoords": true,
+        "hasFireDeptCoords": true,
+        "source": "Normalize and Merge Clean GPT Property Data (v3.2) — FIXED",
+        "googleStatus": "OK",
+        "googleError": null,
+        "debug": {
+          "fireName": "Herald Fire Protection District Station 88",
+          "miles": 6.6,
+          "minutes": 9,
+          "usedBase": "input1"
+        }
+      },
+      "propertyCoords": {
+        "lat": 38.32434,
+        "lng": -121.240917
+      },
+      "fireDeptCoords": {
+        "lat": 38.3346655,
+        "lng": -121.1602769
+      },
+      "propertyAddress": "Unknown Address",
+      "propertyLat": 38.32434,
+      "propertyLng": -121.240917,
+      "fireStationName": "Herald Fire Protection District Station 88",
+      "fireStationAddress": "11620 Clay Station Road, Herald",
+      "fireStationLat": 38.3346655,
+      "fireStationLng": -121.1602769,
+      "distanceMiles": 6.6,
+      "drivingMinutes": 9,
+      "drivingDistanceText": "6.6 mi",
+      "drivingDurationText": "9 mins",
+      "metaNote": "Resolved FireDept distance successfully (miles + minutes)",
+      "address": "Unknown Address",
+      "propertyType": null,
+      "yearBuilt": null,
+      "lotSizeAcres": null,
+      "grossAreaSqFt": null,
+      "systems": {},
+      "permits": {},
+      "constructionSummary": {},
+      "occupancySummary": {},
+      "operationsSummary": {},
+      "fireStation": {
+        "name": "Herald Fire Protection District Station 88",
+        "address": "11620 Clay Station Road, Herald",
+        "latitude": 38.3346655,
+        "longitude": -121.1602769
+      },
+      "distanceMetrics": {
+        "distanceKm": null,
+        "drivingDistanceMiles": 6.6,
+        "drivingDistanceMeters": null,
+        "drivingTime": 9,
+        "drivingTimeSeconds": null
+      }
+    },
+    "fireDepartment": {
+      "name": "Herald Fire Protection District Station 88",
+      "address": "11620 Clay Station Road, Herald",
+      "latitude": 38.3346655,
+      "longitude": -121.1602769,
+      "distanceMiles": 6.6,
+      "drivingMinutes": 9,
+      "drivingDistanceText": "6.6 mi",
+      "drivingDurationText": "9 mins"
+    },
+    "_debug_fire_v53": {
+      "topLevelKeys": [
+        "propertyOverview",
+        "buildingOverview",
+        "constructionSummary",
+        "interiorSummary",
+        "systemsSummary",
+        "permitSummary",
+        "riskAndHazards",
+        "occupancySummary",
+        "operationsSummary",
+        "location",
+        "meta",
+        "_raw"
+      ],
+      "found": {
+        "fireStationFound": true,
+        "distanceMetricsFound": true,
+        "fireDeptFound": true,
+        "distancesFound": true
+      },
+      "mapped": {
+        "fireName": "Herald Fire Protection District Station 88",
+        "miles": 6.6,
+        "minutes": 9
+      }
+    },
+    "fireServices": {
+      "name": "Herald Fire Protection District Station 88",
+      "address": "11620 Clay Station Road, Herald",
+      "lat": 38.3346655,
+      "lng": -121.1602769,
+      "miles": 6.6,
+      "minutes": 9,
+      "drivingDistanceText": "6.6 mi",
+      "drivingDurationText": "9 mins"
+    },
+    "diagnostics": {
+      "fireServicesFixed": true,
+      "usedBackup": true,
+      "hadOriginal": false
+    }
+  }
+]

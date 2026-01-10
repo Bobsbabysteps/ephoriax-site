@@ -1,0 +1,366 @@
+[
+  {
+    "version": "v6.1",
+    "generatedAt": "2026-01-10T12:21:33.085Z",
+    "property": {
+      "address": null,
+      "coordinates": {
+        "lat": 38.32434,
+        "lng": -121.240917
+      },
+      "overview": {
+        "address": {
+          "line1": "11919 COLONY RD",
+          "city": "GALT",
+          "state": "CA",
+          "postalCode": "95632",
+          "country": "US"
+        },
+        "parcelNumber": "138-0090-112-0000",
+        "lotSizeAcres": 4.77,
+        "propertyType": "RURAL RESIDENCE",
+        "landUse": "RURAL HOMESITE",
+        "yearBuilt": 2001,
+        "latitude": 38.32434,
+        "longitude": -121.240917
+      },
+      "building": {
+        "buildingSizeSqFt": 4210
+      },
+      "construction": {
+        "structures": [
+          {
+            "type": "Primary Residence",
+            "sizeSqFt": 4170,
+            "yearBuilt": 2001,
+            "permitNumber": "CBN2000-02439"
+          },
+          {
+            "type": "Ag Exempt Building",
+            "sizeSqFt": 1600,
+            "permitNumber": "CBN2000-01345"
+          }
+        ]
+      },
+      "interior": {
+        "bedrooms": 4,
+        "bathrooms": 4,
+        "attic": {
+          "present": true,
+          "details": "Attic insulation replaced in 2020 fire repair"
+        }
+      },
+      "systems": {
+        "hvac": {
+          "present": true,
+          "details": "Mechanical/HVAC work documented in solar permits (2017)"
+        },
+        "electrical": {
+          "present": true,
+          "details": "Multiple permits for electrical work, upgrades, and repairs"
+        },
+        "solar": {
+          "present": true,
+          "details": "12.4 kW and 17.7 kW roof-mount solar systems installed in 2017"
+        },
+        "plumbing": {
+          "present": true,
+          "details": "Plumbing work included in solar and fire repair permits"
+        }
+      },
+      "permits": [
+        {
+          "permitNumber": "CBN2000-02439",
+          "type": "New building addition adu (not a garage conversion) deck patio cover garage barn ground mount solar",
+          "status": "final",
+          "date": "2000-09-11",
+          "value": 386000,
+          "description": "4170 S.F. New single family dwelling plans on file",
+          "contractor": "BBM Construction INC"
+        },
+        {
+          "permitNumber": "CBN2000-01345",
+          "type": "New building addition adu (not a garage conversion) deck patio cover garage barn ground mount solar; Building/residential/building combo new add/cbnr",
+          "status": "Finaled",
+          "date": "2000-05-24",
+          "value": 1,
+          "description": "Ag exempt building 1600sf",
+          "contractor": "CALVIN JEPSEN"
+        },
+        {
+          "permitNumber": "MIS2000-02955",
+          "type": "Miscellaneous electrical plumbing mechanical solar/pv electric vehicle charger generator (not for re",
+          "status": "final",
+          "date": "2000-06-09",
+          "value": 1000,
+          "description": "Electrical for ag. Exempt building. (cbn2000-01345)",
+          "contractor": null
+        },
+        {
+          "permitNumber": "MISR2017-04251",
+          "type": "Miscellaneous water heater electrical plumbing HVAC mechanical solar/pv electric vehicle equip. Gene",
+          "status": "complete",
+          "date": "2017-10-06",
+          "value": 65000,
+          "description": "Residence - install 12.4 kw roof mount solar system wtih 35 panels - derate 200 amp to 175 amp",
+          "contractor": "Fisher Electric INC; Troy Fair"
+        },
+        {
+          "permitNumber": "MISR2017-04253",
+          "type": "Miscellaneous water heater electrical plumbing HVAC mechanical solar/pv electric vehicle equip. Gene",
+          "status": "complete",
+          "date": "2017-11-02",
+          "value": 65000,
+          "description": "Residence - install 17.7 kw roof mount solar system with 50 panels - derate breaker from 200 amp to 150 amp ch-01 change in smud meter socket",
+          "contractor": "Fisher Electric INC; Troy Fair"
+        },
+        {
+          "permitNumber": "MISR2017-04253-01",
+          "type": "Residential/single-family/duplex - change order",
+          "status": "complete",
+          "date": "2017-11-01",
+          "value": null,
+          "description": "Ch-01 change in smud meter socket",
+          "contractor": null
+        },
+        {
+          "permitNumber": "APPR2020-01480",
+          "type": "Electronic submittals. Remodels repairs including fire/vehicle damage alterations ti's new buildings",
+          "status": "canceled",
+          "date": "2020-07-21",
+          "value": 52000,
+          "description": "The repair scope consists of replacing interior finishes attic insulation and some electrical components at the west wing of the house along with a truss repair",
+          "contractor": "JP Gallagher Construction INC"
+        },
+        {
+          "permitNumber": "CBRR2020-01140",
+          "type": "Replace windows or siding fire repair other repairs",
+          "status": "complete",
+          "date": "2020-11-16",
+          "value": 52000,
+          "description": "The repair scope consists of replacing interior finishes attic insulation and some electrical components at the west wing of the house along with a truss repair",
+          "contractor": "JP Gallagher Construction INC"
+        }
+      ],
+      "permitSummary": {
+        "total": 8,
+        "summary": [
+          {
+            "year": "2000",
+            "types": [
+              {
+                "type": "New building addition adu (not a garage conversion) deck patio cover garage barn ground mount solar",
+                "count": 1
+              },
+              {
+                "type": "New building addition adu (not a garage conversion) deck patio cover garage barn ground mount solar; Building/residential/building combo new add/cbnr",
+                "count": 1
+              },
+              {
+                "type": "Miscellaneous electrical plumbing mechanical solar/pv electric vehicle charger generator (not for re",
+                "count": 1
+              }
+            ]
+          },
+          {
+            "year": "2017",
+            "types": [
+              {
+                "type": "Miscellaneous water heater electrical plumbing HVAC mechanical solar/pv electric vehicle equip. Gene",
+                "count": 2
+              },
+              {
+                "type": "Residential/single-family/duplex - change order",
+                "count": 1
+              }
+            ]
+          },
+          {
+            "year": "2020",
+            "types": [
+              {
+                "type": "Electronic submittals. Remodels repairs including fire/vehicle damage alterations ti's new buildings",
+                "count": 1
+              },
+              {
+                "type": "Replace windows or siding fire repair other repairs",
+                "count": 1
+              }
+            ]
+          }
+        ],
+        "details": [
+          {
+            "permitNumber": "CBN2000-02439",
+            "type": "New building addition adu (not a garage conversion) deck patio cover garage barn ground mount solar",
+            "status": "final",
+            "date": "2000-09-11",
+            "value": 386000,
+            "description": "4170 S.F. New single family dwelling plans on file",
+            "contractor": "BBM Construction INC"
+          },
+          {
+            "permitNumber": "CBN2000-01345",
+            "type": "New building addition adu (not a garage conversion) deck patio cover garage barn ground mount solar; Building/residential/building combo new add/cbnr",
+            "status": "Finaled",
+            "date": "2000-05-24",
+            "value": 1,
+            "description": "Ag exempt building 1600sf",
+            "contractor": "CALVIN JEPSEN"
+          },
+          {
+            "permitNumber": "MIS2000-02955",
+            "type": "Miscellaneous electrical plumbing mechanical solar/pv electric vehicle charger generator (not for re",
+            "status": "final",
+            "date": "2000-06-09",
+            "value": 1000,
+            "description": "Electrical for ag. Exempt building. (cbn2000-01345)",
+            "contractor": null
+          },
+          {
+            "permitNumber": "MISR2017-04251",
+            "type": "Miscellaneous water heater electrical plumbing HVAC mechanical solar/pv electric vehicle equip. Gene",
+            "status": "complete",
+            "date": "2017-10-06",
+            "value": 65000,
+            "description": "Residence - install 12.4 kw roof mount solar system wtih 35 panels - derate 200 amp to 175 amp",
+            "contractor": "Fisher Electric INC; Troy Fair"
+          },
+          {
+            "permitNumber": "MISR2017-04253",
+            "type": "Miscellaneous water heater electrical plumbing HVAC mechanical solar/pv electric vehicle equip. Gene",
+            "status": "complete",
+            "date": "2017-11-02",
+            "value": 65000,
+            "description": "Residence - install 17.7 kw roof mount solar system with 50 panels - derate breaker from 200 amp to 150 amp ch-01 change in smud meter socket",
+            "contractor": "Fisher Electric INC; Troy Fair"
+          },
+          {
+            "permitNumber": "MISR2017-04253-01",
+            "type": "Residential/single-family/duplex - change order",
+            "status": "complete",
+            "date": "2017-11-01",
+            "value": null,
+            "description": "Ch-01 change in smud meter socket",
+            "contractor": null
+          },
+          {
+            "permitNumber": "APPR2020-01480",
+            "type": "Electronic submittals. Remodels repairs including fire/vehicle damage alterations ti's new buildings",
+            "status": "canceled",
+            "date": "2020-07-21",
+            "value": 52000,
+            "description": "The repair scope consists of replacing interior finishes attic insulation and some electrical components at the west wing of the house along with a truss repair",
+            "contractor": "JP Gallagher Construction INC"
+          },
+          {
+            "permitNumber": "CBRR2020-01140",
+            "type": "Replace windows or siding fire repair other repairs",
+            "status": "complete",
+            "date": "2020-11-16",
+            "value": 52000,
+            "description": "The repair scope consists of replacing interior finishes attic insulation and some electrical components at the west wing of the house along with a truss repair",
+            "contractor": "JP Gallagher Construction INC"
+          }
+        ]
+      },
+      "riskAndHazards": {
+        "fireDamageHistory": "Fire repair permits indicate interior and attic damage repair in 2020"
+      },
+      "occupancy": {
+        "occupancyNarrative": "The property is a rural single-family residence with four bedrooms and four bathrooms, likely owner-occupied. Recent permits suggest ongoing maintenance and repairs."
+      },
+      "operations": {
+        "operationsNarrative": "The primary operations appear to be residential, with an agricultural-exempt outbuilding on-site. Recent upgrades include solar installations and fire-related repairs. No evidence of commercial or rental activity."
+      }
+    },
+    "fireServices": {
+      "name": null,
+      "address": null,
+      "coordinates": {
+        "lat": null,
+        "lng": null
+      },
+      "distance": {
+        "miles": null,
+        "minutes": null,
+        "drivingDistanceText": null,
+        "drivingDurationText": null
+      }
+    },
+    "diagnostics": {
+      "completenessScore": null,
+      "validationPassed": true,
+      "missingFields": []
+    },
+    "summary": {
+      "headline": "Property with 4 bedrooms on 4.77 acres.",
+      "keyHighlights": [
+        "Built 2001",
+        "Lot size: 4.77 acres",
+        "Fire station: Unknown (? mi, ? mins)"
+      ]
+    },
+    "resources": {
+      "apiUsage": [
+        {
+          "service": "ATTOM Property API",
+          "endpoint": "propertyapi/v1.0.0",
+          "calls": 1,
+          "costPerCallUSD": 0.02,
+          "totalCostUSD": 0.02
+        },
+        {
+          "service": "Google Maps API",
+          "endpoint": "distanceMatrix",
+          "calls": 1,
+          "costPerCallUSD": 0.005,
+          "totalCostUSD": 0.005
+        },
+        {
+          "service": "OpenAI GPT",
+          "model": "unknown-model",
+          "tokensUsed": null,
+          "costPer1kTokensUSD": 0.01,
+          "totalCostUSD": null
+        }
+      ],
+      "totalEstimatedCostUSD": 0.025,
+      "executionMetrics": {
+        "executionTimeMs": null,
+        "workflowId": "a5tqSfooNyBDKwFm",
+        "runId": "2731"
+      }
+    },
+    "meta": {
+      "source": "Flatten Property JSON v5.3 — FireDept FIXED",
+      "openaiId": "chatcmpl-CwSG3seoS7LLPT2JOHfr4dfzFggl9",
+      "created": 1768047683,
+      "usage": {
+        "prompt_tokens": 2089,
+        "completion_tokens": 1769,
+        "total_tokens": 3858,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "audio_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        }
+      },
+      "debug_fire": {
+        "fireDeptKeysPresent": false,
+        "distancesKeysPresent": false,
+        "distanceMetricsKeysPresent": false,
+        "mapped": {
+          "name": "Unknown Fire Station",
+          "miles": null,
+          "minutes": null
+        }
+      }
+    }
+  }
+]
