@@ -1,6 +1,6 @@
 // api/n8n-proxy.js
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.status(405).json({ error: "Method not allowed" });
     return;
@@ -34,4 +34,4 @@ module.exports = async function handler(req, res) {
     console.error("Proxy error:", err);
     res.status(500).json({ error: err.message });
   }
-};
+}
