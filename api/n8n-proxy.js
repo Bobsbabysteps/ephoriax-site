@@ -13,8 +13,23 @@ export default async function handler(req, res) {
       body: JSON.stringify(req.body),
     });
 
-    const data = await response.json();
-    res.status(200).json(data);
+    const text = await response.text();
+    
+    if (!text || text.trim() === "") {
+      res.status(502).json({ error: "n8n returned empty response - workflow may be inactive" });
+      return;
+    }
+
+    try {
+      const data = JSON.parse(text);
+      res.status(200).json(data);
+    } catch (parseErr) {
+      res.status(502).json({ 
+        error: "n8n returned invalid response",
+        upstreamStatus: response.status,
+        rawResponse: text
+      });
+    }
   } catch (err) {
     console.error("Proxy error:", err);
     res.status(500).json({ error: err.message });
